@@ -45,7 +45,7 @@ At the `.vscode\launch.json`, find the env vars and add your Forge Client ID, Se
 
 **How to use this sample**
 
-Open `http://localhost:3000` to start the app, if first time, click on `Define Activity`, enter new `width` & `height` values, select the input file (use from **sample files** folder), select the `Activity` and, finally, `Start workitem`. 
+Open `http://localhost:3000` to start the app, if first time, click on `Define Activity`, upload a dwg file that contais civil 3d parcel objects, select the `Activity` and, finally, `Start workitem`. 
 
 # Further Reading
 
