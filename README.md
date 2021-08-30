@@ -9,7 +9,7 @@ Webapp interface that uses Design Automation to extract the `Parcel` data from C
 
 Clone this project or download it. It's recommended to install [GitHub desktop](https://desktop.github.com/). To clone it via command line, use the following (**Terminal** on MacOSX/Linux, **Git Shell** on Windows):
 
-    git clone https://github.com/e-hermoso/ForgeSample-AMC-Dev.git
+    git clone https://github.com/e-hermoso/OCPW-Automation-Map-Check.git
     
 **ngrok**
 
