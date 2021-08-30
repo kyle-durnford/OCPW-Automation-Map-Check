@@ -5,6 +5,15 @@ Webapp interface that uses Design Automation to extract the `Parcel` data from C
 
 ## Data flow diagram
 ![](https://raw.githubusercontent.com/e-hermoso/ForgeSample-AMC-Dev/main/wwwroot/images/Data%20Flow%20Forge%20Checker.jpg)
+
+# Setup
+
+## Prerequisites
+
+1. **Forge Account**: Learn how to create a Forge Account, activate subscription and create an app at [this tutorial](http://learnforge.autodesk.io/#/account/). 
+2. **Visual Studio**: Either Community (Windows) or Code (Windows, MacOS).
+3. **.NET Core** basic knowledge with C#
+4. **ngrok**: Routing tool, [download here](https://ngrok.com/). 
 ## Running locally
 
 Clone this project or download it. It's recommended to install [GitHub desktop](https://desktop.github.com/). To clone it via command line, use the following (**Terminal** on MacOSX/Linux, **Git Shell** on Windows):
