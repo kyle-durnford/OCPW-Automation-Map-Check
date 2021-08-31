@@ -39,7 +39,7 @@ Right-click on the project, then go to **Debug**. Adjust the settings as shown b
 
 Open the `webapp` folder (only), at the bottom-right, select **Yes** and **Restore**. This restores the packages (e.g. Autodesk.Forge) and creates the launch.json file. See *Tips & Tricks* for .NET Core on MacOS.
 
-![](../media/webapp/visual_code_restore.png)
+![](https://raw.githubusercontent.com/e-hermoso/ForgeSample-AMC-Dev/main/wwwroot/images/visual_code_restore.png)
 
 At the `.vscode\launch.json`, find the env vars and add your Forge Client ID, Secret and callback URL. Also define the `ASPNETCORE_URLS` variable. The end result should be as shown below:
 
