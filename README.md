@@ -16,7 +16,7 @@ Webapp interface that uses Design Automation to extract the `Parcel` data from C
 4. **ngrok**: Routing tool, [download here](https://ngrok.com/). 
 ## Running locally
 
-Clone this project or download it. It's recommended to install [GitHub desktop](https://desktop.github.com/). To clone it via command line, use the following (**Terminal** on MacOSX/Linux, **Git Shell** on Windows):
+Clone this project or download it. It's recommended to install [Git for Windows](https://git-scm.com/download/win). To clone it via command line, use the following (**Terminal** on MacOSX/Linux, **Git Shell** on Windows):
 
     git clone https://github.com/e-hermoso/OCPW-Automation-Map-Check.git
     
