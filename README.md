@@ -30,7 +30,8 @@ After [download ngrok](https://ngrok.com/), run `ngrok http 3000 -host-header="l
 
 **Visual Studio** (Windows):
 
-Right-click on the project, then go to **Debug**. Adjust the settings as shown below. 
+Right-click on the project, then go to **Debug**. Adjust the settings as shown below.
+![](https://github.com/e-hermoso/ForgeSample-AMC-Dev/blob/main/wwwroot/images/Untitled_%20Aug%2030,%202021%2010_46%20PM%20(2).gif?)
 
 ![](../media/webapp/visual_studio_settings.png)
 
