@@ -11,7 +11,7 @@ Webapp interface that uses Design Automation to extract the `Parcel` data from C
 ## Prerequisites
 
 1. **Forge Account**: Learn how to create a Forge Account, activate subscription and create an app at [this tutorial](http://learnforge.autodesk.io/#/account/). 
-2. **Visual Studio**: [Either Community (Windows)](https://visualstudio.microsoft.com/downloads/) or [Code (Windows, MacOS).](https://code.visualstudio.com/download)
+2. **Visual Studio**: [Either Community (Windows)](https://visualstudio.microsoft.com/downloads/) or **Visual Studio Code**:[Code (Windows, MacOS).](https://code.visualstudio.com/download)
 3. **.NET Core** basic knowledge with C#
 4. **ngrok**: Routing tool, [download here](https://ngrok.com/). 
 ## Running locally
