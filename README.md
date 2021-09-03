@@ -32,6 +32,12 @@ After [download ngrok](https://ngrok.com/), run `ngrok http 3000 -host-header="l
 
 Right-click on the project, then go to **Debug**. Adjust the settings as shown below.
 ![](https://github.com/e-hermoso/ForgeSample-AMC-Dev/blob/main/wwwroot/images/Untitled_%20Aug%2030,%202021%2010_46%20PM%20(2).gif?)
+Under Debug tab see the Environment Variables section and add:
+- `ASPNETCORE_ENVIRONMENT` : use `DEVELOPMENT`
+- `ASPNETCORE_URLS` : use `http://localhost:3000`
+- `FORGE_CLIENT_ID` : use your id here
+- `FORGE_CLIENT_SECRET` : use your secret here
+- `FORGE_WEBHOOK_URL` : use the ngrok forwarding URL from previous step
 
 ![](../media/webapp/visual_studio_settings.png)
 
