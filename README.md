@@ -4,7 +4,7 @@
 Webapp interface that uses Design Automation to extract the `Parcel` data from Civil 3d objects.
 
 ## Data flow diagram
-![](https://raw.githubusercontent.com/e-hermoso/ForgeSample-AMC-Dev/main/wwwroot/images/Data%20Flow%20Forge%20Checker.jpg)
+![](https://github.com/e-hermoso/OCPW-Automation-Map-Check/blob/main/media/aboutapp/img/Data%20Flow%20Forge%20Checker.jpg)
 
 # Setup
 
@@ -26,12 +26,12 @@ When a `Workitem` completes, **Design Automation** can notify our application. A
 
 After [download ngrok](https://ngrok.com/), run `ngrok http 3000 -host-header="localhost:3000"`, then copy the `http` address into the `FORGE_WEBHOOK_URL` environment variable (see next). For this sample, do not use the `https` address.
 
-![](../media/webapp/ngrok_setup.png)
+![](https://github.com/e-hermoso/OCPW-Automation-Map-Check/blob/main/media/aboutapp/img/ngrok-setup.gif)
 
 **Visual Studio** (Windows):
 
 Right-click on the project, then go to **Debug**. Adjust the settings as shown below.
-![](https://github.com/e-hermoso/ForgeSample-AMC-Dev/blob/main/wwwroot/images/Untitled_%20Aug%2030,%202021%2010_46%20PM%20(2).gif?)
+![](https://github.com/e-hermoso/OCPW-Automation-Map-Check/blob/main/media/aboutapp/img/env-setup.gif)
 Under Debug tab see the Environment Variables section and add:
 - `ASPNETCORE_ENVIRONMENT` : use `DEVELOPMENT`
 - `ASPNETCORE_URLS` : use `http://localhost:3000`
@@ -45,7 +45,7 @@ Under Debug tab see the Environment Variables section and add:
 
 Open the `webapp` folder (only), at the bottom-right, select **Yes** and **Restore**. This restores the packages (e.g. Autodesk.Forge) and creates the launch.json file. See *Tips & Tricks* for .NET Core on MacOS.
 
-![](https://raw.githubusercontent.com/e-hermoso/ForgeSample-AMC-Dev/main/wwwroot/images/visual_code_restore.png)
+![](https://github.com/e-hermoso/OCPW-Automation-Map-Check/blob/main/media/aboutapp/img/visual_code_restore.png)
 
 At the `.vscode\launch.json`, find the env vars and add your Forge Client ID, Secret and callback URL. Also define the `ASPNETCORE_URLS` variable. The end result should be as shown below:
 
