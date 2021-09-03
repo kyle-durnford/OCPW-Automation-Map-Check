@@ -25,6 +25,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="media\aboutapp\img\" />
     <Folder Include="wwwroot\" />
   </ItemGroup>
 
