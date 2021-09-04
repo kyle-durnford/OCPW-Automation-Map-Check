@@ -219,33 +219,38 @@ function Show2dCurve(viewer) {
 
     // search for the selected object based on the HandleId
     // "this" gives access to the searchSelectObj method in the browser
-    this.searchSelectedObj = function (handleIdData) {
-        var itemObj
-        console.log("Execute function getAllLeafComponents_v4")
-        // Execute test function getAllLeafComponents_v3
-        getAllLeafComponents_v4((dbIds) => {
-            // Now for leaf components, let's get some properties and count occurrences of each value
-            const filteredProps = ['externalId'];
+    this.searchSelectedObj = function (hid,dbIdsDict) {
+        console.log("Execute function searchSelectedObj")
 
-            console.log("Execute function getBulkProperties")
+        var dbIdVal = dbIdsDict[hid.toUpperCase()]
+        createOverlayforHandleIdObj(dbIdVal)
 
-            // Get only the properties we need for the leaf dbIds
-            viewer.model.getBulkProperties(dbIds, filteredProps, (items) => {
-                // Iterate through the elements we found
-                console.log("Searching for handleId")
-                itemObj = items.find(item => item['externalId'].toLowerCase() == handleIdData)
-                console.log("Object item found: " + itemObj)
-                console.log("Searching for handleId DONE")
+        // NOTE : No need for getAllLeafComponents_v4 function to get database Id based on the handle Id
+        // var itemObj
+        // Execute test function getAllLeafComponents_v4
+        //getAllLeafComponents_v4((dbIds) => {
+        //    // Now for leaf components, let's get some properties and count occurrences of each value
+        //    const filteredProps = ['externalId'];
 
-                var dbIdVal = itemObj['dbId']
+        //    console.log("Execute function getBulkProperties")
 
-                createOverlayforHandleIdObj(dbIdVal)
-            });
-            // Note: console.log() is executed while the find method is still being executed.
-            console.log("Execute function getBulkProperties: COMPLETE")
-        });
+        //    // Get only the properties we need for the leaf dbIds
+        //    viewer.model.getBulkProperties(dbIds, filteredProps, (items) => {
+        //        // Iterate through the elements we found
+        //        console.log("Searching for handleId")
+        //        itemObj = items.find(item => item['externalId'].toLowerCase() == handleIdData)
+        //        console.log("Object item found: " + itemObj)
+        //        console.log("Searching for handleId DONE")
+
+        //        var dbIdVal = itemObj['dbId']
+
+        //        createOverlayforHandleIdObj(dbIdVal)
+        //    });
+        //    // Note: console.log() is executed while the find method is still being executed.
+        //    console.log("Execute function getBulkProperties: COMPLETE")
+        //});
         // Note: console.log() is executed while the find method is still being executed.
-        console.log("Execute function getAllLeafComponents_v4: COMPLETE")
+        //console.log("Execute function getAllLeafComponents_v4: COMPLETE")
     }
 }
 

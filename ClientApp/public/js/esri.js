@@ -677,7 +677,7 @@ function base_map(jsonData) {
 
             // Get the instance of the extension.
             var overLayGeometryExtension = viewer.getExtension('OverLayGeometry')
-            overLayGeometryExtension.searchSelectedObj(hid)
+            overLayGeometryExtension.searchSelectedObj(hid, viewerDbIds)
 
             // This approach is getting the definition, not the instance of the extension.
             // console.log(Autodesk.Viewing.theExtensionManager.getExtensionClass('MyOverLayGeo'))
@@ -710,7 +710,7 @@ function base_map(jsonData) {
 
             // Get the instance of the extension.
             var overLayGeometryExtension = viewer.getExtension('OverLayGeometry')
-            overLayGeometryExtension.searchSelectedObj(handleIdFromElementAttribute)
+            overLayGeometryExtension.searchSelectedObj(handleIdFromElementAttribute, viewerDbIds)
 
             // Eric - Call Function to zoom in to object on viewer.
             executeFitToViewHandleId(handleIdFromElementAttribute)
@@ -814,7 +814,7 @@ function base_map(jsonData) {
                     // Call Function to zoom in to object on viewer.
                     executeFitToViewHandleId(hid);
 
-                    overLayGeometryExtension.searchSelectedObj(hid)
+                    overLayGeometryExtension.searchSelectedObj(hid, viewerDbIds)
                 }
 
                 var geo = graphic.geometry;

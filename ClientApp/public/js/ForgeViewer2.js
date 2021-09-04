@@ -1,4 +1,5 @@
 ﻿var viewer;
+var viewerDbIds;
 var da_jsonData; // Assign json data to a variable after design automation is complete
 
 function launchViewer(urn) {
@@ -34,11 +35,6 @@ function launchViewer(urn) {
     });
 }
 
-
-function onDocumentLoadFailure(viewerErrorCode) {
-    console.error('onDocumentLoadFailure() - errorCode:' + viewerErrorCode);
-}
-
 function onDocumentLoadSuccess2(viewerDocument) {
     // viewerDocument is an instance of Autodesk.Viewing.Document
     console.log("Executing onDocumentLoadSuccess2 function.")
@@ -55,10 +51,17 @@ function onDocumentLoadSuccess2(viewerDocument) {
         // Run other functionalities after model is done loading.
         console.log("Viewer GEOMETRY_LOADED_EVENT and OBJECT_TREE_CREATED_EVENT is completely loaded.")
 
+        // Get all dbIds and hIds from the forge viewer model for dynimc connections
+        // for button labels, segments from esri map and data table.
+        viewerDbIds = forgeViewerModelDbIds()
+
     });
     console.log("Check if Viewer is completely loaded.")
 }
 
+function onDocumentLoadFailure(viewerErrorCode) {
+    console.error('onDocumentLoadFailure() - errorCode:' + viewerErrorCode);
+}
 function onDocumentLoadFailure2() {
     console.error('Failed fetching Forge manifest');
 }
@@ -87,4 +90,11 @@ function afterViewerEvents(viewer, events) {
     });
 
     return Promise.all(promises)
+}
+// Get all dbIds from the viewer model 
+function forgeViewerModelDbIds() {
+    viewer.model.getExternalIdMapping(data => {
+        console.log("dbIdsDict: ", data)
+        viewerDbIds = data
+    })
 }

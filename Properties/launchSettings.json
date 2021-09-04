@@ -13,11 +13,11 @@
       "launchBrowser": true,
       "environmentVariables": {
         "FORGE_CALLBACK_URL": "http://localhost:3000/api/forge/callback/oauth",
-        "FORGE_CLIENT_SECRET": "1234",
+        "FORGE_CLIENT_SECRET": "123",
         "ASPNETCORE_URLS": "http://localhost:3000",
-        "FORGE_CLIENT_ID": "1234",
+        "FORGE_CLIENT_ID": "123",
         "ASPNETCORE_ENVIRONMENT": "Development",
-        "FORGE_WEBHOOK_URL": "http://0607-76-169-130-154.ngrok.io"
+        "FORGE_WEBHOOK_URL": "http://47bf-76-169-130-154.ngrok.io"
       }
     },
     "ForgeChckerReactApp": {
