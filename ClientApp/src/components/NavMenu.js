@@ -1,49 +1,75 @@
 import React, { Component } from 'react';
-import { Collapse, Container, Navbar, NavbarBrand, NavbarToggler, NavItem, NavLink } from 'reactstrap';
+import { makeStyles } from '@material-ui/core/styles';
+import Box from '@material-ui/core/Box';
+import { Collapse, Container, Nav, Navbar, NavbarBrand, NavbarToggler, NavItem, NavLink } from 'reactstrap';
 import { Link } from 'react-router-dom';
+import iconLegal from "../assets/icon_legal.svg"
 import './NavMenu.css';
 
-export class NavMenu extends Component {
-  static displayName = NavMenu.name;
+const drawerWidth = 100;
 
-  constructor (props) {
-    super(props);
-
-    this.toggleNavbar = this.toggleNavbar.bind(this);
-    this.state = {
-      collapsed: true
-    };
+const useStyles = makeStyles((theme) => ({
+  navbar: {
+    display: 'flex-column',
+    bgcolor: '#576EEF',
+    width: `calc(100% - ${drawerWidth}px)`,
+  },
+  list: {
+    bgcolor: '#3E52BB',
   }
+}));
 
-  toggleNavbar () {
-    this.setState({
-      collapsed: !this.state.collapsed
-    });
-  }
+const columnProps = {
+  bgcolor: '#576EEF',
+  borderColor: 'text.primary',
+  m: 1,
+  border: 1,
+  style: { width: '5rem', height: '40rem' },
+};
 
-  render () {
-    return (
-      <header>
-        <Navbar className="navbar-expand-sm navbar-toggleable-sm ng-white border-bottom box-shadow mb-3" light>
+const tabProps = {
+  display: 'flex',
+  bgcolor: '#3E52BB',
+  borderColor: 'text.primary',
+  m: 1,
+  border: 1,
+  style: { width: '4rem', height: '4rem' },
+  justifyContent: 'center',
+};
+
+
+const NavMenu = () => {
+  const classes = useStyles();
+
+  return (
+    // <header>
+      <Box borderRadius={8} {...columnProps}>
+        <Nav variant="pills" className={classes.navbar} >
           <Container>
-            <NavbarBrand tag={Link} to="/">ForgeChckerReactApp</NavbarBrand>
-            <NavbarToggler onClick={this.toggleNavbar} className="mr-2" />
-            <Collapse className="d-sm-inline-flex flex-sm-row-reverse" isOpen={!this.state.collapsed} navbar>
-              <ul className="navbar-nav flex-grow">
-                <NavItem>
-                  <NavLink tag={Link} className="text-dark" to="/">Home</NavLink>
+              <ul className="navbar-nav">
+                <NavItem className={classes.list}>
+                  <NavLink tag={Link} className="text-dark" to="/">
+                    <div>
+                      <img src={iconLegal}></img>
+                    </div>
+                    <div>
+                      Legal
+                    </div>  
+                  </NavLink>
                 </NavItem>
-                <NavItem>
+                {/* <NavItem>
                   <NavLink tag={Link} className="text-dark" to="/counter">Counter</NavLink>
                 </NavItem>
                 <NavItem>
                   <NavLink tag={Link} className="text-dark" to="/fetch-data">Fetch data</NavLink>
-                </NavItem>
+                </NavItem> */}
               </ul>
-            </Collapse>
           </Container>
-        </Navbar>
-      </header>
-    );
-  }
+        </Nav>
+      </Box>
+    // </header>
+  )
+
 }
+
+export default NavMenu
