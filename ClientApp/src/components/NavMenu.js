@@ -1,7 +1,6 @@
-import React, { Component } from 'react';
+import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
-import Box from '@material-ui/core/Box';
-import { Collapse, Container, Nav, Navbar, NavbarBrand, NavbarToggler, NavItem, NavLink } from 'reactstrap';
+import { Container, Nav, NavItem, NavLink } from 'reactstrap';
 import { Link } from 'react-router-dom';
 import iconLegal from "../assets/icon_legal.svg"
 import './NavMenu.css';
@@ -10,31 +9,42 @@ const drawerWidth = 100;
 
 const useStyles = makeStyles((theme) => ({
   navbar: {
-    display: 'flex-column',
-    bgcolor: '#576EEF',
+    display: 'flex',
+    backgroundColor: '#576EEF',
     width: `calc(100% - ${drawerWidth}px)`,
   },
   list: {
     bgcolor: '#3E52BB',
+  },
+  flex: {
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'center',
+    alignItems: 'center'
+  },
+  tab: {
+    backgroundColor: '#3E52BB',
+    border: 0,
+    width: '64px',
+    height:'4rem',
+    borderRadius: 8
+  },
+  title: {
+    marginTop: '-.5rem',
+    fontFamily: 'poppins, sans-serif',
+    color: '#fff'
+  },
+  icon: {
+    marginTop: '-.5rem'
   }
 }));
 
 const columnProps = {
-  bgcolor: '#576EEF',
-  borderColor: 'text.primary',
-  m: 1,
-  border: 1,
-  style: { width: '5rem', height: '40rem' },
+  border: 0,
+  style: {background: '#576EEF', width:'5rem', height:'calc(100vh - 1rem)', padding: '.5rem', margin: '.5rem 0 .5rem .5rem', borderRadius: '.5rem', position: 'fixed', top: '0', left: '0'},
 };
 
-const tabProps = {
-  display: 'flex',
-  bgcolor: '#3E52BB',
-  borderColor: 'text.primary',
-  m: 1,
-  border: 1,
-  style: { width: '4rem', height: '4rem' },
-  justifyContent: 'center',
+const iconProps = {
 };
 
 
@@ -43,18 +53,20 @@ const NavMenu = () => {
 
   return (
     // <header>
-      <Box borderRadius={8} {...columnProps}>
+      <div borderradius={8} {...columnProps}>
         <Nav variant="pills" className={classes.navbar} >
-          <Container>
+          <Container style={{padding: 0}}>
               <ul className="navbar-nav">
                 <NavItem className={classes.list}>
-                  <NavLink tag={Link} className="text-dark" to="/">
-                    <div>
-                      <img src={iconLegal}></img>
-                    </div>
-                    <div>
-                      Legal
-                    </div>  
+                  <NavLink tag={Link} className="text-light" to="/">
+                    <div className={`${classes.flex} ${classes.tab}`}>
+                      <div {...iconProps}>
+                        <img src={iconLegal} className={classes.icon}></img>
+                      </div>
+                      <div className={classes.title}>
+                        Legal
+                      </div> 
+                    </div> 
                   </NavLink>
                 </NavItem>
                 {/* <NavItem>
@@ -66,7 +78,7 @@ const NavMenu = () => {
               </ul>
           </Container>
         </Nav>
-      </Box>
+      </div>
     // </header>
   )
 

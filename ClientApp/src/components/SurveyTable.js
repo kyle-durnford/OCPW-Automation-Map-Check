@@ -1,15 +1,9 @@
-import React, { useState, useEffect, Fragment } from "react"
-import Paper from '@mui/material/Paper';
-import Table from '@mui/material/Table';
-import TableBody from '@mui/material/TableBody';
-import TableCell from '@mui/material/TableCell';
-import TableContainer from '@mui/material/TableContainer';
-import TableHead from '@mui/material/TableHead';
-import TablePagination from '@mui/material/TablePagination';
-import TableRow from '@mui/material/TableRow';
-import { CircularProgress } from '@material-ui/core';
+import React, { useState, useEffect, useCallback} from "react"
 import { makeStyles } from '@material-ui/core/styles';
 import connection from '../services/connection'
+import good from '../assets/check.svg'
+import error from '../assets/error.svg'
+import warn from '../assets/warning.svg'
 
 const useStyles = makeStyles(() => ({
     circularProgress: {
@@ -21,59 +15,231 @@ const useStyles = makeStyles(() => ({
 }));
 
 const columns = [
-  { id: 'name', label: 'Name', minWidth: 170 },
-  { id: 'code', label: 'ISO\u00a0Code', minWidth: 100 },
   {
-    id: 'population',
-    label: 'Population',
-    minWidth: 170,
-    align: 'right',
-    format: (value) => value.toLocaleString('en-US'),
+    id: 'status',
+    label: 'Status',
+    align: 'center',
   },
   {
-    id: 'size',
-    label: 'Size\u00a0(km\u00b2)',
-    minWidth: 170,
-    align: 'right',
-    format: (value) => value.toLocaleString('en-US'),
+    id: 'name',
+    label: 'Parcel Name',
+    align: 'left',
   },
   {
-    id: 'density',
-    label: 'Density',
-    minWidth: 170,
-    align: 'right',
-    format: (value) => value.toFixed(2),
+    id: 'length',
+    label: 'Length',
+    align: 'left',
+  },
+  {
+    id: 'bearing',
+    label: 'Bearing',
+    align: 'left',
+  },
+  {
+    id: 'label',
+    label: 'Label Length',
+    align: 'left',
+  },
+  {
+    id: 'diff',
+    label: 'Difference',
+    align: 'left',
+  },
+  {
+    id: 'sources',
+    label: 'Significant Sources',
+    align: 'center',
+  },
+  {
+    id: 'lengthcheck',
+    label: 'Length Check',
+    align: 'center',
+  },
+
+  {
+    id: 'bearingcheck',
+    label: 'Bearing Check',
+    align: 'center',
+  },
+  {
+    id: 'northorientation',
+    label: 'North Orientation',
+    align: 'center',
   },
 ];
 
-function createData(name, code, population, size) {
-  const density = population / size;
-  return { name, code, population, size, density };
+const rowProps = {
+  style: {
+    fontFamily: 'poppins, sans-serif',
+    fontSize: '1rem',
+    width: '100%'
+  }
 }
 
-const rows = [
-  createData('India', 'IN', 1324171354, 3287263),
-  createData('China', 'CN', 1403500365, 9596961),
-  createData('Italy', 'IT', 60483973, 301340),
-  createData('United States', 'US', 327167434, 9833520),
-  createData('Canada', 'CA', 37602103, 9984670),
-  createData('Australia', 'AU', 25475400, 7692024),
-  createData('Germany', 'DE', 83019200, 357578),
-  createData('Ireland', 'IE', 4857000, 70273),
-  createData('Mexico', 'MX', 126577691, 1972550),
-  createData('Japan', 'JP', 126317000, 377973),
-  createData('France', 'FR', 67022000, 640679),
-  createData('United Kingdom', 'GB', 67545757, 242495),
-  createData('Russia', 'RU', 146793744, 17098246),
-  createData('Nigeria', 'NG', 200962417, 923768),
-  createData('Brazil', 'BR', 210147125, 8515767),
-];
+const dataProps = {
+  style: {
+    padding: '.5rem 1rem .5rem 1rem',
+    maxWidth: 'max-content'
+  }
+}
 
-const SurveyTable = ({loading, url}) => {
-  const classes = useStyles();
+const dataTopProps = {
+  style: {
+    padding: '.5rem 1rem .5rem 1rem',
+    fontSize: '.75rem',
+    lineHeight: '1.15',
+    textAlign: 'left'
+  }
+}
+
+const tableContProps = {
+  style: {
+    width: 'auto', 
+    overflow: 'auto', 
+    height: 'calc(40vh - 131px - 2rem)',
+    margin: '0rem 1rem 0rem 2rem',
+    padding: '0 1rem 2rem 0'
+  }
+}
+
+const tableProps = {
+  style: {
+    tableLayout: '100%',
+    width: '100%',
+    borderCollaps: 'inherit',
+    borderSpacing: '0px',
+    position: 'relative',
+    overflow: 'auto',
+    display: 'table',
+    borderCollapse: 'collapse',
+    paddingRight: '1rem',
+    textAlign: 'left',
+  }
+}
+
+const tableHeadProps = {
+  style: {
+    textTransform: 'uppercase',
+    fontWeight: '600',
+    width: '100%',
+    backgroundColor: '#fff',
+    display: 'table-header-group',
+    top: '0',
+    position: 'sticky',
+  }
+}
+
+const tableBodyProps = {
+  style: {
+    display: 'table-row-group',
+    width: '100%'
+  }
+}
+
+const tableTitleProps = {
+  style: {
+    fontFamily: 'poppins, sans-serif',
+    fontSize: '1.25rem',
+    fontWeight: '600',
+    padding: '1rem 0 .5rem 2rem'
+  }
+}
+
+const tableTabProps = {
+  style: {
+    fontFamily: 'poppins, sans-serif',
+    fontWeight: '600',
+    fontSize: '1rem',
+    color: '#bbb',
+    padding: '.25rem .5rem',
+    borderTop: '.3rem solid #fff',
+    transition: 'border-color .2s ease, color .2s ease',
+    cursor: 'pointer'
+  }
+}
+
+const tableTabSelectedProps = {
+  style: {
+    fontFamily: 'poppins, sans-serif',
+    fontWeight: '600',
+    fontSize: '1rem',
+    color: 'rgb(87, 110, 239)',
+    padding: '.25rem .5rem',
+    borderTop: '.3rem solid rgb(87, 110, 239)',
+    transition: 'border-color .2s ease, color .2s ease',
+    cursor: 'pointer'
+  }
+}
+
+const tableTabRowProps = {
+  style: {
+    display: 'flex',
+    justifyContent: 'flex-start',
+    flexWrap: 'nowrap',
+    textTransform: 'uppercase',
+    margin: '0 2rem'
+  }
+}
+
+
+const SurveyTable = ({loading, url, data, selected, setSelected}) => {
   const [tableInfo, setTableInfo] = useState()
   const [didMount, setDidMount] = useState(false)
- 
+  const [active, setActive] = useState(true);
+  const [active1, setActive1] = useState(false);
+  const [select, setSelect] = useState([]);
+  const [row, setRow] = useState(null)
+
+  //Get the selected row when it renders
+  const itemEl = useCallback(
+    node => {
+      if (node !== null) {
+        setRow(node)
+      }
+    },
+    [],
+  )
+
+  //Scroll to the selected row in the table
+  if (row !== null) {
+    row.scrollIntoView({
+      scrollMode: 'if-needed',
+      behavior: "smooth",
+      block: 'center'
+    })
+  }
+
+  //Changes the table view to line/curve depending on what table the selected row is in
+  useEffect(() => {
+    if (select.length > 0 && select[1] !== null) {
+      if (data[select[0]].parcel[select[1]].dimension === 'line') {
+        setActive1(false);
+        setActive(true);
+      } else if (data[select[0]].parcel[select[1]].dimension === 'curve') {
+        setActive(false);
+        setActive1(true);
+      }
+    }
+  }, [select])
+
+  //switch between line and curve view
+  const handleClick = (e) => {
+      if (active === false) {
+          setActive1(false);
+          setActive(true);
+      }
+  };
+
+  const handleClickAlt = (e) => {
+    if (active1 === false) {
+        setActive(false);
+        setActive1(true);
+    }
+};
+
+  useEffect(() => {
+    setSelect(selected);
+  }, [selected])
 
   useEffect(() => { 
     setDidMount(true)
@@ -93,55 +259,90 @@ const SurveyTable = ({loading, url}) => {
     }  
   }, [url]);
 
-  if (loading && !tableInfo) 
-    return (
-        <Fragment>
-            <span className={classes.circularProgress}>
-                <CircularProgress size={48} />
-            </span>
-        </Fragment>
-    )
+  // if (loading && !tableInfo) 
+  //   return (
+  //       <Fragment>
+  //           <span className={classes.circularProgress}>
+  //               <CircularProgress size={48} />
+  //           </span>
+  //       </Fragment>
+  //   )
 
   return (
-    <Paper sx={{ width: '100%', overflow: 'hidden' }}>
-      <TableContainer sx={{ maxHeight: 440 }}>
-        <Table stickyHeader aria-label="sticky table">
-          <TableHead>
-            <TableRow>
-              {columns.map((column) => (
-                <TableCell
+    <>
+    <div {...tableTabRowProps}>
+      <div className={`tableTab`} {...(active === true) ? {...tableTabSelectedProps} : {...tableTabProps}} onClick={e => handleClick(e)}>Line Check</div>
+      <div className={`tableTab`} {...(active1 === true) ? {...tableTabSelectedProps} : {...tableTabProps}} onClick={e => handleClickAlt(e)}>Curve Check</div>
+    </div>
+    <div {...tableTitleProps}>Dimension {(active === true) ? "Line" : "Curve"} Check</div>
+    <div {...tableContProps} className={`scrollAlt`}>
+      <table {...tableProps}>
+        <thead {...tableHeadProps}>
+          <tr {...rowProps}>
+            {columns.map((column) => (
+                <td
                   key={column.id}
                   align={column.align}
                   style={{ minWidth: column.minWidth }}
+                  {...dataTopProps}
                 >
                   {column.label}
-                </TableCell>
+                </td>
               ))}
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {rows
-              // .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-              .map((row) => {
-                return (
-                  <TableRow hover role="checkbox" tabIndex={-1} key={row.code}>
-                    {columns.map((column) => {
-                      const value = row[column.id];
-                      return (
-                        <TableCell key={column.id} align={column.align}>
-                          {column.format && typeof value === 'number'
-                            ? column.format(value)
-                            : value}
-                        </TableCell>
+          </tr>
+        </thead>
+        <tbody {...tableBodyProps}>
+          {data.map((e, i) => {
+              return (
+                data[i].parcel.map((row, l) => {
+                  //Sort what dimension is displayed
+                  if ((data[i].parcel[l].dimension === 'line' && active === true) || (data[i].parcel[l].dimension === 'curve' && active1 === true) ) {
+                    //get the selected row
+                    if (select.length > 0 && select[0] === i && select[1] === l) {
+                      return(
+                      <tr ref={itemEl} className={'rowSelectColor'} {...rowProps} role="checkbox" tabIndex={-1} key={row.code} onClick={() => setSelected([])}>
+                          {columns.map((column, i) => {
+                            const value = row[column.id];
+                            return (
+                              <td {...dataProps} key={i} align={column.align}>
+                                {//https://stackoverflow.com/questions/46592833/how-to-use-switch-statement-inside-a-react-component
+                                {
+                                  'good': <img src={good} alt="Good"></img>,
+                                  'error': <img src={error} alt="Error"></img>,
+                                  'warn': <img src={warn} alt="Warning"></img>, 
+                                }[value] || value}
+                              </td>
+                            );
+                          })}
+                        </tr>
                       );
-                    })}
-                  </TableRow>
-                );
-              })}
-          </TableBody>
-        </Table>
-      </TableContainer>
-    </Paper>
+                    } else {
+                      return (
+                        <tr className={'rowAltColor'} {...rowProps} role="checkbox" tabIndex={-1} key={row.code} onClick={() => setSelected([i,l])}>
+                          {columns.map((column, i) => {
+                            const value = row[column.id];
+                            return (
+                              <td {...dataProps} key={i} align={column.align}>
+                                
+                                {//https://stackoverflow.com/questions/46592833/how-to-use-switch-statement-inside-a-react-component
+                                {
+                                  'good': <img src={good} alt="Good"></img>,
+                                  'error': <img src={error} alt="Error"></img>,
+                                  'warn': <img src={warn} alt="Warning"></img>, 
+                                }[value] || value}
+                              </td>
+                            );
+                          })}
+                        </tr>
+                       );
+                    }
+                  }
+                }));
+            })}
+        </tbody>
+      </table>
+    </div>
+    </>
   );
 }
 

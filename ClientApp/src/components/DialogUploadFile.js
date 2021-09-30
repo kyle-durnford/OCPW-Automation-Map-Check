@@ -3,17 +3,13 @@ import Button from '@material-ui/core/Button';
 import { makeStyles } from '@material-ui/core';
 import TextField from '@material-ui/core/TextField';
 import Dialog from '@material-ui/core/Dialog';
-import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
-import DialogContentText from '@material-ui/core/DialogContentText';
-import DialogTitle from '@material-ui/core/DialogTitle';
 import { useForm, Controller } from 'react-hook-form';
 import Dropzone from './Dropzone'
-import BuildTables from './SurveyTable'
 import connection from '../services/connection'
 
 const useStyles = makeStyles(theme => ({
@@ -25,8 +21,8 @@ const useStyles = makeStyles(theme => ({
     padding: theme.spacing(2),
 
     '& .MuiTextField-root': {
-      margin: theme.spacing(1),
-      width: '300px',
+      margin: '.5rem 0',
+      width: '100%',
     },
     '& .MuiButtonBase-root': {
       margin: theme.spacing(2),
@@ -34,7 +30,42 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-const DialogUploadFile = ({open, onClose, connectionId, isLoading}) => {
+const dialogTitleProps = {
+    style: {
+        fontFamily: 'poppins, sans-serif',
+        fontWeight: '600',
+        fontSize: '1.5rem',
+        padding: '1rem 0 0 1rem'
+    }
+}
+
+const inputContProps = {
+    style: {
+        margin: 'calc(2rem - 8px) 0'
+    }
+} 
+
+const buttonSolidProps = {
+    style: {
+        fontFamily: 'poppins, sans-serif',
+        fontSize: '1rem',
+        fontWeight: '600',
+        color: '#fff',
+        padding: '.25rem 1.5rem',
+        background: '#fe805c',
+        border: '2px solid #fe805c',
+        borderRadius: '.5rem',
+        cursor: 'pointer',
+        textTransform: 'uppercase',
+        transition: 'color .2s ease, background.2s ease',
+        boxShadow: 'none',
+        margin: ' calc(2rem - 8px) 8px 0',
+        width: '100%'
+
+    }
+};
+
+const DialogUploadFile = ({open, onClose, connectionId, isLoading, setSubmit}) => {
   const classes = useStyles();  
   const [submitAttempted, setSubmitAttempted] = useState()
   const [files, setFiles] = useState([])
@@ -66,15 +97,15 @@ const DialogUploadFile = ({open, onClose, connectionId, isLoading}) => {
   return (
     <div>
         <Dialog open={open} onClose={onClose} aria-labelledby="form-dialog-title">
-            <DialogTitle id="form-dialog-title">Submit Map</DialogTitle>
-            <DialogContent>
+            <div {...dialogTitleProps} id="form-dialog-title">Submit Map</div>
+            <DialogContent className={`scroll`} style={{padding: '0 1rem', border: '2rem 1rem solid transparent'}}>
                 <form className={classes.root} onSubmit={handleSubmit(onSubmit)}>
                     <Controller
                         render={({ field: { onChange } }) => (
                             <Dropzone onChange={(e) => {
                                     onChange(e.target.files[0])
                                     setFiles([e.target.files[0]])
-                                }} 
+                                }}
                             />
                         )}
                         name="files"
@@ -88,7 +119,7 @@ const DialogUploadFile = ({open, onClose, connectionId, isLoading}) => {
                             control={control}
                             defaultValue=""
                             render={({ field: { onChange, value }, fieldState: { error } }) => (
-                                <FormControl fullWidth>
+                                <FormControl style={{marginTop: '2rem'}} fullWidth>
                                     <InputLabel>Map Type</InputLabel>
                                     <Select
                                         value={value}
@@ -107,7 +138,7 @@ const DialogUploadFile = ({open, onClose, connectionId, isLoading}) => {
                         />
                     }    
                     {mapType &&
-                    <div>
+                    <div {...inputContProps}>
                     <Controller
                         name="parcelNumber"
                         control={control}
@@ -120,6 +151,7 @@ const DialogUploadFile = ({open, onClose, connectionId, isLoading}) => {
                             onChange={onChange}
                             error={!!error}
                             helperText={error ? error.message : null}
+                            fullWidth
                         />
                         )}
                         rules={{ required: 'Number of parcels required' }}
@@ -215,10 +247,7 @@ const DialogUploadFile = ({open, onClose, connectionId, isLoading}) => {
                         )}
                     />
                     <div>
-                        <Button variant="contained" onClick={onClose}>
-                            Cancel
-                        </Button>
-                        <Button type="submit" variant="contained" color="primary">
+                        <Button {...buttonSolidProps} type="submit" variant="contained" color="primary" onClick={() => setSubmit(true)}>
                             Start Work Item
                         </Button>
                     </div>

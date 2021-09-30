@@ -13,6 +13,96 @@ html {
   }
 }
 
+.rowAltColor:nth-child(odd) {
+  background-color: #a0acf03f;
+  transition: background-color .2s ease;
+}
+
+.rowAltColor td:first-of-type, .rowSelectColor td:first-of-type {
+  border-radius: .5rem 0 0 .5rem;
+}
+
+.rowAltColor td:last-of-type, .rowSelectColor td:last-of-type {
+  border-radius: 0 .5rem .5rem 0;
+}
+
+.rowAltColor:hover {
+  background-color: #8a99ee98;
+}
+
+.rowAltColor {
+  cursor: pointer;
+}
+
+.rowSelectColor {
+  border-radius: 0 .5rem .5rem 0;
+  background-color:  rgb(160, 172, 240);
+  transition: background-color .2s ease;
+}
+
 .box-shadow {
   box-shadow: 0 .25rem .75rem rgba(0, 0, 0, .05);
+}
+
+.orangeOutlineButton:hover{
+  background-color: #fe805c !important;
+  color: #fff !important;
+}
+
+.parcelInfo:hover {
+  background: #a0acf0 !important;
+}
+
+.parcelBorder {
+  border: 2px solid #a0acf0;
+}
+
+.scroll, .scrollAlt {
+  scroll-behavior: smooth;
+}
+
+.scroll::-webkit-scrollbar-track
+{
+	border-radius: 10px;
+	background-color: #fff;
+}
+
+.scroll::-webkit-scrollbar
+{
+	width: 8px;
+	background-color: transparent;
+}
+
+.scroll::-webkit-scrollbar-thumb
+{
+	border-radius: 10px;
+	background-color: #a0acf0 ;
+}
+
+.scrollAlt::-webkit-scrollbar
+{
+	width: 8px;
+	background-color: transparent;
+}
+
+.scrollAlt::-webkit-scrollbar-thumb
+{
+	border-radius: 10px;
+	background-color: #a0acf0;
+}
+
+.scrollAlt::-webkit-scrollbar-track-piece:end {
+  border-radius: 10px;
+  margin-bottom: 2rem;
+  background-color: #f2f4fd;
+}
+
+.scrollAlt::-webkit-scrollbar-track-piece:start {
+  border-radius: 10px;
+  margin-top: 2.5rem;
+  background-color: #f2f4fd;
+}
+
+.tableTab:hover {
+  border-top: .3rem solid #a0acf0 !important;
 }

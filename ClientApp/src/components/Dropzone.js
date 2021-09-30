@@ -2,6 +2,47 @@ import React, { useCallback, useState } from "react"
 import {useDropzone} from 'react-dropzone'
 import { FaTrashAlt } from "react-icons/fa"
 
+const dropTextProps = {
+  style: {
+    fontSize: '1rem',
+    minWidth: 'max-content'
+  }
+}
+
+const dropzoneProps = {
+  style: {
+      background: '#f4f5fc',
+      border: '2px dashed #bbb',
+      borderRadius: '1rem',
+      padding: '1rem 8rem',
+      cursor: 'pointer',
+      width: '100%',
+  }
+}
+
+const dropTitleProps = {
+  style: {
+    fontSize: '1.5rem',
+    fontWeight: '600'
+  }
+}
+
+const dropFileProps = {
+  style: {
+    fontSize: '1rem',
+    fontFamily: 'poppins, sans-serif',
+    textAlign: 'center'
+  }
+}
+
+const dropzoneContProps = {
+  style: {
+    fontFamily: 'poppins, sans-serif',
+    textAlign: 'center',
+    color: '#333',
+  }
+}
+
 const Dropzone = ({ onChange, ...rest }) => {
 
   const [files, setFiles] = useState([])  
@@ -22,9 +63,9 @@ const Dropzone = ({ onChange, ...rest }) => {
     <ul>
       {files.map((file, i) =>
         file !== null ? (
-          <li key={file.id}>
-            {file.name} <small> {file.size} bytes</small>
+            <div key={file.id} {...dropFileProps}>{file.name} <small> {file.size} bytes</small>
             <button
+              style={{cursor: 'pointer'}}
               type="button"
               id={file.id + "_remove"}
               onClick={() => {
@@ -33,7 +74,7 @@ const Dropzone = ({ onChange, ...rest }) => {
             >
               <FaTrashAlt />
             </button>
-          </li>
+            </div>
         ) : (
           ""
         )
@@ -42,12 +83,15 @@ const Dropzone = ({ onChange, ...rest }) => {
   )
 
   return (
-    <div {...getRootProps()}>
+    <div {...dropzoneProps} {...getRootProps()}>
       <input {...getInputProps({ onChange })} />
       {isDragActive ? (
-        <p>Drop the files here ...</p>
+        <p {...dropzoneContProps} {...dropTextProps}>Drop the files here ...</p>
       ) : (
-        <p>Drag 'n' drop some files here, or click to select files</p>
+        <div {...dropzoneContProps}>
+          <h2 {...dropTitleProps}>Drag and Drop</h2>
+          <p {...dropTextProps}>or click to choose files</p>
+        </div>
       )}
       <aside>{filesDisplay}</aside>
     </div>
