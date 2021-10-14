@@ -72,6 +72,8 @@ const parcelInfoContProps = {
 const Parcel = ({setSelected, selected, data, parcelNum, open, setOpen, opened}) => {
 
     const [active, setActive] = useState();
+
+    console.log();
     
 
     const handleSelect = (i) => {
@@ -107,11 +109,11 @@ const Parcel = ({setSelected, selected, data, parcelNum, open, setOpen, opened})
     }, [selected])
     
 
-    const parcelInfo = data.parcel.map((e, i) => {
+    const parcelInfo = Object.entries(data[0]['Segments']).map((e, i) => {
         if (i === active) {
-            return <li className={`parcelInfo`} onClick={() => handleSelect(i)} {...parcelInfoSelectedProps} key={i}> {data.parcel[i].desc}</li>
+            return <li className={`parcelInfo`} onClick={() => handleSelect(i)} {...parcelInfoSelectedProps} key={i}> {Object.entries(data[0]['Segments'])[i][1].desc_grid}</li>
         } else {
-            return <li className={`parcelInfo`} onClick={() => handleSelect(i)} {...parcelInfoProps} key={i} > {data.parcel[i].desc}</li>
+            return <li className={`parcelInfo`} onClick={() => handleSelect(i)} {...parcelInfoProps} key={i}> {Object.entries(data[0]['Segments'])[i][1].desc_grid}</li>
         }
     
     });

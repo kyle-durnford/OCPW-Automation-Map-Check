@@ -4,6 +4,7 @@ import connection from '../services/connection'
 import good from '../assets/check.svg'
 import error from '../assets/error.svg'
 import warn from '../assets/warning.svg'
+import _ from "lodash";
 
 const useStyles = makeStyles(() => ({
     circularProgress: {
@@ -14,15 +15,15 @@ const useStyles = makeStyles(() => ({
     }
 }));
 
-const columns = [
+const lineColumns = [
   {
     id: 'status',
     label: 'Status',
     align: 'center',
   },
   {
-    id: 'name',
-    label: 'Parcel Name',
+    id: 'oid',
+    label: 'Parcel ID',
     align: 'left',
   },
   {
@@ -31,17 +32,17 @@ const columns = [
     align: 'left',
   },
   {
-    id: 'bearing',
+    id: 'bearing_DMS',
     label: 'Bearing',
     align: 'left',
   },
   {
-    id: 'label',
+    id: 'Labels_Check.LineLength_Check.SegmentLength_Label',
     label: 'Label Length',
     align: 'left',
   },
   {
-    id: 'diff',
+    id: 'Labels_Check.LineLength_Check.Difference',
     label: 'Difference',
     align: 'left',
   },
@@ -51,13 +52,13 @@ const columns = [
     align: 'center',
   },
   {
-    id: 'lengthcheck',
+    id: 'Labels_Check.LineLength_Check.SigFig_Check',
     label: 'Length Check',
     align: 'center',
   },
 
   {
-    id: 'bearingcheck',
+    id: 'Labels_Check.LineBearing_Check.SigFig_Check',
     label: 'Bearing Check',
     align: 'center',
   },
@@ -68,10 +69,63 @@ const columns = [
   },
 ];
 
+const curveColumns = [
+  {
+    id: 'status',
+    label: 'Status',
+    align: 'center',
+  },
+  {
+    id: 'oid',
+    label: 'Parcel ID',
+    align: 'left',
+  },
+  {
+    id: 'arcLength',
+    label: 'Arc Length',
+    align: 'left',
+  },
+  {
+    id: 'bearingRadiusIn_DMS',
+    label: 'Bearing Radius In',
+    align: 'left',
+  },
+  {
+    id: 'bearingRadiusOut_DMS',
+    label: 'Bearing Radius Out',
+    align: 'center',
+  },
+  {
+    id: 'Labels_Check.ArcLength_Check.ArcLength_Label',
+    label: 'Label Length',
+    align: 'left',
+  },
+  {
+    id: 'Labels_Check.ArcLength_Check.Difference',
+    label: 'Difference',
+    align: 'left',
+  },
+  {
+    id: 'Labels_Check.ArcDelta_Check.SigFig_Check',
+    label: 'Length Check',
+    align: 'center',
+  },
+  {
+    id: 'Labels_Check.ArcDelta_Check.SigFig_Check',
+    label: 'Bearing Check',
+    align: 'center',
+  },
+  {
+    id: 'northorientation',
+    label: 'North Orientation',
+    align: 'center',
+  },
+]
+
 const rowProps = {
   style: {
     fontFamily: 'poppins, sans-serif',
-    fontSize: '1rem',
+    fontSize: '.9rem',
     width: '100%'
   }
 }
@@ -79,7 +133,10 @@ const rowProps = {
 const dataProps = {
   style: {
     padding: '.5rem 1rem .5rem 1rem',
-    maxWidth: 'max-content'
+    maxWidth: 'min-content',
+    overflow: 'hidden',
+    textOverflow: 'ellipses',
+    whiteSpace: 'nowrap'
   }
 }
 
@@ -88,7 +145,8 @@ const dataTopProps = {
     padding: '.5rem 1rem .5rem 1rem',
     fontSize: '.75rem',
     lineHeight: '1.15',
-    textAlign: 'left'
+    textAlign: 'left',
+    maxWidth: '2rem'
   }
 }
 
@@ -104,7 +162,7 @@ const tableContProps = {
 
 const tableProps = {
   style: {
-    tableLayout: '100%',
+    tableLayout: 'fixed',
     width: '100%',
     borderCollaps: 'inherit',
     borderSpacing: '0px',
@@ -186,7 +244,7 @@ const SurveyTable = ({loading, url, data, selected, setSelected}) => {
   const [tableInfo, setTableInfo] = useState()
   const [didMount, setDidMount] = useState(false)
   const [active, setActive] = useState(true);
-  const [active1, setActive1] = useState(false);
+  const [activeColumns, setActiveColumns] = useState(lineColumns)
   const [select, setSelect] = useState([]);
   const [row, setRow] = useState(null)
 
@@ -212,12 +270,12 @@ const SurveyTable = ({loading, url, data, selected, setSelected}) => {
   //Changes the table view to line/curve depending on what table the selected row is in
   useEffect(() => {
     if (select.length > 0 && select[1] !== null) {
-      if (data[select[0]].parcel[select[1]].dimension === 'line') {
-        setActive1(false);
+      if (Object.entries(Object.entries(parcelData[select[0]][1][1][1][0]['Segments']))[select[1]][1][1]['shapeType'] === 'Line') {
         setActive(true);
-      } else if (data[select[0]].parcel[select[1]].dimension === 'curve') {
+        setActiveColumns(lineColumns);
+      } else if (Object.entries(Object.entries(parcelData[select[0]][1][1][1][0]['Segments']))[select[1]][1][1]['shapeType'] === 'Curve') {
         setActive(false);
-        setActive1(true);
+        setActiveColumns(curveColumns);
       }
     }
   }, [select])
@@ -225,15 +283,15 @@ const SurveyTable = ({loading, url, data, selected, setSelected}) => {
   //switch between line and curve view
   const handleClick = (e) => {
       if (active === false) {
-          setActive1(false);
           setActive(true);
+          setActiveColumns(lineColumns);
       }
   };
 
   const handleClickAlt = (e) => {
-    if (active1 === false) {
+    if (active === true) {
         setActive(false);
-        setActive1(true);
+        setActiveColumns(curveColumns);
     }
 };
 
@@ -259,6 +317,14 @@ const SurveyTable = ({loading, url, data, selected, setSelected}) => {
     }  
   }, [url]);
 
+  const keys = Object.keys(data)
+  const values = keys.map((key) => {
+      return(data[key])
+  })
+  const parcelData = Object.entries(Object.entries(Object.entries(values[1])));
+
+  console.log(parcelData)
+
   // if (loading && !tableInfo) 
   //   return (
   //       <Fragment>
@@ -268,20 +334,21 @@ const SurveyTable = ({loading, url, data, selected, setSelected}) => {
   //       </Fragment>
   //   )
 
+
   return (
     <>
     <div {...tableTabRowProps}>
       <div className={`tableTab`} {...(active === true) ? {...tableTabSelectedProps} : {...tableTabProps}} onClick={e => handleClick(e)}>Line Check</div>
-      <div className={`tableTab`} {...(active1 === true) ? {...tableTabSelectedProps} : {...tableTabProps}} onClick={e => handleClickAlt(e)}>Curve Check</div>
+      <div className={`tableTab`} {...(active === false) ? {...tableTabSelectedProps} : {...tableTabProps}} onClick={e => handleClickAlt(e)}>Curve Check</div>
     </div>
     <div {...tableTitleProps}>Dimension {(active === true) ? "Line" : "Curve"} Check</div>
     <div {...tableContProps} className={`scrollAlt`}>
       <table {...tableProps}>
         <thead {...tableHeadProps}>
           <tr {...rowProps}>
-            {columns.map((column) => (
+            {activeColumns.map((column, i) => (
                 <td
-                  key={column.id}
+                  key={i}
                   align={column.align}
                   style={{ minWidth: column.minWidth }}
                   {...dataTopProps}
@@ -292,24 +359,26 @@ const SurveyTable = ({loading, url, data, selected, setSelected}) => {
           </tr>
         </thead>
         <tbody {...tableBodyProps}>
-          {data.map((e, i) => {
+          {parcelData.map((e, i) => {
+            console.log();
               return (
-                data[i].parcel.map((row, l) => {
+                Object.entries(parcelData[i][1][1][1][0]['Segments']).map((row, l) => {
                   //Sort what dimension is displayed
-                  if ((data[i].parcel[l].dimension === 'line' && active === true) || (data[i].parcel[l].dimension === 'curve' && active1 === true) ) {
+                  //console.log(row[1].length)
+                  if ((Object.entries(row[1])[1][1] === 'Line' && active === true) || (Object.entries(row[1])[1][1] === 'Curve' && active === false) ) {
                     //get the selected row
                     if (select.length > 0 && select[0] === i && select[1] === l) {
                       return(
-                      <tr ref={itemEl} className={'rowSelectColor'} {...rowProps} role="checkbox" tabIndex={-1} key={row.code} onClick={() => setSelected([])}>
-                          {columns.map((column, i) => {
-                            const value = row[column.id];
+                      <tr ref={itemEl} className={'rowSelectColor'} {...rowProps} role="checkbox" tabIndex={-1} key={l} onClick={() => setSelected([])}>
+                          {activeColumns.map((column, i) => {
+                            const value = _.get(row[1], column.id);
                             return (
                               <td {...dataProps} key={i} align={column.align}>
                                 {//https://stackoverflow.com/questions/46592833/how-to-use-switch-statement-inside-a-react-component
                                 {
-                                  'good': <img src={good} alt="Good"></img>,
-                                  'error': <img src={error} alt="Error"></img>,
-                                  'warn': <img src={warn} alt="Warning"></img>, 
+                                  'Pass': <img src={good} alt="Pass"></img>,
+                                  'Fail': <img src={error} alt="Fail"></img>,
+                                  default: <p>None</p>,
                                 }[value] || value}
                               </td>
                             );
@@ -318,17 +387,17 @@ const SurveyTable = ({loading, url, data, selected, setSelected}) => {
                       );
                     } else {
                       return (
-                        <tr className={'rowAltColor'} {...rowProps} role="checkbox" tabIndex={-1} key={row.code} onClick={() => setSelected([i,l])}>
-                          {columns.map((column, i) => {
-                            const value = row[column.id];
+                        <tr className={'rowAltColor'} {...rowProps} role="checkbox" tabIndex={-1} key={l} onClick={() => setSelected([i,l])}>
+                          {activeColumns.map((column, i) => {
+                            const value = _.get(row[1], column.id);
                             return (
                               <td {...dataProps} key={i} align={column.align}>
                                 
                                 {//https://stackoverflow.com/questions/46592833/how-to-use-switch-statement-inside-a-react-component
                                 {
-                                  'good': <img src={good} alt="Good"></img>,
-                                  'error': <img src={error} alt="Error"></img>,
-                                  'warn': <img src={warn} alt="Warning"></img>, 
+                                  'Pass': <img src={good} alt="Pass"></img>,
+                                  'Fail': <img src={error} alt="Fail"></img>,
+                                  default: <p>None</p>, 
                                 }[value] || value}
                               </td>
                             );

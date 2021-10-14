@@ -17,6 +17,8 @@ const drawerProps = {
 
 const Drawer = ({data, setSelected, selected}) => {
 
+    
+
     const [open, setOpen] = useState(null);
 
     useEffect(() => {
@@ -26,8 +28,14 @@ const Drawer = ({data, setSelected, selected}) => {
 
     //if no data is loaded, return null
     if (data !== null) {
-        const parcels = data.map((e, i) => { 
-            return ((i === open || i === selected[0])  ? <Parcel data={data[i]} setSelected={setSelected} selected={selected} key={i} parcelNum={i} setOpen={setOpen} opened={true} /> : <Parcel data={data[i]} setSelected={setSelected} setOpen={setOpen} selected={selected} key={i} parcelNum={i} />)})
+        const keys = Object.keys(data)
+        const values = keys.map((key) => {
+            return(data[key])
+        })
+        const parcelData = Object.entries(Object.entries(Object.entries(values[1])));
+        console.log(parcelData);
+        const parcels = parcelData.map((e, i) => { 
+            return ((i === open || i === selected[0])  ? <Parcel data={parcelData[i][1][1][1]} setSelected={setSelected} selected={selected} key={i} parcelNum={i} setOpen={setOpen} opened={true} /> : <Parcel data={parcelData[i][1][1][1]} setSelected={setSelected} setOpen={setOpen} selected={selected} key={i} parcelNum={i} />)})
     
         return (
             <div {...drawerProps} className={`scroll`}>

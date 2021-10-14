@@ -14,6 +14,7 @@ import AppBar from './AppBar'
 import planImage from "../assets/plan_drawing.svg"
 // import connection from '../services/connection'
 
+
 const drawerWidth = 100;
 
 const Item = styled(Paper)(({ theme }) => ({
@@ -201,6 +202,27 @@ const Container = () => {
   const [designAutomationUrl, setDesignAutomationUrl] = useState()
   const [objectKeys, setObjectKeys] = useState()
   const [selected, setSelected] = useState([])
+
+  const getData = () => {
+    fetch('437oc.json', {
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
+      }
+    })
+    .then(response => {
+      return response.json();
+    })
+    .then(myData => {
+      console.log(myData);
+      setData(myData);
+      
+    })
+  }
+
+  useEffect(()=> {
+    getData()
+  },[])
 
   useEffect(() => {
     if (submit === true) {
