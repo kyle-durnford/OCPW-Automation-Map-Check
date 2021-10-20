@@ -41,6 +41,93 @@ export const startWorkItem = async item => {
   })
 }
 
+
+export const getAppBundle = async () => {
+
+  return new Promise(function(resolve, reject) {
+    axios({
+        method : 'GET',
+        url : '/api/appbundles'
+    }).then(
+      response => {
+        console.log("AppBundle: ", response.appBundle + ", v" + response.version)
+        resolve(response)
+      },
+      error => {
+        console.log("AppBundle error:", error)
+        reject(error)
+      }
+    )
+  })
+}
+
+export const createAppBundle = async () => {
+
+  return new Promise(function(resolve, reject) {
+    axios({
+        method : 'POST',
+        url : 'api/forge/designautomation/appbundles',
+        data: {
+          zipFileName: 'AMC',
+          engine: 'Autodesk.3dsMax+2020'
+        },
+        contentType: 'application/json',        
+    }).then(
+      response => {
+        console.log("AppBundle: ", response.appBundle + ", v" + response.version)
+        resolve(response)
+      },
+      error => {
+        console.log("AppBundle error:", error)
+        reject(error)
+      }
+    )
+  })
+}
+
+export const getActivity = async => {
+
+  return new Promise(function(resolve, reject) {
+    axios({
+        method : 'GET',
+        url : 'api/forge/designautomation/activities'
+    }).then(
+      response => {
+        console.log("Activity: ", response.activity)
+        resolve(response)
+      },
+      error => {
+        console.log("Activity error:", error)
+        reject(error)
+      }
+    )
+  })
+}
+
+export const createActivity = async => {
+
+  return new Promise(function(resolve, reject) {
+    axios({
+        method : 'POST',
+        url : 'api/forge/designautomation/activities',
+        data: {
+          zipFileName: 'AMC',
+          engine: 'Autodesk.3dsMax+2020'
+        },
+        contentType: 'application/json',        
+    }).then(
+      response => {
+        console.log("Activity: ", response.activity)
+        resolve(response)
+      },
+      error => {
+        console.log("Activity error:", error)
+        reject(error)
+      }
+    )
+  })
+}
+
 export const clearAccount = async => {
   return new Promise(function(resolve, reject) {
     axios.delete("api/forge/designautomation/account").then(
@@ -84,7 +171,7 @@ export const getTableInfo = async url => {
   return new Promise(function(resolve, reject) {
     axios.get(url).then(
       response => {
-        console.log("Table data retrived", response)
+        console.log("Table data retrieved", response)
         resolve(response.data)
       },
       error => {
@@ -98,6 +185,10 @@ export const getTableInfo = async url => {
 export default {
   startConnection,
   startWorkItem,
+  createAppBundle,
+  getAppBundle,
+  createActivity,
+  getActivity,
   clearAccount,
   getTableInfo,
 }

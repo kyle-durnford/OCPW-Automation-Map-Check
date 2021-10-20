@@ -1,4 +1,15 @@
-import React, {useState, useEffect} from 'react'; 
+import React, {useState, useEffect, Fragment} from 'react';
+import { CircularProgress } from '@material-ui/core'; 
+import { makeStyles } from '@material-ui/core/styles';
+
+const useStyles = makeStyles(() => ({
+    circularProgress: {
+      padding: '9em 0',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center'
+    }
+}));
 
 const parcelSelectedProps = {
     style: {
@@ -69,12 +80,12 @@ const parcelInfoContProps = {
     }
 }
 
-const Parcel = ({setSelected, selected, data, parcelNum, open, setOpen, opened}) => {
+const Parcel = ({loading, setSelected, selected, data, parcelNum, open, setOpen, opened}) => {
+
+    const classes = useStyles();
 
     const [active, setActive] = useState();
 
-    console.log();
-    
 
     const handleSelect = (i) => {
         const compare = [parcelNum, i];
@@ -108,7 +119,16 @@ const Parcel = ({setSelected, selected, data, parcelNum, open, setOpen, opened})
         setActive(selected[1])
     }, [selected])
     
+    if (loading || !data) 
+        return (
+            <Fragment>
+                <span className={classes.circularProgress}>
+                    <CircularProgress size={48} />
+                </span>
+            </Fragment>
+        )
 
+       
     const parcelInfo = Object.entries(data[0]['Segments']).map((e, i) => {
         if (i === active) {
             return <li className={`parcelInfo`} onClick={() => handleSelect(i)} {...parcelInfoSelectedProps} key={i}> {Object.entries(data[0]['Segments'])[i][1].desc_grid}</li>
@@ -116,7 +136,7 @@ const Parcel = ({setSelected, selected, data, parcelNum, open, setOpen, opened})
             return <li className={`parcelInfo`} onClick={() => handleSelect(i)} {...parcelInfoProps} key={i}> {Object.entries(data[0]['Segments'])[i][1].desc_grid}</li>
         }
     
-    });
+    }); 
 
     return (
         <div key={parcelNum} {...(opened === true) ? {...parcelSelectedProps} : {...parcelProps}}>

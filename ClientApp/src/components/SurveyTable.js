@@ -1,4 +1,5 @@
-import React, { useState, useEffect, useCallback} from "react"
+import React, { useState, useEffect, useCallback, Fragment} from "react"
+import { CircularProgress } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import connection from '../services/connection'
 import good from '../assets/check.svg'
@@ -240,8 +241,11 @@ const tableTabRowProps = {
 }
 
 
-const SurveyTable = ({loading, url, data, selected, setSelected}) => {
+const SurveyTable = ({loading, data, selected, setSelected}) => {
+  const classes = useStyles();
+
   const [tableInfo, setTableInfo] = useState()
+  const [parcelData, setParcelData] = useState()
   const [didMount, setDidMount] = useState(false)
   const [active, setActive] = useState(true);
   const [activeColumns, setActiveColumns] = useState(lineColumns)
@@ -270,10 +274,10 @@ const SurveyTable = ({loading, url, data, selected, setSelected}) => {
   //Changes the table view to line/curve depending on what table the selected row is in
   useEffect(() => {
     if (select.length > 0 && select[1] !== null) {
-      if (Object.entries(Object.entries(parcelData[select[0]][1][1][1][0]['Segments']))[select[1]][1][1]['shapeType'] === 'Line') {
+      if (Object.entries(Object.entries(data[select[0]][1][1][1][0]['Segments']))[select[1]][1][1]['shapeType'] === 'Line') {
         setActive(true);
         setActiveColumns(lineColumns);
-      } else if (Object.entries(Object.entries(parcelData[select[0]][1][1][1][0]['Segments']))[select[1]][1][1]['shapeType'] === 'Curve') {
+      } else if (Object.entries(Object.entries(data[select[0]][1][1][1][0]['Segments']))[select[1]][1][1]['shapeType'] === 'Curve') {
         setActive(false);
         setActiveColumns(curveColumns);
       }
@@ -299,120 +303,95 @@ const SurveyTable = ({loading, url, data, selected, setSelected}) => {
     setSelect(selected);
   }, [selected])
 
-  useEffect(() => { 
-    setDidMount(true)
-  }, [])
-
-  useEffect(() => {
-    if (didMount) {
-      console.log('Url:', url)
-      connection.getTableInfo(url).then(
-          response => {
-              console.log('Response', response)
-              setTableInfo(response.data)
-          },
-          error => {
-            console.log('Error:', error)        }
-      )
-    }  
-  }, [url]);
-
-  const keys = Object.keys(data)
-  const values = keys.map((key) => {
-      return(data[key])
-  })
-  const parcelData = Object.entries(Object.entries(Object.entries(values[1])));
-
-  console.log(parcelData)
-
-  // if (loading && !tableInfo) 
-  //   return (
-  //       <Fragment>
-  //           <span className={classes.circularProgress}>
-  //               <CircularProgress size={48} />
-  //           </span>
-  //       </Fragment>
-  //   )
 
 
-  return (
-    <>
-    <div {...tableTabRowProps}>
-      <div className={`tableTab`} {...(active === true) ? {...tableTabSelectedProps} : {...tableTabProps}} onClick={e => handleClick(e)}>Line Check</div>
-      <div className={`tableTab`} {...(active === false) ? {...tableTabSelectedProps} : {...tableTabProps}} onClick={e => handleClickAlt(e)}>Curve Check</div>
-    </div>
-    <div {...tableTitleProps}>Dimension {(active === true) ? "Line" : "Curve"} Check</div>
-    <div {...tableContProps} className={`scrollAlt`}>
-      <table {...tableProps}>
-        <thead {...tableHeadProps}>
-          <tr {...rowProps}>
-            {activeColumns.map((column, i) => (
-                <td
-                  key={i}
-                  align={column.align}
-                  style={{ minWidth: column.minWidth }}
-                  {...dataTopProps}
-                >
-                  {column.label}
-                </td>
-              ))}
-          </tr>
-        </thead>
-        <tbody {...tableBodyProps}>
-          {parcelData.map((e, i) => {
-            console.log();
-              return (
-                Object.entries(parcelData[i][1][1][1][0]['Segments']).map((row, l) => {
-                  //Sort what dimension is displayed
-                  //console.log(row[1].length)
-                  if ((Object.entries(row[1])[1][1] === 'Line' && active === true) || (Object.entries(row[1])[1][1] === 'Curve' && active === false) ) {
-                    //get the selected row
-                    if (select.length > 0 && select[0] === i && select[1] === l) {
-                      return(
-                      <tr ref={itemEl} className={'rowSelectColor'} {...rowProps} role="checkbox" tabIndex={-1} key={l} onClick={() => setSelected([])}>
-                          {activeColumns.map((column, i) => {
-                            const value = _.get(row[1], column.id);
-                            return (
-                              <td {...dataProps} key={i} align={column.align}>
-                                {//https://stackoverflow.com/questions/46592833/how-to-use-switch-statement-inside-a-react-component
-                                {
-                                  'Pass': <img src={good} alt="Pass"></img>,
-                                  'Fail': <img src={error} alt="Fail"></img>,
-                                  default: <p>None</p>,
-                                }[value] || value}
-                              </td>
-                            );
-                          })}
-                        </tr>
-                      );
-                    } else {
-                      return (
-                        <tr className={'rowAltColor'} {...rowProps} role="checkbox" tabIndex={-1} key={l} onClick={() => setSelected([i,l])}>
-                          {activeColumns.map((column, i) => {
-                            const value = _.get(row[1], column.id);
-                            return (
-                              <td {...dataProps} key={i} align={column.align}>
-                                
-                                {//https://stackoverflow.com/questions/46592833/how-to-use-switch-statement-inside-a-react-component
-                                {
-                                  'Pass': <img src={good} alt="Pass"></img>,
-                                  'Fail': <img src={error} alt="Fail"></img>,
-                                  default: <p>None</p>, 
-                                }[value] || value}
-                              </td>
-                            );
-                          })}
-                        </tr>
-                       );
+  if (loading || !data) 
+    return (
+        <Fragment>
+            <span className={classes.circularProgress}>
+                <CircularProgress size={48} />
+            </span>
+        </Fragment>
+    )
+ 
+    return (
+      <>
+      <div {...tableTabRowProps}>
+        <div className={`tableTab`} {...(active === true) ? {...tableTabSelectedProps} : {...tableTabProps}} onClick={e => handleClick(e)}>Line Check</div>
+        <div className={`tableTab`} {...(active === false) ? {...tableTabSelectedProps} : {...tableTabProps}} onClick={e => handleClickAlt(e)}>Curve Check</div>
+      </div>
+      <div {...tableTitleProps}>Dimension {(active === true) ? "Line" : "Curve"} Check</div>
+      <div {...tableContProps} className={`scrollAlt`}>
+        <table {...tableProps}>
+          <thead {...tableHeadProps}>
+            <tr {...rowProps}>
+              {activeColumns.map((column, i) => (
+                  <td
+                    key={i}
+                    align={column.align}
+                    style={{ minWidth: column.minWidth }}
+                    {...dataTopProps}
+                  >
+                    {column.label}
+                  </td>
+                ))}
+            </tr>
+          </thead>
+          <tbody {...tableBodyProps}>
+            {data.map((e, i) => {
+              console.log();
+                return (
+                  Object.entries(data[i][1][1][1][0]['Segments']).map((row, l) => {
+                    //Sort what dimension is displayed
+                    //console.log(row[1].length)
+                    if ((Object.entries(row[1])[1][1] === 'Line' && active === true) || (Object.entries(row[1])[1][1] === 'Curve' && active === false) ) {
+                      //get the selected row
+                      if (select.length > 0 && select[0] === i && select[1] === l) {
+                        return(
+                        <tr ref={itemEl} className={'rowSelectColor'} {...rowProps} role="checkbox" tabIndex={-1} key={l} onClick={() => setSelected([])}>
+                            {activeColumns.map((column, i) => {
+                              const value = _.get(row[1], column.id);
+                              return (
+                                <td {...dataProps} key={i} align={column.align}>
+                                  {//https://stackoverflow.com/questions/46592833/how-to-use-switch-statement-inside-a-react-component
+                                  {
+                                    'Pass': <img src={good} alt="Pass"></img>,
+                                    'Fail': <img src={error} alt="Fail"></img>,
+                                    default: <p>None</p>,
+                                  }[value] || value}
+                                </td>
+                              );
+                            })}
+                          </tr>
+                        );
+                      } else {
+                        return (
+                          <tr className={'rowAltColor'} {...rowProps} role="checkbox" tabIndex={-1} key={l} onClick={() => setSelected([i,l])}>
+                            {activeColumns.map((column, i) => {
+                              const value = _.get(row[1], column.id);
+                              return (
+                                <td {...dataProps} key={i} align={column.align}>
+                                  
+                                  {//https://stackoverflow.com/questions/46592833/how-to-use-switch-statement-inside-a-react-component
+                                  {
+                                    'Pass': <img src={good} alt="Pass"></img>,
+                                    'Fail': <img src={error} alt="Fail"></img>,
+                                    default: <p>None</p>, 
+                                  }[value] || value}
+                                </td>
+                              );
+                            })}
+                          </tr>
+                        );
+                      }
                     }
-                  }
-                }));
-            })}
-        </tbody>
-      </table>
-    </div>
-    </>
-  );
+                  }));
+              })}
+          </tbody>
+        </table>
+      </div>
+      </>
+    )
 }
 
 export default SurveyTable

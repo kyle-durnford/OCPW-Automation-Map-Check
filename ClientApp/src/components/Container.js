@@ -3,7 +3,7 @@ import { makeStyles } from '@material-ui/core/styles';
 
 import Paper from '@mui/material/Paper';
 import { styled } from '@mui/material/styles';
-import * as signalR from "@microsoft/signalr";
+import { HubConnectionBuilder } from "@microsoft/signalr";
 import DialogUploadFile from './DialogUploadFile'
 import SurveyTable from './SurveyTable'
 import EsriMap from './EsriMap'
@@ -12,7 +12,7 @@ import NavMenu from './NavMenu'
 import Drawer from './Drawer'
 import AppBar from './AppBar'
 import planImage from "../assets/plan_drawing.svg"
-// import connection from '../services/connection'
+import connection from '../services/connection'
 
 
 const drawerWidth = 100;
@@ -190,6 +190,8 @@ const Container = () => {
   const [submit, setSubmit] = useState(false);
   const [open, setOpen] = useState(false)
   const [data, setData] = useState(null)
+  const [tableInfo, setTableInfo] = useState(null)
+  const [parcelInfo, setParcelInfo] = useState(null)
   //const [data, setData] = useState(dummyData)
   const [loading, setLoading] = useState(false)
   const [loadingTable, setLoadingTable] = useState(true)
@@ -202,92 +204,179 @@ const Container = () => {
   const [designAutomationUrl, setDesignAutomationUrl] = useState()
   const [objectKeys, setObjectKeys] = useState()
   const [selected, setSelected] = useState([])
+  const [didMount, setDidMount] = useState(false)
 
-  const getData = () => {
-    fetch('437oc.json', {
-      headers: {
-        'Content-Type': 'application/json',
-        'Accept': 'application/json'
-      }
-    })
-    .then(response => {
-      return response.json();
-    })
-    .then(myData => {
-      console.log(myData);
-      setData(myData);
+  // const getData = () => {
+  //   fetch('437oc.json', {
+  //     headers: {
+  //       'Content-Type': 'application/json',
+  //       'Accept': 'application/json'
+  //     }
+  //   })
+  //   .then(response => {
+  //     return response.json();
+  //   })
+  //   .then(myData => {
+  //     // console.log(myData);
+  //     setData(myData);
       
-    })
-  }
+  //   })
+  // }
 
-  useEffect(()=> {
-    getData()
-  },[])
+  // useEffect(()=> {
+  //   getData()
+  // },[])
+
+  // useEffect(() => {
+  //   if (submit === true) {
+  //     getData()
+  //     // setData(dummyData);
+  //   }
+  // },[submit])
+
+  // useEffect(() => {
+  //   if (data === null) {
+  //     setLoading(false);
+  //   } else {
+  //     setLoading(true);
+  //   }
+  // }, [data])
 
   useEffect(() => {
-    if (submit === true) {
-      setData(dummyData);
-    }
-  },[submit])
-
-  useEffect(() => {
-    if (data === null) {
-      setLoading(false);
-    } else {
-      setLoading(true);
-    }
-  }, [data])
-
-  useEffect(() => {
-    let designAutomation = new signalR.HubConnectionBuilder().withUrl("/api/signalr/designautomation").withAutomaticReconnect().build();
+    const designAutomation = new HubConnectionBuilder().withUrl("/api/signalr/designautomation").withAutomaticReconnect().build();
     setDesignAutomationConnect(designAutomation)
 
-    designAutomation.start().then(() => {
-        designAutomation.invoke('getConnectionId').then((id) => {
-            console.log("getConnectionId result: " , id)
-            setDesignAutomationId(id)
-        })
-
-    });
-
-    let modelDerivative = new signalR.HubConnectionBuilder().withUrl("/api/signalr/modelderivative").withAutomaticReconnect().build();
+    const modelDerivative = new HubConnectionBuilder().withUrl("/api/signalr/modelderivative").withAutomaticReconnect().build();
     setModelDerivativeConnect(modelDerivative)
 
-    modelDerivative.start().then(() => {
-        modelDerivative.invoke('getConnectionId').then((id) => {
-            console.log("getConnectionId result: " , id)
-            setModelDerivativeId(id)
-        })
+    // connection.clearAccount().then(
+    //     response => {
+    //         console.log('clearAccount: ', response)
+    //     },
+    //     error => {
+    //        console.log('Error:', error)        }
+    // )
+    
 
-    });
+    connection.createAppBundle().then(
+        response => {
+            console.log('AppBundle: ', response)
+        },
+        error => {
+           console.log('Error:', error)        }
+    )
+
+    connection.createActivity().then(
+        response => {
+            console.log('Activity: ', response)
+        },
+        error => {
+           console.log('Error:', error)        }
+    )
+
+    connection.getAppBundle().then(
+        response => {
+            console.log('AppBundle: ', response)
+        },
+        error => {
+           console.log('Error:', error)        }
+    )
+
+    connection.getActivity().then(
+        response => {
+            console.log('Activity: ', response)
+        },
+        error => {
+           console.log('Error:', error)        }
+    )
+
+    setDidMount(true)
   }, [])
+
 
   useEffect(() => {
     if (designAutomationConnect) {
-      designAutomationConnect.on("downloadResult", (url) => {
-        console.log('downloadResult:', url)
-        setDesignAutomationUrl(url)
-        setLoadingTable(false)
-      });
 
-      designAutomationConnect.on("onComplete", (message) => {
-        console.log('onComplete:', message)
-      });
+      console.log('designAutomationConnect changed')
+      
+      designAutomationConnect.start().then(() => {
+          designAutomationConnect.invoke('getConnectionId').then((id) => {
+              console.log("getConnectionId DesignAutomation result: " , id)
+              setDesignAutomationId(id)
+          })
 
-      designAutomationConnect.on("objKeysInputFile", (objectKeys) => {
-        console.log('objKeysInputFile:', objectKeys)
-        setObjectKeys(objectKeys)
-      });
+          designAutomationConnect.on("downloadResult", (url) => {
+            console.log('downloadResult:', url)
+            setDesignAutomationUrl(url)
+            setLoadingTable(false)
+          })
+
+          designAutomationConnect.on("onComplete", (message) => {
+            console.log('onComplete:', message)
+          })
+
+          designAutomationConnect.on("objKeysInputFile", (objectKeys) => {
+            console.log('objKeysInputFile:', objectKeys)
+            // setObjectKeys(objectKeys)
+          })
+
+      }).catch(e => console.log('Connection failed: ', e));
+    
+
     }
   }, [designAutomationConnect]);
 
   useEffect(() => {
     if (modelDerivativeConnect) {
-      modelDerivativeConnect.on("extractionFinished", (extractionFinished) => {
-        console.log('extractionFinished:', extractionFinished)
-      });
+
+      console.log('modelDerivativeConnect changed')
+
+      modelDerivativeConnect.start().then(() => {
+          modelDerivativeConnect.invoke('getConnectionId').then((id) => {
+              console.log("getConnectionId ModelDerivative result: " , id)
+              setModelDerivativeId(id)
+          })
+
+          modelDerivativeConnect.on("extractionFinished", (extractionFinished) => {
+            console.log('extractionFinished:', extractionFinished)
+          });
+      }).catch(e => console.log('Connection failed: ', e));
+
     }
   }, [modelDerivativeConnect]);
+
+
+  useEffect(() => {
+    if (didMount) {
+      console.log('Url:', designAutomationUrl)
+      connection.getTableInfo(designAutomationUrl).then(
+          response => {
+              console.log('Response', response)
+
+              const keys = Object.keys(response)
+              const values = keys.map((key) => {
+                  return(response[key])
+              })
+              const tableData = Object.entries(Object.entries(Object.entries(values[1])));
+
+              setTableInfo(tableData)
+              setParcelInfo(response)
+              setLoadingTable(false)
+          },
+          error => {
+            console.log('Error:', error)        }
+      )
+    }  
+  }, [designAutomationUrl]);
+
+  // if (modelDerivativeConnect && modelDerivativeConnect.connectionState) {
+
+  //   console.log('modelDerivativeConnect State:', modelDerivativeConnect.connectionState)
+
+  //   modelDerivativeConnect.on('extractionFinished', (extractionFinished) => {
+  //     console.log('extractionFinished:', extractionFinished)
+  //   });
+  // }  
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -295,10 +384,11 @@ const Container = () => {
 
   const onDialogClose = () => {
     setOpen(false)
+    console.log('Close Dialog')
   }
 
   const handleLoading = (isLoading) => {
-    setLoading(isLoading)
+    setSubmit(isLoading)
   }
 
   return (
@@ -307,24 +397,25 @@ const Container = () => {
         <div style={{position:'relative', width: 'calc(82px + .5rem)'}}>
           <NavMenu />
         </div>
-        <Drawer data={data} setSelected={setSelected} selected={selected}/>
+        <Drawer loading={loading} data={parcelInfo} setSelected={setSelected} selected={selected}/>
       </div>
       <div className={classes.mapView}>
         <AppBar handleClickOpen={handleClickOpen} />
         <DialogUploadFile open={open} onClose={onDialogClose} connectionId={designAutomationId} isLoading={handleLoading} setSubmit={setSubmit}/>
         <div className={classes.mapCont}>
-        {loading ?  
+        {submit ?  
           <div>
             <div {...mapContProps}>
               <div {...defaultAltProps}>
-                <EsriMap loading={loading} />
+                <EsriMap loading={loadingEsri} />
               </div>
               <div {...dividerProps}></div>
               <div {...defaultProps}>
-                <ForgeMap loading={loading} objectKeys={objectKeys} connectionId={modelDerivativeId}/>
+                <ForgeMap loading={loadingForge} objectKeys={objectKeys} connectionId={modelDerivativeId}/>
               </div>
             </div>
-            <SurveyTable loading={loading} designAutomationUrl={designAutomationUrl} data={data} selected={selected} setSelected={setSelected}/>
+            <SurveyTable loading={loadingTable} data={tableInfo} selected={selected} setSelected={setSelected}/>
+
           </div>
           :
           <div>

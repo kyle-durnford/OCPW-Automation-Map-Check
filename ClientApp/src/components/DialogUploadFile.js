@@ -74,12 +74,11 @@ const DialogUploadFile = ({open, onClose, connectionId, isLoading, setSubmit}) =
   const { handleSubmit, control, getValues } = useForm();
 
   const onSubmit = data => {
-    console.log('Data:', data, connectionId)
     const formData = new FormData()
     formData.append('inputFile', data.files);
     formData.append('data', JSON.stringify({
         mapType: data.mapType,
-        activityName: 'AMCActivity_dev',
+        activityName: 'AMCActivity+dev',
         browerConnectionId: connectionId
     }));
 
@@ -102,7 +101,7 @@ const DialogUploadFile = ({open, onClose, connectionId, isLoading, setSubmit}) =
                 <form className={classes.root} onSubmit={handleSubmit(onSubmit)}>
                     <Controller
                         render={({ field: { onChange } }) => (
-                            <Dropzone onChange={(e) => {
+                            <Dropzone onChange={(e, index) => {
                                     onChange(e.target.files[0])
                                     setFiles([e.target.files[0]])
                                 }}
