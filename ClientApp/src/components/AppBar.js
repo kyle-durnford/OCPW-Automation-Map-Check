@@ -2,8 +2,6 @@ import React from "react"
 
 import '../custom.css'
 
-const reviewNum = '#6531';
-
 const appBarProps = {
     style: {
         display: 'flex',
@@ -37,10 +35,6 @@ const buttonOutlineProps = {
         textTransform: 'uppercase',
         transition: 'color .2s ease, background.2s ease',
     }
-};
-
-const buttonSolidProps = {
-
 };
 
 const reviewNumProps = {

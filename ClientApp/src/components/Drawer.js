@@ -33,7 +33,7 @@ const Drawer = ({loading, data, setSelected, selected}) => {
             return(data[key])
         })
         const parcelData = Object.entries(Object.entries(Object.entries(values[1])));
-        console.log(parcelData);
+        // console.log(parcelData);
         const parcels = parcelData.map((e, i) => { 
             return ((i === open || i === selected[0])  ? <Parcel loading={loading} data={parcelData[i][1][1][1]} setSelected={setSelected} selected={selected} key={i} parcelNum={i} setOpen={setOpen} opened={true} /> : <Parcel data={parcelData[i][1][1][1]} setSelected={setSelected} setOpen={setOpen} selected={selected} key={i} parcelNum={i} />)})
     

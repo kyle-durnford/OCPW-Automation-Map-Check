@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react"
+import React, { useState } from "react"
 import Button from '@material-ui/core/Button';
 import { makeStyles } from '@material-ui/core';
 import TextField from '@material-ui/core/TextField';
@@ -246,7 +246,7 @@ const DialogUploadFile = ({open, onClose, connectionId, isLoading, setSubmit}) =
                         )}
                     />
                     <div>
-                        <Button {...buttonSolidProps} type="submit" variant="contained" color="primary" onClick={() => setSubmit(true)}>
+                        <Button {...buttonSolidProps} type="submit" variant="contained" color="primary">
                             Start Work Item
                         </Button>
                     </div>

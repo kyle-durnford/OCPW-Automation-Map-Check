@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useCallback, Fragment} from "react"
 import { CircularProgress } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
-import connection from '../services/connection'
 import good from '../assets/check.svg'
 import error from '../assets/error.svg'
 import warn from '../assets/warning.svg'
@@ -244,9 +243,6 @@ const tableTabRowProps = {
 const SurveyTable = ({loading, data, selected, setSelected}) => {
   const classes = useStyles();
 
-  const [tableInfo, setTableInfo] = useState()
-  const [parcelData, setParcelData] = useState()
-  const [didMount, setDidMount] = useState(false)
   const [active, setActive] = useState(true);
   const [activeColumns, setActiveColumns] = useState(lineColumns)
   const [select, setSelect] = useState([]);

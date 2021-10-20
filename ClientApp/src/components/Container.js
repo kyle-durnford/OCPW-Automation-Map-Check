@@ -1,8 +1,5 @@
 import React, { useState, useEffect } from "react"
 import { makeStyles } from '@material-ui/core/styles';
-
-import Paper from '@mui/material/Paper';
-import { styled } from '@mui/material/styles';
 import { HubConnectionBuilder } from "@microsoft/signalr";
 import DialogUploadFile from './DialogUploadFile'
 import SurveyTable from './SurveyTable'
@@ -17,12 +14,12 @@ import connection from '../services/connection'
 
 const drawerWidth = 100;
 
-const Item = styled(Paper)(({ theme }) => ({
-  ...theme.typography.body2,
-  padding: theme.spacing(1),
-  textAlign: 'center',
-  color: theme.palette.text.secondary,
-}));
+// const Item = styled(Paper)(({ theme }) => ({
+//   ...theme.typography.body2,
+//   padding: theme.spacing(1),
+//   textAlign: 'center',
+//   color: theme.palette.text.secondary,
+// }));
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -157,39 +154,38 @@ const mapContProps = {
   }
 }
 
-const dummyData = [
-  { parcel: [
-    { dimension: 'line', desc: 'Lorem ipsum dolor sit amet, consec adipiscing elit.', status: 'good', name: 'Property: 1', length: '6', bearing: 'S 43 12 48.56 E', label: 'N43 12 41.56W', diff: "0 00 0", sources: "good", lengthcheck: "good", bearingcheck: "good", northorientation: "good"},
-    { dimension: 'line', desc: 'Lorem ipsum dolor sit amet, consec adipiscing elit. Nulla enim dolor, facilisis quis venenatis quis.', status: 'good', name: 'Property: 1', length: '8', bearing: 'S 58 12 21.56 E', label: 'N58 12 41.56W', diff: "1 00 0", sources: "good", lengthcheck: "good", bearingcheck: "good", northorientation: "good"},
-    { dimension: 'line', desc: 'Lorem ipsum dolor sit amet, consec adipiscing elit.', status: 'warn', name: 'Property: 1', length: '3', bearing: 'S 23 12 31.56 E', label: 'N23 12 41.56W', diff: "2 00 0", sources: "warn", lengthcheck: "warn", bearingcheck: "good", northorientation: "good"},
-    { dimension: 'line', desc: 'Lorem ipsum dolor sit amet, consec adipiscing elit. Mauris tincidunt bibendum leo, sed fermentum tellus. In posuere mi mauris, nec tincidunt justo dapibus quis. Praesent dapibus, dolor nec tristique pharetra, magna elit viverra nunc, in faucibus mi odio sed ipsum.', status: 'error', name: 'Property: 1', length: '9', bearing: 'S 73 12 11.56 E', label: 'N73 12 41.56W', diff: "3 00 0", sources: "warn", lengthcheck: "good", bearingcheck: "error", northorientation: "error"},
-  ]},
-  { parcel: [
-    { dimension: 'line', desc: 'Lorem ipsum dolor sit amet, consec adipiscing elit. Nulla enim dolor, facilisis quis venenatis quis.', status: 'good', name: 'Property: 3', length: '8', bearing: 'S 58 12 21.56 E', label: 'N58 12 41.56W', diff: "1 00 0", sources: "good", lengthcheck: "good", bearingcheck: "good", northorientation: "good"},
-    { dimension: 'line', desc: 'Lorem ipsum dolor sit amet, consec adipiscing elit.', status: 'good', name: 'Property: 3', length: '6', bearing: 'S 43 12 48.56 E', label: 'N43 12 41.56W', diff: "0 00 0", sources: "good", lengthcheck: "good", bearingcheck: "good", northorientation: "good"},
-    { dimension: 'line', desc: 'Lorem ipsum dolor sit amet, consec adipiscing elit.', status: 'warn', name: 'Property: 3', length: '3', bearing: 'S 23 12 31.56 E', label: 'N23 12 41.56W', diff: "2 00 0", sources: "warn", lengthcheck: "warn", bearingcheck: "good", northorientation: "good"},
-    { dimension: 'line', desc: 'Lorem ipsum dolor sit amet, consec adipiscing elit. Mauris tincidunt bibendum leo, sed fermentum tellus. In posuere mi mauris, nec tincidunt justo dapibus quis. Praesent dapibus, dolor nec tristique pharetra, magna elit viverra nunc, in faucibus mi odio sed ipsum.', status: 'error', name: 'Property: 3', length: '9', bearing: 'S 73 12 11.56 E', label: 'N73 12 41.56W', diff: "3 00 0", sources: "warn", lengthcheck: "good", bearingcheck: "error", northorientation: "error"},
-  ]},
-  { parcel: [
-    { dimension: 'curve', desc: 'Lorem ipsum dolor sit amet, consec adipiscing elit. Mauris tincidunt bibendum leo, sed fermentum tellus. In posuere mi mauris, nec tincidunt justo dapibus quis. Praesent dapibus, dolor nec tristique pharetra, magna elit viverra nunc, in faucibus mi odio sed ipsum.', status: 'error', name: 'Property: 4', length: '9', bearing: 'S 73 12 11.56 E', label: 'N73 12 41.56W', diff: "3 00 0", sources: "warn", lengthcheck: "good", bearingcheck: "error", northorientation: "error"},
-    { dimension: 'curve', desc: 'Lorem ipsum dolor sit amet, consec adipiscing elit.', status: 'good', name: 'Property: 4', length: '6', bearing: 'S 43 12 48.56 E', label: 'N43 12 41.56W', diff: "0 00 0", sources: "good", lengthcheck: "good", bearingcheck: "good", northorientation: "good"},
-    { dimension: 'curve', desc: 'Lorem ipsum dolor sit amet, consec adipiscing elit. Nulla enim dolor, facilisis quis venenatis quis.', status: 'good', name: 'Property: 4', length: '8', bearing: 'S 58 12 21.56 E', label: 'N58 12 41.56W', diff: "1 00 0", sources: "good", lengthcheck: "good", bearingcheck: "good", northorientation: "good"},
-    { dimension: 'curve', desc: 'Lorem ipsum dolor sit amet, consec adipiscing elit.', status: 'warn', name: 'Property: 4', length: '3', bearing: 'S 23 12 31.56 E', label: 'N23 12 41.56W', diff: "2 00 0", sources: "warn", lengthcheck: "warn", bearingcheck: "good", northorientation: "good"},
-  ]},
-  { parcel: [
-    { dimension: 'curve', desc: 'Lorem ipsum dolor sit amet, consec adipiscing elit.', status: 'warn', name: 'Property: 2', length: '3', bearing: 'S 23 12 31.56 E', label: 'N23 12 41.56W', diff: "2 00 0", sources: "warn", lengthcheck: "warn", bearingcheck: "good", northorientation: "good"},
-    { dimension: 'curve', desc: 'Lorem ipsum dolor sit amet, consec adipiscing elit.', status: 'good', name: 'Property: 2', length: '6', bearing: 'S 43 12 48.56 E', label: 'N43 12 41.56W', diff: "0 00 0", sources: "good", lengthcheck: "good", bearingcheck: "good", northorientation: "good"},
-    { dimension: 'curve', desc: 'Lorem ipsum dolor sit amet, consec adipiscing elit. Nulla enim dolor, facilisis quis venenatis quis.', status: 'good', name: 'Property: 2', length: '8', bearing: 'S 58 12 21.56 E', label: 'N58 12 41.56W', diff: "1 00 0", sources: "good", lengthcheck: "good", bearingcheck: "good", northorientation: "good"},
-    { dimension: 'curve', desc: 'Lorem ipsum dolor sit amet, consec adipiscing elit. Mauris tincidunt bibendum leo, sed fermentum tellus. In posuere mi mauris, nec tincidunt justo dapibus quis. Praesent dapibus, dolor nec tristique pharetra, magna elit viverra nunc, in faucibus mi odio sed ipsum.', status: 'error', name: 'Property: 2', length: '9', bearing: 'S 73 12 11.56 E', label: 'N73 12 41.56W', diff: "3 00 0", sources: "warn", lengthcheck: "good", bearingcheck: "error", northorientation: "error"},
-    ]},
-]
+// const dummyData = [
+//   { parcel: [
+//     { dimension: 'line', desc: 'Lorem ipsum dolor sit amet, consec adipiscing elit.', status: 'good', name: 'Property: 1', length: '6', bearing: 'S 43 12 48.56 E', label: 'N43 12 41.56W', diff: "0 00 0", sources: "good", lengthcheck: "good", bearingcheck: "good", northorientation: "good"},
+//     { dimension: 'line', desc: 'Lorem ipsum dolor sit amet, consec adipiscing elit. Nulla enim dolor, facilisis quis venenatis quis.', status: 'good', name: 'Property: 1', length: '8', bearing: 'S 58 12 21.56 E', label: 'N58 12 41.56W', diff: "1 00 0", sources: "good", lengthcheck: "good", bearingcheck: "good", northorientation: "good"},
+//     { dimension: 'line', desc: 'Lorem ipsum dolor sit amet, consec adipiscing elit.', status: 'warn', name: 'Property: 1', length: '3', bearing: 'S 23 12 31.56 E', label: 'N23 12 41.56W', diff: "2 00 0", sources: "warn", lengthcheck: "warn", bearingcheck: "good", northorientation: "good"},
+//     { dimension: 'line', desc: 'Lorem ipsum dolor sit amet, consec adipiscing elit. Mauris tincidunt bibendum leo, sed fermentum tellus. In posuere mi mauris, nec tincidunt justo dapibus quis. Praesent dapibus, dolor nec tristique pharetra, magna elit viverra nunc, in faucibus mi odio sed ipsum.', status: 'error', name: 'Property: 1', length: '9', bearing: 'S 73 12 11.56 E', label: 'N73 12 41.56W', diff: "3 00 0", sources: "warn", lengthcheck: "good", bearingcheck: "error", northorientation: "error"},
+//   ]},
+//   { parcel: [
+//     { dimension: 'line', desc: 'Lorem ipsum dolor sit amet, consec adipiscing elit. Nulla enim dolor, facilisis quis venenatis quis.', status: 'good', name: 'Property: 3', length: '8', bearing: 'S 58 12 21.56 E', label: 'N58 12 41.56W', diff: "1 00 0", sources: "good", lengthcheck: "good", bearingcheck: "good", northorientation: "good"},
+//     { dimension: 'line', desc: 'Lorem ipsum dolor sit amet, consec adipiscing elit.', status: 'good', name: 'Property: 3', length: '6', bearing: 'S 43 12 48.56 E', label: 'N43 12 41.56W', diff: "0 00 0", sources: "good", lengthcheck: "good", bearingcheck: "good", northorientation: "good"},
+//     { dimension: 'line', desc: 'Lorem ipsum dolor sit amet, consec adipiscing elit.', status: 'warn', name: 'Property: 3', length: '3', bearing: 'S 23 12 31.56 E', label: 'N23 12 41.56W', diff: "2 00 0", sources: "warn", lengthcheck: "warn", bearingcheck: "good", northorientation: "good"},
+//     { dimension: 'line', desc: 'Lorem ipsum dolor sit amet, consec adipiscing elit. Mauris tincidunt bibendum leo, sed fermentum tellus. In posuere mi mauris, nec tincidunt justo dapibus quis. Praesent dapibus, dolor nec tristique pharetra, magna elit viverra nunc, in faucibus mi odio sed ipsum.', status: 'error', name: 'Property: 3', length: '9', bearing: 'S 73 12 11.56 E', label: 'N73 12 41.56W', diff: "3 00 0", sources: "warn", lengthcheck: "good", bearingcheck: "error", northorientation: "error"},
+//   ]},
+//   { parcel: [
+//     { dimension: 'curve', desc: 'Lorem ipsum dolor sit amet, consec adipiscing elit. Mauris tincidunt bibendum leo, sed fermentum tellus. In posuere mi mauris, nec tincidunt justo dapibus quis. Praesent dapibus, dolor nec tristique pharetra, magna elit viverra nunc, in faucibus mi odio sed ipsum.', status: 'error', name: 'Property: 4', length: '9', bearing: 'S 73 12 11.56 E', label: 'N73 12 41.56W', diff: "3 00 0", sources: "warn", lengthcheck: "good", bearingcheck: "error", northorientation: "error"},
+//     { dimension: 'curve', desc: 'Lorem ipsum dolor sit amet, consec adipiscing elit.', status: 'good', name: 'Property: 4', length: '6', bearing: 'S 43 12 48.56 E', label: 'N43 12 41.56W', diff: "0 00 0", sources: "good", lengthcheck: "good", bearingcheck: "good", northorientation: "good"},
+//     { dimension: 'curve', desc: 'Lorem ipsum dolor sit amet, consec adipiscing elit. Nulla enim dolor, facilisis quis venenatis quis.', status: 'good', name: 'Property: 4', length: '8', bearing: 'S 58 12 21.56 E', label: 'N58 12 41.56W', diff: "1 00 0", sources: "good", lengthcheck: "good", bearingcheck: "good", northorientation: "good"},
+//     { dimension: 'curve', desc: 'Lorem ipsum dolor sit amet, consec adipiscing elit.', status: 'warn', name: 'Property: 4', length: '3', bearing: 'S 23 12 31.56 E', label: 'N23 12 41.56W', diff: "2 00 0", sources: "warn", lengthcheck: "warn", bearingcheck: "good", northorientation: "good"},
+//   ]},
+//   { parcel: [
+//     { dimension: 'curve', desc: 'Lorem ipsum dolor sit amet, consec adipiscing elit.', status: 'warn', name: 'Property: 2', length: '3', bearing: 'S 23 12 31.56 E', label: 'N23 12 41.56W', diff: "2 00 0", sources: "warn", lengthcheck: "warn", bearingcheck: "good", northorientation: "good"},
+//     { dimension: 'curve', desc: 'Lorem ipsum dolor sit amet, consec adipiscing elit.', status: 'good', name: 'Property: 2', length: '6', bearing: 'S 43 12 48.56 E', label: 'N43 12 41.56W', diff: "0 00 0", sources: "good", lengthcheck: "good", bearingcheck: "good", northorientation: "good"},
+//     { dimension: 'curve', desc: 'Lorem ipsum dolor sit amet, consec adipiscing elit. Nulla enim dolor, facilisis quis venenatis quis.', status: 'good', name: 'Property: 2', length: '8', bearing: 'S 58 12 21.56 E', label: 'N58 12 41.56W', diff: "1 00 0", sources: "good", lengthcheck: "good", bearingcheck: "good", northorientation: "good"},
+//     { dimension: 'curve', desc: 'Lorem ipsum dolor sit amet, consec adipiscing elit. Mauris tincidunt bibendum leo, sed fermentum tellus. In posuere mi mauris, nec tincidunt justo dapibus quis. Praesent dapibus, dolor nec tristique pharetra, magna elit viverra nunc, in faucibus mi odio sed ipsum.', status: 'error', name: 'Property: 2', length: '9', bearing: 'S 73 12 11.56 E', label: 'N73 12 41.56W', diff: "3 00 0", sources: "warn", lengthcheck: "good", bearingcheck: "error", northorientation: "error"},
+//     ]},
+// ]
 
 
 const Container = () => {
   const classes = useStyles();
   const [submit, setSubmit] = useState(false);
   const [open, setOpen] = useState(false)
-  const [data, setData] = useState(null)
   const [tableInfo, setTableInfo] = useState(null)
   const [parcelInfo, setParcelInfo] = useState(null)
   //const [data, setData] = useState(dummyData)
@@ -348,10 +344,10 @@ const Container = () => {
 
   useEffect(() => {
     if (didMount) {
-      console.log('Url:', designAutomationUrl)
+      // console.log('Url:', designAutomationUrl)
       connection.getTableInfo(designAutomationUrl).then(
           response => {
-              console.log('Response', response)
+              // console.log('Response', response)
 
               const keys = Object.keys(response)
               const values = keys.map((key) => {
@@ -384,7 +380,6 @@ const Container = () => {
 
   const onDialogClose = () => {
     setOpen(false)
-    console.log('Close Dialog')
   }
 
   const handleLoading = (isLoading) => {
@@ -401,7 +396,7 @@ const Container = () => {
       </div>
       <div className={classes.mapView}>
         <AppBar handleClickOpen={handleClickOpen} />
-        <DialogUploadFile open={open} onClose={onDialogClose} connectionId={designAutomationId} isLoading={handleLoading} setSubmit={setSubmit}/>
+        <DialogUploadFile open={open} onClose={onDialogClose} connectionId={designAutomationId} isLoading={handleLoading}/>
         <div className={classes.mapCont}>
         {submit ?  
           <div>
