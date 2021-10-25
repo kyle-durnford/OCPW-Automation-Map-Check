@@ -24,14 +24,14 @@ const ForgeMap = ({loading, objectKeys, connectionId}) => {
 
     useEffect(() => {
         if (didMount) {
-        connection.translateObject(objectKeys, connectionId).then(
-            response => {
-                console.log('Response', response)
-                setMapInfo(response.data)
-            },
-            error => {
-                console.log('Error:', error)        }
-        )
+            connection.translateObject(objectKeys, connectionId).then(
+                response => {
+                    console.log('Response', response)
+                    setMapInfo(response.data)
+                },
+                error => {
+                    console.log('Error:', error)        }
+            )
         }  
     }, [objectKeys]);
 

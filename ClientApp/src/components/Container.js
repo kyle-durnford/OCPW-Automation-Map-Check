@@ -10,6 +10,7 @@ import Drawer from './Drawer'
 import AppBar from './AppBar'
 import planImage from "../assets/plan_drawing.svg"
 import connection from '../services/connection'
+import esri from '../data/esri'
 
 
 const drawerWidth = 100;
@@ -313,7 +314,7 @@ const Container = () => {
 
           designAutomationConnect.on("objKeysInputFile", (objectKeys) => {
             console.log('objKeysInputFile:', objectKeys)
-            // setObjectKeys(objectKeys)
+            setObjectKeys(objectKeys)
           })
 
       }).catch(e => console.log('Connection failed: ', e));
@@ -358,6 +359,8 @@ const Container = () => {
               setTableInfo(tableData)
               setParcelInfo(response)
               setLoadingTable(false)
+
+              esri.buildMap(response)
           },
           error => {
             console.log('Error:', error)        }

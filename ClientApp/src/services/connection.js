@@ -1,6 +1,6 @@
 
 import axios from "axios"
-import * as signalR from "@microsoft/signalr";
+import * as signalR from "@microsoft/signalr"
 
 export const startConnection = async => {
 
@@ -18,8 +18,6 @@ export const startConnection = async => {
 }
 
 export const startWorkItem = async item => {
-
-  console.log('Item', item)
 
   return new Promise(function(resolve, reject) {
     axios({
@@ -146,11 +144,11 @@ export const clearAccount = async => {
 export const translateObject = async (objectKeys, connectionId) => {
 
   const data = {
-    data: JSON.stringify(
-      { 'bucketKey': objectKeys[0], 
+    data: { 
+        'bucketKey': objectKeys[0], 
         'objectName': objectKeys[1], 
         'connectionId': connectionId 
-      })
+      }
   }
 
   return new Promise(function(resolve, reject) {
@@ -191,4 +189,5 @@ export default {
   getActivity,
   clearAccount,
   getTableInfo,
+  translateObject
 }
