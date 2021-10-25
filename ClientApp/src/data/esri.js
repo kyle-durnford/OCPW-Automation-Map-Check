@@ -12,7 +12,7 @@
         import Point from "@arcgis/core/geometry/Point"
         import Polygon from "@arcgis/core/geometry/Polygon"
         import _ from "lodash";
-import { lightBlue } from "@material-ui/core/colors";
+
 
 
         let polylist = []
