@@ -256,7 +256,7 @@
             let mkey = 'Parcel'
             const parcels = jsonData.Parcels
             _.forEach(parcels, (value, key) => {
-                console.log('Parcels:', value[0].Segments)
+                // console.log('Parcels:', value[0].Segments)
                 pnum += 1
                 mkey = 'Parcel' + pnum
                 const dictionary = value[0]['Segments'];
@@ -289,7 +289,7 @@
                 graphicslayer.graphics.add(newGraphic);
 
                 _.forEach(dictionary, (value, key) => {
-                    console.log('Key', key)
+                    // console.log('Key', key)
 
                     const shapetype = value.shapeType;
                     const radtangentstart = value.radtangent_start;
@@ -448,7 +448,7 @@
 
         export const buildMap = (json) => {
 
-            console.log('Building Map')
+            // console.log('Building Map')
 
             config.request.timeout = 300000
 
@@ -483,7 +483,7 @@
             map.add(lblgraphicslayer)
 
 
-            console.log('Finished')
+            // console.log('Finished')
 
             view.when(function () {
                 //myUpload()
@@ -491,7 +491,7 @@
 
             ericJson(json, view)
 
-            console.log('Finished')
+            // console.log('Finished')
         }
 
 export default {

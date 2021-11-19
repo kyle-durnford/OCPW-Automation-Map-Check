@@ -3,26 +3,27 @@ import { CircularProgress } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import good from '../assets/check.svg'
 import error from '../assets/error.svg'
+import Filter from '../assets/Filter.js'
 import warn from '../assets/warning.svg'
+import missing from '../assets/missing.svg'
 import _ from "lodash";
+import { number } from "prop-types";
 
 const useStyles = makeStyles(() => ({
     circularProgress: {
-      padding: '9em 0',
+      //padding: '9em 0',
       display: 'flex',
       alignItems: 'center',
-      justifyContent: 'center'
+      justifyContent: 'center',
+      flex: "1",
+      width: '100%',
+      minHeight: '20vh'
     }
 }));
 
 const lineColumns = [
   {
-    id: 'status',
-    label: 'Status',
-    align: 'center',
-  },
-  {
-    id: 'oid',
+    id: 'parcelId',
     label: 'Parcel ID',
     align: 'left',
   },
@@ -42,23 +43,38 @@ const lineColumns = [
     align: 'left',
   },
   {
-    id: 'Labels_Check.LineLength_Check.Difference',
-    label: 'Difference',
+    id: 'Labels_Check.LineBearing_Check.Bearing_Label',
+    label: 'Label Bearing',
     align: 'left',
   },
   {
-    id: 'sources',
-    label: 'Significant Sources',
-    align: 'center',
+    id: 'Labels_Check.LineLength_Check.Difference',
+    label: 'Length Diff.',
+    align: 'left',
+  },
+  {
+    id: 'Labels_Check.LineBearing_Check.Difference',
+    label: 'Bearing Diff.',
+    align: 'left',
   },
   {
     id: 'Labels_Check.LineLength_Check.SigFig_Check',
+    label: 'Length Sig Figs',
+    align: 'center',
+  },
+  {
+    id: 'Labels_Check.LineBearing_Check.SigFig_Check',
+    label: 'Bearing Sig Figs',
+    align: 'center',
+  },
+  {
+    id: 'Labels_Check.LineLength_Check.SegmentLength_Check',
     label: 'Length Check',
     align: 'center',
   },
 
   {
-    id: 'Labels_Check.LineBearing_Check.SigFig_Check',
+    id: 'Labels_Check.LineBearing_Check.SegmentBearing_Check',
     label: 'Bearing Check',
     align: 'center',
   },
@@ -71,12 +87,7 @@ const lineColumns = [
 
 const curveColumns = [
   {
-    id: 'status',
-    label: 'Status',
-    align: 'center',
-  },
-  {
-    id: 'oid',
+    id: 'parcelId',
     label: 'Parcel ID',
     align: 'left',
   },
@@ -91,14 +102,14 @@ const curveColumns = [
     align: 'left',
   },
   {
-    id: 'bearingRadiusOut_DMS',
-    label: 'Bearing Radius Out',
-    align: 'center',
-  },
-  {
     id: 'Labels_Check.ArcLength_Check.ArcLength_Label',
     label: 'Label Length',
     align: 'left',
+  },
+  {
+    id: 'bearingRadiusOut_DMS',
+    label: 'Bearing Radius Out',
+    align: 'center',
   },
   {
     id: 'Labels_Check.ArcLength_Check.Difference',
@@ -108,6 +119,11 @@ const curveColumns = [
   {
     id: 'Labels_Check.ArcDelta_Check.SigFig_Check',
     label: 'Length Check',
+    align: 'center',
+  },
+  {
+    id: 'Labels_Check.ArcDelta_Check.SigFig_Check',
+    label: 'Difference Bearing',
     align: 'center',
   },
   {
@@ -122,31 +138,151 @@ const curveColumns = [
   },
 ]
 
+const referenceColumns = [
+  {
+    id: 'oid',
+    label: 'Parcel ID',
+    align: 'left',
+  },
+  {
+    id: 'oid',
+    label: 'Conveyance/Map type',
+    align: 'left',
+  },
+  {
+    id: 'oid',
+    label: 'NO.',
+    align: 'left',
+  },
+  {
+    id: 'oid',
+    label: 'Document Reference',
+    align: 'left',
+  },
+  {
+    id: 'oid',
+    label: 'Recorded/Survey Date',
+    align: 'left',
+  },
+  {
+    id: 'oid',
+    label: 'LS/RE#',
+    align: 'left',
+  },
+  {
+    id: 'oid',
+    label: 'Certificate of Correction',
+    align: 'left',
+  },
+]
+
+const timelineColumns = [
+  {
+    id: 'oid',
+    label: 'Parcel ID',
+    align: 'left',
+  },
+]
+
+const monumentsColumns = [
+  {
+    id: 'oid',
+    label: 'Parcel ID',
+    align: 'left',
+  },
+  {
+    id: 'oid',
+    label: 'Map No.',
+    align: 'left',
+  },
+  {
+    id: 'oid',
+    label: 'Reference',
+    align: 'left',
+  },
+  {
+    id: 'oid',
+    label: 'Project Name',
+    align: 'left',
+  },
+  {
+    id: 'oid',
+    label: 'GPS Name',
+    align: 'left',
+  },
+  {
+    id: 'oid',
+    label: 'Point ID',
+    align: 'left',
+  },
+  {
+    id: 'oid',
+    label: 'Monument',
+    align: 'left',
+  },
+]
+
+const historyColumns = [
+  {
+    id: 'oid',
+    label: 'Parcel ID',
+    align: 'left',
+  },
+]
+
+const monumentTimelineColumns = [
+  {
+    id: 'oid',
+    label: 'Parcel ID',
+    align: 'left',
+  },
+]
+
+const relativedColumns = [
+  {
+    id: 'oid',
+    label: 'Parcel ID',
+    align: 'left',
+  },
+]
+
+//end of columns
+
 const rowProps = {
   style: {
     fontFamily: 'poppins, sans-serif',
     fontSize: '.9rem',
-    width: '100%'
+    width: '100%',
+    cursor: 'pointer'
   }
 }
 
 const dataProps = {
   style: {
-    padding: '.5rem 1rem .5rem 1rem',
-    maxWidth: 'min-content',
+    padding: '.5rem 0 .5rem 1rem',
     overflow: 'hidden',
     textOverflow: 'ellipses',
-    whiteSpace: 'nowrap'
+    whiteSpace: 'nowrap',
+    width: 'calc(min-content + .5rem)'
   }
 }
 
 const dataTopProps = {
   style: {
-    padding: '.5rem 1rem .5rem 1rem',
+    padding: '.5rem 0 .5rem 1rem',
     fontSize: '.75rem',
     lineHeight: '1.15',
     textAlign: 'left',
-    maxWidth: '2rem'
+    cursor: 'pointer',
+  }
+}
+
+const dataTopInner = {
+  style: {
+    display: 'flex',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'flex-start'
   }
 }
 
@@ -154,15 +290,23 @@ const tableContProps = {
   style: {
     width: 'auto', 
     overflow: 'auto', 
-    height: 'calc(40vh - 131px - 2rem)',
-    margin: '0rem 1rem 0rem 2rem',
-    padding: '0 1rem 2rem 0'
+    height: '100%',
+    margin: '0rem 1rem 0rem 1rem',
+    padding: '0 1rem 0 0',
+  }
+}
+
+const tableContainerProps = {
+  style: {
+    flex: "1",
+    minHeight: '20vh',
+    width: '100%'
   }
 }
 
 const tableProps = {
   style: {
-    tableLayout: 'fixed',
+    tableLayout: 'auto',
     width: '100%',
     borderCollaps: 'inherit',
     borderSpacing: '0px',
@@ -190,7 +334,7 @@ const tableHeadProps = {
 const tableBodyProps = {
   style: {
     display: 'table-row-group',
-    width: '100%'
+    width: '100%',
   }
 }
 
@@ -232,21 +376,118 @@ const tableTabSelectedProps = {
 const tableTabRowProps = {
   style: {
     display: 'flex',
-    justifyContent: 'flex-start',
+    justifyContent: 'space-between',
     flexWrap: 'nowrap',
     textTransform: 'uppercase',
     margin: '0 2rem'
   }
 }
 
+const tabInner = {
+  style: {
+    display: 'flex',
+    justifyContent: 'flex-start',
+    flexWrap: 'nowrap',
+    textTransform: 'uppercase',
+    margin: '0'
+  }
+}
 
-const SurveyTable = ({loading, data, selected, setSelected}) => {
+const parcelErrorProps = {
+  style: {
+      fontSize: '.65rem',
+      backgroundColor: '#f55d6e',
+      marginLeft: '1rem',
+      color: '#fff',
+      padding: '.35rem',
+      borderRadius: '100%',
+      width: '24px',
+      height: '24px',
+      display: 'inline-block',
+      lineHeight: '1.2',
+      textAlign: 'center',
+      verticalAlign: 'middle'
+  }
+}
+
+
+const SurveyTable = ({loading, data, selected, setSelected, page}) => {
   const classes = useStyles();
+  const referenceTabs = [['References', referenceColumns], [ 'Timeline', timelineColumns]];
+  const legalTabs = [['Line Check', lineColumns], ['Curve Check', curveColumns]];
+  const monumentTabs = [['Monuments', monumentsColumns], ['History', historyColumns], ['Timeline', monumentTimelineColumns], ['Relatived', relativedColumns]];
 
-  const [active, setActive] = useState(true);
+  const [active, setActive] = useState(0);
   const [activeColumns, setActiveColumns] = useState(lineColumns)
-  const [select, setSelect] = useState([]);
   const [row, setRow] = useState(null)
+  const [lineErrors, setLineErrors] = useState(0)
+  const [curveErrors, setCurveErrors] = useState(0)
+  const [tabArray, setTabArray] = useState(legalTabs)
+  const [sortName, setSortName] = useState()
+  const [tableResults, setTableResults] = useState([])
+  const [defaultTableResults, setDefaultTableResults] = useState([])
+  const [contain, setContain] = useState(false)
+  const [sortArrow, setSortArrow] = useState(['', 'default'])
+  const [showError, setShowError] = useState('all')
+  const [sortedResults, setSortedResults] = useState([])
+  const [sortTerm, setSortTerm] = useState('parcelId')
+  const [defaultSortedResults, setDefaultSortedResults] = useState([])
+
+  useEffect(() => {
+    if(data) {
+      let lines = 0;
+      let curves = 0;
+      let results = []
+      data.map((e, i) => {
+        Object.entries(data[i][1][1][1][0]['Segments']).map((row, l) => {
+          console.log(row[1])
+          row[1] = {...row[1], ...{parcel: i+1}, ...{parcelId: (i+1) + ":" + (l+1)}}
+          if (row.find(({ shapeType }) => shapeType === 'Line')) {
+            let check1 = false
+            let check2 = false
+            console.log(Object.values(Object.values(Object.values(row[1].Labels_Check))))
+            if(Object.values(Object.values(Object.values(row[1].Labels_Check))).includes('None')) {
+              row[1] = {...row[1], ...{status: 'none'}}
+            } else {
+              Object.values(Object.values(row[1].Labels_Check)).map((el, il) => {
+                if(Object.values(el).includes('Fail') && check1 === false) {
+                    lines++
+                    check1 = true
+                    row[1] = {...row[1], ...{status: 'fail'}}
+                } else if (Object.values(el).includes('Pass') && !Object.values(el).includes('Fail') && check2 === false) {
+                   check2 = true
+                   row[1] = {...row[1], ...{status: 'pass'}}
+                }
+              })
+            }
+          } else if (row.find(({ shapeType }) => shapeType === 'Curve')) {
+            let check1 = false
+            let check2 = false
+            console.log(Object.values(Object.values(Object.values(row[1].Labels_Check))))
+            if(Object.values(Object.values(Object.values(row[1].Labels_Check)))[0] === 'None') {
+              row[1] = {...row[1], ...{status: 'none'}}
+            } else {
+              Object.values(Object.values(row[1].Labels_Check)).map((el, il) => {
+                if(Object.values(el).includes('Fail') && check1 === false) {
+                  curves++
+                  check1 = true
+                  row[1] = {...row[1], ...{status: 'fail'}}
+                } else if (Object.values(el).includes('Pass') && !Object.values(el).includes('Fail') && check2 === false) {
+                  check2 = true
+                  row[1] = {...row[1], ...{status: 'pass'}}
+                }
+              })
+            }
+          }
+          results.push(row[1])
+        })
+      })
+      setLineErrors(lines)
+      setCurveErrors(curves)
+      setDefaultTableResults(results)
+      setTableResults(results)
+    }
+  }, [data])
 
   //Get the selected row when it renders
   const itemEl = useCallback(
@@ -269,54 +510,204 @@ const SurveyTable = ({loading, data, selected, setSelected}) => {
 
   //Changes the table view to line/curve depending on what table the selected row is in
   useEffect(() => {
-    if (select.length > 0 && select[1] !== null) {
-      if (Object.entries(Object.entries(data[select[0]][1][1][1][0]['Segments']))[select[1]][1][1]['shapeType'] === 'Line') {
-        setActive(true);
+    if (selected) {
+      let row = tableResults.find(({oid}) => oid === selected)
+      if (row && row['shapeType'] === 'Line') {
+        setActive(0);
         setActiveColumns(lineColumns);
-      } else if (Object.entries(Object.entries(data[select[0]][1][1][1][0]['Segments']))[select[1]][1][1]['shapeType'] === 'Curve') {
-        setActive(false);
+      } else if (row && row['shapeType'] === 'Curve') {
+        setActive(1);
         setActiveColumns(curveColumns);
       }
     }
-  }, [select])
-
-  //switch between line and curve view
-  const handleClick = (e) => {
-      if (active === false) {
-          setActive(true);
-          setActiveColumns(lineColumns);
-      }
-  };
-
-  const handleClickAlt = (e) => {
-    if (active === true) {
-        setActive(false);
-        setActiveColumns(curveColumns);
-    }
-};
-
-  useEffect(() => {
-    setSelect(selected);
   }, [selected])
 
+  //switch between line and curve view
+  const handleClick = (num, column) => {
+    setActive(num);
+    setActiveColumns(column);
+};
 
+const handleFilterClick = () => {
+  if(contain === true) {
+    setContain(false)
+  } else {
+    setContain(true)
+  }
+}
 
+const handleErrorClick = () => {
+  if(showError === 'all') {
+    setShowError('fail')
+  } else if (showError === 'fail'){
+    setShowError('pass')
+  } else if(showError === 'pass') {
+    setShowError('none')
+  } else {
+    setShowError('all')
+  }
+}
+
+const handleSortClick = e => {
+  setSortTerm(e)
+  if(!sortName || (e !== sortName && e + 'Alt' !== sortName)) {
+    setSortArrow([e, 'down'])
+    setSortName(e +'Alt')
+  } else if(sortName === e + 'Alt') {
+    setSortArrow([e, 'up'])
+    setSortName(e)
+  } else {
+    setSortArrow([e, 'default'])
+    setSortName()
+  }
+}
+
+useEffect(() => {
+
+  switch(page) {
+    case 'reference': 
+      setTabArray(referenceTabs)
+      break
+    case 'legal':
+      setTabArray(legalTabs)
+      break
+    case 'details':
+      setTabArray(legalTabs)
+      break
+    case 'monument':
+      setTabArray(monumentTabs)
+      break
+    default:
+      setTabArray(legalTabs)
+  }
+}, [page])
+
+useEffect(() => {
+  setActiveColumns(tabArray[0][1])
+  setActive(0)
+}, [tabArray])
+
+  //Sorts table when a heading is clicked. Multiple clicks on the same heading will toggle 
+  //between sorting alphabetically/numerically and reverse alphabetically/numerically
+
+  useEffect(() => {
+    let filteredResults = defaultTableResults
+    if(showError !== 'all') {
+       filteredResults = defaultTableResults.filter(e => e?.status === showError)
+    }
+
+    if(sortTerm) {
+      let e = sortTerm
+      let results = []
+      if (contain === true) {
+        if (sortArrow[1] === 'down') {
+          setSortName(e.toString() +'Alt')
+          for(let i = 1; filteredResults.find(el => el.parcel === i); i++) {
+            let sort = filteredResults.slice().filter(ell => ell.parcel === i).sort((a, b) => {
+              
+              let textA = _.get(a, e);
+              let textB = _.get(b, e);
+
+              if (e.toString() === 'parcelId') {
+                return (textA===undefined)-(textB===undefined) || textA.localeCompare(textB, 'en', { numeric: true, sensitivity: 'base' });
+              } else {
+                return (textA===undefined)-(textB===undefined) || -(textA<textB)||+(textA>textB);
+              }
+            })
+            results = results.concat(sort)
+          }
+        } else if(sortArrow[1] === 'up') {
+          for(let i = 1; filteredResults.find(el => el.parcel === i); i++) {
+            let sort = filteredResults.slice().filter(ell => ell.parcel === i).sort((a, b) => {
+              let textA = _.get(a, e);
+              let textB = _.get(b, e);
+              if (e.toString() === 'parcelId') {
+                return (textA===undefined)-(textB===undefined) || textB.localeCompare(textA, 'en', { numeric: true, sensitivity: 'base' });
+              } else {
+                return (textA===undefined)-(textB===undefined) || -(textA>textB)||+(textA<textB);
+              }
+            })
+            results = results.concat(sort)
+          }
+        } else {
+          results = results.concat(filteredResults)
+        }
+      } else {
+        if(sortArrow[1] === 'down') {
+          let sort = filteredResults.slice().sort((a, b) => {
+            let textA = _.get(a, e);
+            let textB = _.get(b, e);
+            if (e.toString() === 'parcelId') {
+              return (textA===undefined)-(textB===undefined) || textA.localeCompare(textB, 'en', { numeric: true, sensitivity: 'base' });
+            } else {
+              return (textA===undefined)-(textB===undefined) || +(textA>textB)||-(textA<textB);
+            }
+          })
+          results = results.concat(sort)
+          console.log(sortName)
+        } else if(sortArrow[1] === 'up'){
+          let sort = filteredResults.slice().sort((a, b) => {
+            let textA = _.get(a, e);
+            let textB = _.get(b, e);
+            if (e.toString() === 'parcelId') {
+              return (textA===undefined)-(textB===undefined) || textB.localeCompare(textA, 'en', { numeric: true, sensitivity: 'base' });
+            } else {
+              return (textA===undefined)-(textB===undefined) || -(textA>textB)||+(textA<textB);
+            }
+          })
+          results = results.concat(sort)
+        } else {
+          results = results.concat(filteredResults)
+        }
+      }
+      setTableResults(results)
+      setDefaultSortedResults(results)
+    } else {
+      setTableResults(filteredResults)
+      setDefaultSortedResults(filteredResults)
+    }
+
+  }, [sortArrow, showError, contain])
+    
   if (loading || !data) 
     return (
         <Fragment>
-            <span className={classes.circularProgress}>
+            <span className={classes.circularProgress} {...tableContainerProps}>
                 <CircularProgress size={48} />
             </span>
         </Fragment>
     )
  
     return (
-      <>
+      <div {...tableContainerProps}>
       <div {...tableTabRowProps}>
-        <div className={`tableTab`} {...(active === true) ? {...tableTabSelectedProps} : {...tableTabProps}} onClick={e => handleClick(e)}>Line Check</div>
-        <div className={`tableTab`} {...(active === false) ? {...tableTabSelectedProps} : {...tableTabProps}} onClick={e => handleClickAlt(e)}>Curve Check</div>
+        <div {...tabInner}>
+          {tabArray.map((e, i) => (
+            <div 
+            className={`tableTab`} 
+            {...(active === i) ? {...tableTabSelectedProps} : {...tableTabProps}} 
+            onClick={() => handleClick(i, e[1])}
+            >{e[0]} 
+            {(lineErrors > 0 && e[0] === "Line Check" ? 
+            <span {...parcelErrorProps}>{lineErrors}</span> : 
+            curveErrors > 0 && e[0] === "Curve Check" ? 
+            <span {...parcelErrorProps}>{curveErrors}</span> 
+            : null)}
+            </div>
+          ))}
+        </div>
+        <div {...tabInner}>
+          <div className={`tableTab`} 
+          {...(contain === true ? {...tableTabSelectedProps} : {...tableTabProps})}
+          onClick={() => handleFilterClick()}>Sort By {(contain === true ? "All" : "Parcel")}
+          </div>
+          <div className={`tableTab`} 
+          {...(showError === 'fail' || showError === 'pass' || showError === 'none' ? {...tableTabSelectedProps} : {...tableTabProps})}
+          onClick={() => handleErrorClick()}>Filter {(showError === 'fail' ? 'Passing': showError === 'pass' ? "Unknown" : showError === 'none' ? 'All' : "Failing")}
+          </div>
+        </div>
       </div>
-      <div {...tableTitleProps}>Dimension {(active === true) ? "Line" : "Curve"} Check</div>
+      {(page === 'legal' || page === 'project' ? <div {...tableTitleProps}>Dimension {(activeColumns === lineColumns) ? "Line" : "Curve"} Check</div> : null)}
       <div {...tableContProps} className={`scrollAlt`}>
         <table {...tableProps}>
           <thead {...tableHeadProps}>
@@ -325,68 +716,41 @@ const SurveyTable = ({loading, data, selected, setSelected}) => {
                   <td
                     key={i}
                     align={column.align}
-                    style={{ minWidth: column.minWidth }}
                     {...dataTopProps}
+                    onClick={e => handleSortClick(column.id)}
                   >
-                    {column.label}
+                    <div {...dataTopInner}><span>{column.label}</span><span style={{padding: '0 .5rem'}}>{(column.id === sortArrow[0] ? (sortArrow[1] === 'down' ? '▼' : sortArrow[1] === 'up' ? "▲" : '▶' ) : '▶')}</span></div>
                   </td>
                 ))}
             </tr>
           </thead>
           <tbody {...tableBodyProps}>
-            {data.map((e, i) => {
-              console.log();
-                return (
-                  Object.entries(data[i][1][1][1][0]['Segments']).map((row, l) => {
-                    //Sort what dimension is displayed
-                    //console.log(row[1].length)
-                    if ((Object.entries(row[1])[1][1] === 'Line' && active === true) || (Object.entries(row[1])[1][1] === 'Curve' && active === false) ) {
-                      //get the selected row
-                      if (select.length > 0 && select[0] === i && select[1] === l) {
-                        return(
-                        <tr ref={itemEl} className={'rowSelectColor'} {...rowProps} role="checkbox" tabIndex={-1} key={l} onClick={() => setSelected([])}>
-                            {activeColumns.map((column, i) => {
-                              const value = _.get(row[1], column.id);
-                              return (
-                                <td {...dataProps} key={i} align={column.align}>
-                                  {//https://stackoverflow.com/questions/46592833/how-to-use-switch-statement-inside-a-react-component
-                                  {
-                                    'Pass': <img src={good} alt="Pass"></img>,
-                                    'Fail': <img src={error} alt="Fail"></img>,
-                                    default: <p>None</p>,
-                                  }[value] || value}
-                                </td>
-                              );
-                            })}
-                          </tr>
-                        );
-                      } else {
+            {tableResults?.map((e, i) => {
+              //Sort what dimension is displayed
+              if ((Object.entries(e)[1][1] === 'Line' && activeColumns === lineColumns) || (Object.entries(e)[1][1] === 'Curve' && activeColumns === curveColumns) ) {
+                  return(
+                  <tr ref={(e['oid'] === selected ? itemEl : null)} className={(e['oid'] === selected ? 'rowSelectColor' : 'rowAltColor')} {...rowProps} role="checkbox" tabIndex={-1} key={i} onClick={() => e['oid'] !== selected ? setSelected(e['oid']) : setSelected()}>
+                      {activeColumns.map((column, il) => {
+                        const value = _.get(e, column.id);
                         return (
-                          <tr className={'rowAltColor'} {...rowProps} role="checkbox" tabIndex={-1} key={l} onClick={() => setSelected([i,l])}>
-                            {activeColumns.map((column, i) => {
-                              const value = _.get(row[1], column.id);
-                              return (
-                                <td {...dataProps} key={i} align={column.align}>
-                                  
-                                  {//https://stackoverflow.com/questions/46592833/how-to-use-switch-statement-inside-a-react-component
-                                  {
-                                    'Pass': <img src={good} alt="Pass"></img>,
-                                    'Fail': <img src={error} alt="Fail"></img>,
-                                    default: <p>None</p>, 
-                                  }[value] || value}
-                                </td>
-                              );
-                            })}
-                          </tr>
+                          <td {...dataProps} key={il} align={column.align}>
+                            {//https://stackoverflow.com/questions/46592833/how-to-use-switch-statement-inside-a-react-component
+                            {
+                              'Pass': <img src={good} alt="Pass"></img>,
+                              'Fail': <img src={error} alt="Fail"></img>,
+                              undefined: <img src={missing} alt="Missing"></img>,
+                            }[value] || (isNaN(Number(value)) === false ? Number(value).toFixed(2) : value )}
+                          </td>
                         );
-                      }
-                    }
-                  }));
-              })}
+                      })}
+                    </tr>
+                  );
+              }
+            })}
           </tbody>
         </table>
       </div>
-      </>
+      </div>
     )
 }
 

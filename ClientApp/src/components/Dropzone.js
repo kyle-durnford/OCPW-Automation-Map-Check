@@ -60,26 +60,26 @@ const Dropzone = ({ onChange, ...rest }) => {
   }
 
   const filesDisplay = (
-    <ul>
+    <div>
       {files.map((file, i) =>
         file !== null ? (
             <div key={file.id} {...dropFileProps}>{file.name} <small> {file.size} bytes</small>
-            <button
-              style={{cursor: 'pointer'}}
-              type="button"
-              id={file.id + "_remove"}
-              onClick={() => {
-                removeFile(i)
-              }}
-            >
-              <FaTrashAlt />
-            </button>
+              <button
+                style={{cursor: 'pointer'}}
+                type="button"
+                id={file.id + "_remove"}
+                onClick={() => {
+                  removeFile(i)
+                }}
+              >
+                <FaTrashAlt />
+              </button>
             </div>
         ) : (
           ""
         )
       )}
-    </ul>
+    </div>
   )
 
   return (

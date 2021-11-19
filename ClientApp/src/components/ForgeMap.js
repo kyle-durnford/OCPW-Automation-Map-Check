@@ -5,7 +5,7 @@ import connection from '../services/connection'
 
 const useStyles = makeStyles(() => ({
     circularProgress: {
-      padding: '9em 0',
+      //padding: '9em 0',
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'center'

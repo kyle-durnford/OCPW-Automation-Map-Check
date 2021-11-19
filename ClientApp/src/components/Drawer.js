@@ -1,5 +1,8 @@
 import React, {useState, useEffect} from 'react';
 import Parcel from './Parcel.js'
+import ProjectDrawer from './ProjectDrawer.js';
+import ReportDrawer from './ReportDrawer.js';
+import CheckDrawer from './CheckDrawer.js'
 
 const drawerProps = {
     style: {
@@ -15,34 +18,81 @@ const drawerProps = {
     }
 };
 
-const Drawer = ({loading, data, setSelected, selected}) => {
-
-    
+const Drawer = ({loading, data, setSelected, selected, page, setSection, section}) => {
 
     const [open, setOpen] = useState(null);
-
-    useEffect(() => {
-        setOpen(null);
-        setOpen(selected[0]);
-    }, [selected])
+    const [drawerData, setDrawerData] = useState();
+    const [parcelCount, setParcelCount] = useState();
+    const [segmentCount, setSegmentCount] = useState([0,0])
+    const [parcelData, setParcelData] = useState()
 
     //if no data is loaded, return null
-    if (data !== null) {
-        const keys = Object.keys(data)
-        const values = keys.map((key) => {
-            return(data[key])
-        })
-        const parcelData = Object.entries(Object.entries(Object.entries(values[1])));
-        // console.log(parcelData);
-        const parcels = parcelData.map((e, i) => { 
-            return ((i === open || i === selected[0])  ? <Parcel loading={loading} data={parcelData[i][1][1][1]} setSelected={setSelected} selected={selected} key={i} parcelNum={i} setOpen={setOpen} opened={true} /> : <Parcel data={parcelData[i][1][1][1]} setSelected={setSelected} setOpen={setOpen} selected={selected} key={i} parcelNum={i} />)})
-    
+
+    useEffect(() => {
+        if (data !== null) {
+
+            const keys = Object.keys(data)
+            const values = keys.map((key) => {
+                return(data[key])
+            })
+
+            setParcelData(Object.entries(Object.entries(Object.entries(values[1]))))
+        }
+    }, [data])
+
+    useEffect(() => {
+        if (parcelData) {
+            setParcelCount(parcelData.length)
+            let lines = 0
+            let curves = 0
+            parcelData.map((e, i) => {
+            Object.entries(parcelData[i][1][1][1][0]['Segments']).map((row, l) => {
+                if (row.find(({ shapeType }) => shapeType === 'Line')) {
+                    lines++
+                } else if (row.find(({ shapeType }) => shapeType === 'Curve')) {
+                    curves++
+                }
+            })
+            setSegmentCount([lines, curves])
+            })
+        }
+    }, [parcelData])
+
+    useEffect(() => {
+        if (parcelData !== null) {
+   
+            if (page === 'report') {
+                setDrawerData(() => { return (<ReportDrawer data={parcelData}/>)})
+            } else if (page === 'legal' || page === 'monument' || page === 'reference') {
+                const parcels = parcelData.map((e, i) => {
+                    console.log(open, selected)
+                    return <Parcel loading={loading} page={page} data={parcelData[i][1][1][1]} setSelected={setSelected} selected={selected} key={i} parcelNum={i} page={page} open={open} setOpen={setOpen} /> 
+                })
+                setDrawerData(parcels)
+            } else if (page === 'project') {
+                setDrawerData(() => {return (<ProjectDrawer lines={segmentCount[0]} curves={segmentCount[1]} parcelCount={parcelCount}/>)})
+            } else if (page === 'check') {
+                setDrawerData(() => {return (<CheckDrawer setSection={setSection} section={section}/>)})
+            }
+        }
+    }, [page, selected, segmentCount, section, open])
+   
+
+        if (data !== null) {
         return (
             <div {...drawerProps} className={`scroll`}>
-                <div style={{paddingBottom: '1rem'}}>Parcel Closure Report</div>
-                <div>
-                    {parcels}
+                <div style={{paddingBottom: '1rem'}}> 
+                {//https://stackoverflow.com/questions/46592833/how-to-use-switch-statement-inside-a-react-component
+                    {
+                    'project': <p>Project Summary</p>,
+                    'legal': <p>Parcel Closure Report</p>,
+                    'monument': <p>Monuments Description</p>,
+                    'reference': <p>Reference Description</p>,
+                    'check': <p>Check List - RoS</p>,
+                    'report': <p>Generate Report</p>
+                    }[page]}
                 </div>
+                {drawerData}
             </div>
         )
     } else return null;

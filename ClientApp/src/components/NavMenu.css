@@ -59,6 +59,15 @@ html {
 
 .scroll, .scrollAlt {
   scroll-behavior: smooth;
+  scrollbar-width: thin;
+}
+
+.scroll {
+  scrollbar-color: #a0acf0 #fff;
+}
+
+.scrollAlt {
+  scrollbar-color: #a0acf0 #f2f4fd;
 }
 
 .scroll::-webkit-scrollbar-track
@@ -69,6 +78,7 @@ html {
 
 .scroll::-webkit-scrollbar
 {
+  
 	width: 8px;
 	background-color: transparent;
 }

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react"
+import React, { useState, useEffect, createRef } from "react"
 import { makeStyles } from '@material-ui/core/styles';
 import { HubConnectionBuilder } from "@microsoft/signalr";
 import DialogUploadFile from './DialogUploadFile'
@@ -11,6 +11,7 @@ import AppBar from './AppBar'
 import planImage from "../assets/plan_drawing.svg"
 import connection from '../services/connection'
 import esri from '../data/esri'
+import Checklist from "./Checklist";
 
 
 const drawerWidth = 100;
@@ -81,11 +82,11 @@ const useStyles = makeStyles((theme) => ({
     width: '100%'
   },
   mapCont: {
-    width: '100%'
+    width: '100%',
+    height: 'calc(100% - 4.4rem)'
   },
   flex: {
     width: '100%',
-    height: '100%',
     display: 'flex',
     flexDirection: 'column',
     justifyContent: 'center',
@@ -113,78 +114,117 @@ const boxProps = {
   }
 };
 
-const defaultProps = {
+const defaultPropsRight = {
   style: {
-    width: '100%', 
-    height: '60vh', 
     background: '#eee',
     display: 'flex',
     justifyContent: 'center',
-    alignItems: 'center'
+    alignItems: 'center',
+    flex: "1 1 auto",
+    height: '100%'
   },
 };
 
 const defaultAltProps = {
   style: {
-    width: '100%', 
-    height: '60vh', 
     background: '#dff0eb',
     display: 'flex',
     justifyContent: 'center',
-    alignItems: 'center'
+    alignItems: 'center',
+    width: 'calc(50% - .5rem)',
+    maxWidth: '85%',
+    height: '100%'
   },
 };
 
 const dividerProps = {
   style: {
-    width: '20px',
-    height: '60vh',
+    width: '1rem',
     content: '""',
-    backgroundColor: "#fff",
-    cursor: 'col-resize'
+    backgroundColor: "#f4f5fc",
+    cursor: 'col-resize',
+    height: '100%',
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+  }
+}
+
+const horizontalDividerProps = {
+  style: {
+    width: '100%',
+    height: '1rem',
+    content: '""',
+    backgroundColor: "#f4f5fc",
+    cursor: 'row-resize',
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
   }
 }
 
 const mapContProps = {
   style: {
     display: "flex", 
-    flexDirection: "row", 
-    flex: "1 1 0px", 
+    flexDirection: "row",  
     flexWrap: "nowrap", 
-    justifyContent: "center"
+    alignItems: 'flex-start',
+    height: '50%',
+    width: '100%',
+    minHeight: '20vh'
   }
 }
 
-// const dummyData = [
-//   { parcel: [
-//     { dimension: 'line', desc: 'Lorem ipsum dolor sit amet, consec adipiscing elit.', status: 'good', name: 'Property: 1', length: '6', bearing: 'S 43 12 48.56 E', label: 'N43 12 41.56W', diff: "0 00 0", sources: "good", lengthcheck: "good", bearingcheck: "good", northorientation: "good"},
-//     { dimension: 'line', desc: 'Lorem ipsum dolor sit amet, consec adipiscing elit. Nulla enim dolor, facilisis quis venenatis quis.', status: 'good', name: 'Property: 1', length: '8', bearing: 'S 58 12 21.56 E', label: 'N58 12 41.56W', diff: "1 00 0", sources: "good", lengthcheck: "good", bearingcheck: "good", northorientation: "good"},
-//     { dimension: 'line', desc: 'Lorem ipsum dolor sit amet, consec adipiscing elit.', status: 'warn', name: 'Property: 1', length: '3', bearing: 'S 23 12 31.56 E', label: 'N23 12 41.56W', diff: "2 00 0", sources: "warn", lengthcheck: "warn", bearingcheck: "good", northorientation: "good"},
-//     { dimension: 'line', desc: 'Lorem ipsum dolor sit amet, consec adipiscing elit. Mauris tincidunt bibendum leo, sed fermentum tellus. In posuere mi mauris, nec tincidunt justo dapibus quis. Praesent dapibus, dolor nec tristique pharetra, magna elit viverra nunc, in faucibus mi odio sed ipsum.', status: 'error', name: 'Property: 1', length: '9', bearing: 'S 73 12 11.56 E', label: 'N73 12 41.56W', diff: "3 00 0", sources: "warn", lengthcheck: "good", bearingcheck: "error", northorientation: "error"},
-//   ]},
-//   { parcel: [
-//     { dimension: 'line', desc: 'Lorem ipsum dolor sit amet, consec adipiscing elit. Nulla enim dolor, facilisis quis venenatis quis.', status: 'good', name: 'Property: 3', length: '8', bearing: 'S 58 12 21.56 E', label: 'N58 12 41.56W', diff: "1 00 0", sources: "good", lengthcheck: "good", bearingcheck: "good", northorientation: "good"},
-//     { dimension: 'line', desc: 'Lorem ipsum dolor sit amet, consec adipiscing elit.', status: 'good', name: 'Property: 3', length: '6', bearing: 'S 43 12 48.56 E', label: 'N43 12 41.56W', diff: "0 00 0", sources: "good", lengthcheck: "good", bearingcheck: "good", northorientation: "good"},
-//     { dimension: 'line', desc: 'Lorem ipsum dolor sit amet, consec adipiscing elit.', status: 'warn', name: 'Property: 3', length: '3', bearing: 'S 23 12 31.56 E', label: 'N23 12 41.56W', diff: "2 00 0", sources: "warn", lengthcheck: "warn", bearingcheck: "good", northorientation: "good"},
-//     { dimension: 'line', desc: 'Lorem ipsum dolor sit amet, consec adipiscing elit. Mauris tincidunt bibendum leo, sed fermentum tellus. In posuere mi mauris, nec tincidunt justo dapibus quis. Praesent dapibus, dolor nec tristique pharetra, magna elit viverra nunc, in faucibus mi odio sed ipsum.', status: 'error', name: 'Property: 3', length: '9', bearing: 'S 73 12 11.56 E', label: 'N73 12 41.56W', diff: "3 00 0", sources: "warn", lengthcheck: "good", bearingcheck: "error", northorientation: "error"},
-//   ]},
-//   { parcel: [
-//     { dimension: 'curve', desc: 'Lorem ipsum dolor sit amet, consec adipiscing elit. Mauris tincidunt bibendum leo, sed fermentum tellus. In posuere mi mauris, nec tincidunt justo dapibus quis. Praesent dapibus, dolor nec tristique pharetra, magna elit viverra nunc, in faucibus mi odio sed ipsum.', status: 'error', name: 'Property: 4', length: '9', bearing: 'S 73 12 11.56 E', label: 'N73 12 41.56W', diff: "3 00 0", sources: "warn", lengthcheck: "good", bearingcheck: "error", northorientation: "error"},
-//     { dimension: 'curve', desc: 'Lorem ipsum dolor sit amet, consec adipiscing elit.', status: 'good', name: 'Property: 4', length: '6', bearing: 'S 43 12 48.56 E', label: 'N43 12 41.56W', diff: "0 00 0", sources: "good", lengthcheck: "good", bearingcheck: "good", northorientation: "good"},
-//     { dimension: 'curve', desc: 'Lorem ipsum dolor sit amet, consec adipiscing elit. Nulla enim dolor, facilisis quis venenatis quis.', status: 'good', name: 'Property: 4', length: '8', bearing: 'S 58 12 21.56 E', label: 'N58 12 41.56W', diff: "1 00 0", sources: "good", lengthcheck: "good", bearingcheck: "good", northorientation: "good"},
-//     { dimension: 'curve', desc: 'Lorem ipsum dolor sit amet, consec adipiscing elit.', status: 'warn', name: 'Property: 4', length: '3', bearing: 'S 23 12 31.56 E', label: 'N23 12 41.56W', diff: "2 00 0", sources: "warn", lengthcheck: "warn", bearingcheck: "good", northorientation: "good"},
-//   ]},
-//   { parcel: [
-//     { dimension: 'curve', desc: 'Lorem ipsum dolor sit amet, consec adipiscing elit.', status: 'warn', name: 'Property: 2', length: '3', bearing: 'S 23 12 31.56 E', label: 'N23 12 41.56W', diff: "2 00 0", sources: "warn", lengthcheck: "warn", bearingcheck: "good", northorientation: "good"},
-//     { dimension: 'curve', desc: 'Lorem ipsum dolor sit amet, consec adipiscing elit.', status: 'good', name: 'Property: 2', length: '6', bearing: 'S 43 12 48.56 E', label: 'N43 12 41.56W', diff: "0 00 0", sources: "good", lengthcheck: "good", bearingcheck: "good", northorientation: "good"},
-//     { dimension: 'curve', desc: 'Lorem ipsum dolor sit amet, consec adipiscing elit. Nulla enim dolor, facilisis quis venenatis quis.', status: 'good', name: 'Property: 2', length: '8', bearing: 'S 58 12 21.56 E', label: 'N58 12 41.56W', diff: "1 00 0", sources: "good", lengthcheck: "good", bearingcheck: "good", northorientation: "good"},
-//     { dimension: 'curve', desc: 'Lorem ipsum dolor sit amet, consec adipiscing elit. Mauris tincidunt bibendum leo, sed fermentum tellus. In posuere mi mauris, nec tincidunt justo dapibus quis. Praesent dapibus, dolor nec tristique pharetra, magna elit viverra nunc, in faucibus mi odio sed ipsum.', status: 'error', name: 'Property: 2', length: '9', bearing: 'S 73 12 11.56 E', label: 'N73 12 41.56W', diff: "3 00 0", sources: "warn", lengthcheck: "good", bearingcheck: "error", northorientation: "error"},
-//     ]},
-// ]
+const rightContProps = {
+  style: {
+    display: "flex",
+    flexDirection: "column",
+    flexWrap: 'nowrap',
+    alignItems: 'flex-start',
+    height: '84vh',
+  }
+}
 
+const dividerHandle = {
+  style: {
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+  }
+}
+
+const dividerHandleHorz = {
+  style: {
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    flexDirection: 'column'
+  }
+}
+
+const dividerHandleBarHorz = {
+  style: {
+    height: '2px',
+    width: '20px',
+    backgroundColor: '#a0acf0',
+    content: '"',
+    margin: '1px'
+  }
+}
+
+const dividerHandleBarVert = {
+  style: {
+    height: '20px',
+    width: '2px',
+    backgroundColor: '#a0acf0',
+    content: '"',
+    margin: '1px'
+  }
+}
 
 const Container = () => {
   const classes = useStyles();
+  const [page, setPage] = useState('project')
   const [submit, setSubmit] = useState(false);
   const [open, setOpen] = useState(false)
   const [tableInfo, setTableInfo] = useState(null)
@@ -200,8 +240,17 @@ const Container = () => {
   const [modelDerivativeConnect, setModelDerivativeConnect] = useState(null)
   const [designAutomationUrl, setDesignAutomationUrl] = useState()
   const [objectKeys, setObjectKeys] = useState()
-  const [selected, setSelected] = useState([])
+  const [selected, setSelected] = useState()
   const [didMount, setDidMount] = useState(false)
+  const [leftWidth, setLeftWidth] = useState();
+  const [separatorXPosition, setSeparatorXPosition] = useState(undefined);
+  const [dragging, setDragging] = useState(false);
+  const [bar, setBar] = useState()
+  const [topHeight, setTopHeight] = useState()
+  const [separatorYPosition, setSeparatorYPosition] = useState(undefined);
+  const [splitPaneHeightRef, setSplitPaneHeightRef] = useState();
+  const [topRef, setTopRef] = useState();
+  const [section, setSection] = useState(1);
 
   // const getData = () => {
   //   fetch('437oc.json', {
@@ -366,7 +415,7 @@ const Container = () => {
             console.log('Error:', error)        }
       )
     }  
-  }, [designAutomationUrl]);
+  }, [designAutomationUrl, didMount]);
 
   // if (modelDerivativeConnect && modelDerivativeConnect.connectionState) {
 
@@ -389,37 +438,134 @@ const Container = () => {
     setSubmit(isLoading)
   }
 
+    const leftRef = createRef();
+  const splitPaneRef = createRef();
+  const drawerContRef = createRef();
+
+  const onMouseDown = (e, bar) => {
+    setBar(bar)
+    setSeparatorYPosition(e.clientY);
+    setSeparatorXPosition(e.clientX);
+    setDragging(true);
+  };
+
+  const MIN_WIDTH = 150;
+  const MIN_HEIGHT = 150;
+
+  const onMouseMove = (e) => {
+
+    if (dragging && bar === "horz") {
+      const newLeftWidth = leftWidth + e.clientX - separatorXPosition;
+      setSeparatorXPosition(e.clientX);
+
+      if (newLeftWidth < MIN_WIDTH) {
+        setLeftWidth(MIN_WIDTH);
+        return;
+      }
+
+      if (splitPaneRef.current) {
+        const splitPaneWidth = splitPaneRef.current.clientWidth;
+
+        if (newLeftWidth > splitPaneWidth - MIN_WIDTH) {
+          setLeftWidth(splitPaneWidth - MIN_WIDTH);
+          return;
+        }
+      }
+      setLeftWidth(newLeftWidth);
+
+    } else if (dragging && bar === 'vert'){
+      const newTopHeight = topHeight + e.clientY - separatorYPosition
+      setSeparatorYPosition(e.clientY);
+
+      if (splitPaneHeightRef) {
+        const splitPaneHeight = splitPaneHeightRef.clientHeight;
+        if (newTopHeight > splitPaneHeight - MIN_HEIGHT) {
+          setTopHeight(splitPaneHeight - MIN_HEIGHT);
+          return;
+        }
+      }
+      setTopHeight(newTopHeight);
+    }
+  };
+
+  const onMouseUp = () => {
+    setDragging(false);
+    setBar('');
+  };
+
+  useEffect(() => {
+    if (leftRef.current) {
+      if (!leftWidth) {
+        setLeftWidth(leftRef.current?.clientWidth);
+      }
+      leftRef.current.style.width = `${leftWidth}px`;
+    }
+  }, [leftRef, leftWidth, setLeftWidth])
+
+  useEffect(() => {
+    if (topRef) {
+      if (!topHeight) {
+        setTopHeight(topRef?.clientHeight);
+      }
+      topRef.style.height = `${topHeight}px`;
+    }
+  }, [topRef, topHeight, setTopHeight])
+
+  useEffect(() => {
+    document.addEventListener('mousemove', onMouseMove);
+    document.addEventListener('mouseup', onMouseUp);
+
+      return () => {
+      document.removeEventListener('mousemove', onMouseMove);
+      document.removeEventListener('mouseup', onMouseUp);
+      };
+  });
+
+  
+
   return (
     <div className={classes.root}>
-      <div className={classes.drawerCont}>
+      <div className={classes.drawerCont} ref={drawerContRef}>
         <div style={{position:'relative', width: 'calc(82px + .5rem)'}}>
-          <NavMenu />
+          <NavMenu setPage={setPage} page={page}/>
         </div>
-        <Drawer loading={loading} data={parcelInfo} setSelected={setSelected} selected={selected}/>
+        <Drawer loading={loading} page={page} data={parcelInfo} setSelected={setSelected} selected={selected} section={section} setSection={setSection}/>
       </div>
       <div className={classes.mapView}>
         <AppBar handleClickOpen={handleClickOpen} />
         <DialogUploadFile open={open} onClose={onDialogClose} connectionId={designAutomationId} isLoading={handleLoading}/>
         <div className={classes.mapCont}>
-        {submit ?  
-          <div>
-            <div {...mapContProps}>
-              <div {...defaultAltProps}>
-                <EsriMap loading={loadingEsri} />
-              </div>
-              <div {...dividerProps}></div>
-              <div {...defaultProps}>
-                <ForgeMap loading={loadingForge} objectKeys={objectKeys} connectionId={modelDerivativeId}/>
+        {page === 'check' && submit ?  
+          <Checklist data={parcelInfo} section={section} setSection={setSection}/>
+          : submit ?
+          <div ref={e => setSplitPaneHeightRef(e)} {...rightContProps}>
+          <div {...mapContProps} ref={splitPaneRef} className="splitPane" ref={e => setTopRef(e)}>
+            <div {...defaultAltProps} ref={leftRef}>
+              <EsriMap loading={loadingEsri} />
+            </div>
+            <div {...dividerProps} onMouseDown={(e) => onMouseDown(e, 'horz')}>
+              <div {...dividerHandle}>
+                <span {...dividerHandleBarVert}></span>
+                <span {...dividerHandleBarVert}></span>
               </div>
             </div>
-            <SurveyTable loading={loadingTable} data={tableInfo} selected={selected} setSelected={setSelected}/>
-
+            <div {...defaultPropsRight}>
+              <ForgeMap loading={loadingForge} objectKeys={objectKeys} connectionId={modelDerivativeId}/>
+            </div>
           </div>
+          <div {...horizontalDividerProps} onMouseDown={(e) => onMouseDown(e, 'vert')}>
+          <div {...dividerHandleHorz}>
+                <span {...dividerHandleBarHorz}></span>
+                <span {...dividerHandleBarHorz}></span>
+              </div>
+            </div>
+          <SurveyTable page={page} loading={loadingTable} data={tableInfo} selected={selected} setSelected={setSelected}/>
+        </div>
           :
           <div>
             <div {...boxProps}>
               <div className={classes.flex} onClick={() => setOpen(true)}>
-                  <img src={planImage} height='150px' width='150px'/>
+                  <img src={planImage} height='150px' width='150px' alt=""/>
                   <div className={classes.mapUploadText}>Upload a map to get started</div>
               </div>
             </div>

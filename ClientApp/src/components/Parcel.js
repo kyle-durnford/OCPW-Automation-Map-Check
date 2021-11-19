@@ -1,4 +1,4 @@
-import React, {useState, useEffect, Fragment} from 'react';
+import React, {useState, useEffect, Fragment, useCallback} from 'react';
 import { CircularProgress } from '@material-ui/core'; 
 import { makeStyles } from '@material-ui/core/styles';
 
@@ -70,7 +70,40 @@ const parcelInfoSelectedProps = {
         width: '100%',
         borderRadius: '.5rem',
         transition: 'background .2s ease',
-        background: '#a0acf0'
+        background: '#a0acf0',
+        margin: '.5rem 0'
+    }
+}
+
+const parcelErrorIconProps = {
+    style: {
+        fontSize: '.65rem',
+        backgroundColor: '#f55d6e',
+        marginLeft: '1rem',
+        color: '#fff',
+        padding: '.35rem',
+        borderRadius: '100%',
+        width: '24px',
+        height: '24px',
+        display: 'inline-block',
+        lineHeight: '1.2',
+        textAlign: 'center',
+        verticalAlign: 'middle'
+    }
+}
+
+const parcelErrorProps = {
+    style: {
+        listStyle: 'none',
+        fontSize: '1rem',
+        fontWeight: '400',
+        padding: '.5rem',
+        cursor: 'pointer',
+        width: '100%',
+        borderRadius: '.5rem',
+        transition: 'background .2s ease',
+        background: '#f55d6e50',
+        margin: '.5rem 0'
     }
 }
 
@@ -80,45 +113,60 @@ const parcelInfoContProps = {
     }
 }
 
-const Parcel = ({loading, setSelected, selected, data, parcelNum, open, setOpen, opened}) => {
+const Parcel = ({loading, setSelected, selected, data, parcelNum, open, setOpen, page}) => {
 
     const classes = useStyles();
+    const [row, setRow] = useState(null);
+    const [opened, setOpened] = useState(false)
 
-    const [active, setActive] = useState();
 
-
-    const handleSelect = (i) => {
-        const compare = [parcelNum, i];
-        if (selected.every((e, i) => e === compare[i]) === true && active === i) {
-            setOpen(null)
-            setActive(null);
-            setSelected([]);
+    const handleSelect = (e) => {
+        if (selected === e) {
+            setSelected();
         } else {
-            setOpen(null)
-            setActive(null);
-            setActive(i);
-            setSelected([parcelNum, i]);
+            setSelected(e);
         }
     }
 
-    const handleClick = (e) => {
-        if (opened !== true) {
-            setActive(null);
-            setOpen(null);
-            setSelected([parcelNum, null]);
+    const handleClick = () => {
+        if (opened === true) {
+            setOpen(null)
+            setSelected()
+            setOpened(false)
         } else {
-            setOpen(null);
-            setActive(null);
-            setSelected([]);
+            setOpen(parcelNum)
+            setOpened(true)
+            setSelected()
         }
     };
 
     useEffect(() => {
-        setActive(null)
-        setOpen(null)
-        setActive(selected[1])
-    }, [selected])
-    
+       if(Object.values(data[0]['Segments']).find(({oid}) => oid === selected) || (open === parcelNum && !selected)) {
+        setOpened(true)
+       } else {
+        setOpened(false)
+       }
+    }, [selected, open])
+
+    //Get the selected row when it renders
+  const itemEl = useCallback(
+    node => {
+      if (node !== null) {
+        setRow(node)
+      }
+    },
+    [],
+  )
+
+  //Scroll to the selected row in the table
+  if (row !== null) {
+    row.scrollIntoView({
+      scrollMode: 'if-needed',
+      behavior: "smooth",
+      block: 'center'
+    })
+  }
+      
     if (loading || !data) 
         return (
             <Fragment>
@@ -128,20 +176,34 @@ const Parcel = ({loading, setSelected, selected, data, parcelNum, open, setOpen,
             </Fragment>
         )
 
+    const parcelErrors = Object.entries(data[0]['Segments']).map((e, i) => {
+        let parcelErrorCount = 0;
+         Object.values(e[1].Labels_Check).map((el, il) => {
+            if(Object.values(el).includes('Fail')) {
+                parcelErrorCount++
+            }
+        })
+        return parcelErrorCount
+    });
        
     const parcelInfo = Object.entries(data[0]['Segments']).map((e, i) => {
-        if (i === active) {
-            return <li className={`parcelInfo`} onClick={() => handleSelect(i)} {...parcelInfoSelectedProps} key={i}> {Object.entries(data[0]['Segments'])[i][1].desc_grid}</li>
+        if (selected === e[1]['oid']) {
+            return <li ref={itemEl} className={`parcelInfo`} onClick={() => handleSelect(e[1]['oid'])} {...parcelInfoSelectedProps} key={i}> {Object.entries(data[0]['Segments'])[i][1].desc_grid}</li>
         } else {
-            return <li className={`parcelInfo`} onClick={() => handleSelect(i)} {...parcelInfoProps} key={i}> {Object.entries(data[0]['Segments'])[i][1].desc_grid}</li>
+            return <li className={`parcelInfo`} onClick={() => handleSelect(e[1]['oid'])} {...(Object.values(Object.values(e[1].Labels_Check)[0]).includes('Fail') || Object.values(Object.values(e[1].Labels_Check)[1]).includes('Fail') ? {...parcelErrorProps} : {...parcelInfoProps})} key={i}> {Object.entries(data[0]['Segments'])[i][1].desc_grid}</li>
         }
-    
     }); 
 
     return (
         <div key={parcelNum} {...(opened === true) ? {...parcelSelectedProps} : {...parcelProps}}>
-            <div {...parcelTopProps} onClick={e => handleClick(e)}>
-                <div>Parcel {parcelNum + 1}</div>
+            <div {...parcelTopProps} onClick={e => handleClick()}>
+                <div> 
+                    {{
+                    'legal': <p>Parcel {parcelNum + 1}{(parcelErrors.filter(e => e > 0).length > 0 ? <span {...parcelErrorIconProps}>{parcelErrors.filter(e => e > 0).length}</span>: null)}</p>,
+                    'monument': <p>Point {parcelNum + 1}</p>,
+                    'reference': <p>Reference {parcelNum + 1}</p>,
+                    }[page]}
+                </div>
                 <div></div>
                 <div {...parcelButtonProps}>{opened ? '-' : '+'}</div>
             </div>

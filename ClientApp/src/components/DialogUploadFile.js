@@ -28,6 +28,10 @@ const useStyles = makeStyles(theme => ({
       margin: theme.spacing(2),
     },
   },
+  select: {
+    padding: '1rem',
+    fontSize: '1rem'
+  }
 }));
 
 const dialogTitleProps = {
@@ -119,18 +123,20 @@ const DialogUploadFile = ({open, onClose, connectionId, isLoading, setSubmit}) =
                             defaultValue=""
                             render={({ field: { onChange, value }, fieldState: { error } }) => (
                                 <FormControl style={{marginTop: '2rem'}} fullWidth>
-                                    <InputLabel>Map Type</InputLabel>
-                                    <Select
+                                    <label htmlFor="mapType">Map Type</label>
+                                    <select
+                                        className={classes.select}
                                         value={value}
-                                        label="mapType"
+                                        name="mapType"
                                         onChange={(e) => {
                                             onChange(e.target.value)
                                             setMapType(e.target.value)
                                         }}
                                     >
-                                        <MenuItem value={'TractMap'}>Tract Map</MenuItem>
-                                        <MenuItem value={'RecordOfSurvey'}>Record of Survey</MenuItem>
-                                    </Select>
+                                        <option value="" disabled hidden>Select...</option>
+                                        <option value={'TractMap'}>Tract Map</option>
+                                        <option value={'RecordOfSurvey'}>Record of Survey</option>
+                                    </select>
                                 </FormControl>
                             )}
                             rules={{ required: 'Map Type required' }}
