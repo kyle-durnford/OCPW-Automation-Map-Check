@@ -1,6 +1,7 @@
-import React, { useState, useEffect, createRef } from "react"
+import React, { useState, useEffect, createRef, Fragment } from "react"
 import { makeStyles } from '@material-ui/core/styles';
 import { HubConnectionBuilder } from "@microsoft/signalr";
+import { CircularProgress } from '@material-ui/core';
 import DialogUploadFile from './DialogUploadFile'
 import SurveyTable from './SurveyTable'
 import EsriMap from './EsriMap'
@@ -10,7 +11,7 @@ import Drawer from './Drawer'
 import AppBar from './AppBar'
 import planImage from "../assets/plan_drawing.svg"
 import connection from '../services/connection'
-import esri from '../data/esri'
+// import { buildMap } from '../data/esri'
 import Checklist from "./Checklist";
 
 
@@ -133,7 +134,8 @@ const defaultAltProps = {
     alignItems: 'center',
     width: 'calc(50% - .5rem)',
     maxWidth: '85%',
-    height: '100%'
+    height: '100%',
+    overflow: 'hidden'
   },
 };
 
@@ -251,6 +253,8 @@ const Container = () => {
   const [splitPaneHeightRef, setSplitPaneHeightRef] = useState();
   const [topRef, setTopRef] = useState();
   const [section, setSection] = useState(1);
+  const [esriData, setEsriData] = useState()
+  const [container, setContainer] = useState()
 
   // const getData = () => {
   //   fetch('437oc.json', {
@@ -288,6 +292,11 @@ const Container = () => {
   //   }
   // }, [data])
 
+      
+  const setMapRef = (mapRef) => {
+    setContainer(mapRef)
+  }
+
   useEffect(() => {
     const designAutomation = new HubConnectionBuilder().withUrl("/api/signalr/designautomation").withAutomaticReconnect().build();
     setDesignAutomationConnect(designAutomation)
@@ -302,7 +311,6 @@ const Container = () => {
     //     error => {
     //        console.log('Error:', error)        }
     // )
-    
 
     connection.createAppBundle().then(
         response => {
@@ -409,7 +417,9 @@ const Container = () => {
               setParcelInfo(response)
               setLoadingTable(false)
 
-              esri.buildMap(response)
+              // buildMap(response, container)
+              setLoadingEsri(false)
+              setEsriData(response)
           },
           error => {
             console.log('Error:', error)        }
@@ -521,7 +531,6 @@ const Container = () => {
       };
   });
 
-  
 
   return (
     <div className={classes.root}>
@@ -541,7 +550,15 @@ const Container = () => {
           <div ref={e => setSplitPaneHeightRef(e)} {...rightContProps}>
           <div {...mapContProps} ref={splitPaneRef} className="splitPane" ref={e => setTopRef(e)}>
             <div {...defaultAltProps} ref={leftRef}>
-              <EsriMap loading={loadingEsri} />
+              {esriData ?
+                <EsriMap loading={loadingEsri} esriData={esriData}/>   
+                :
+                <Fragment>
+                    <span className={classes.circularProgress}>
+                        <CircularProgress size={48} />
+                    </span>
+                </Fragment>                
+              }
             </div>
             <div {...dividerProps} onMouseDown={(e) => onMouseDown(e, 'horz')}>
               <div {...dividerHandle}>
