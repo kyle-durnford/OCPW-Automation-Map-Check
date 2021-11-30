@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef, Fragment } from "react"
 import { CircularProgress } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
-import { buildMap, createCityLayer } from '../data/esri'
+import { buildMap, createCityLayer, selectedLayer } from '../data/esri'
 
 const useStyles = makeStyles(() => ({
     circularProgress: {
@@ -11,22 +11,23 @@ const useStyles = makeStyles(() => ({
       justifyContent: 'center'
     },
     viewDiv: {
-        height: 'calc(50vh - 65px)',
-        width: '100%' 
+        height: '100%',
+        width: '100%',
     }
 }));
 
-const EsriMap = ({loading, esriData}) => {
+const EsriMap = ({loading, esriData, selected}) => {
     const classes = useStyles();
     const mapRef = useRef();
 
-    console.log('esriData', esriData)
+    useEffect(() => {
+        const cityLayer = createCityLayer()
+        buildMap(esriData, mapRef.current, cityLayer, selected)
+    }, []);
 
     useEffect(() => {
-        console.log('Build Map')
-        const cityLayer = createCityLayer()
-        buildMap(esriData, mapRef.current, cityLayer)
-    }, []);
+        selectedLayer(selected)
+    }, [selected])
 
     // esri.buildMap(json, mapRef)
     // if (loading) 

@@ -255,6 +255,11 @@ const Container = () => {
   const [section, setSection] = useState(1);
   const [esriData, setEsriData] = useState()
   const [container, setContainer] = useState()
+  const [hideDrawer, setHideDrawer] = useState(false)
+
+  const leftRef = createRef();
+  const splitPaneRef = createRef();
+  const drawerContRef = createRef();
 
   // const getData = () => {
   //   fetch('437oc.json', {
@@ -293,9 +298,9 @@ const Container = () => {
   // }, [data])
 
       
-  const setMapRef = (mapRef) => {
-    setContainer(mapRef)
-  }
+  // const setMapRef = (mapRef) => {
+  //   setContainer(mapRef)
+  // }
 
   useEffect(() => {
     const designAutomation = new HubConnectionBuilder().withUrl("/api/signalr/designautomation").withAutomaticReconnect().build();
@@ -420,6 +425,8 @@ const Container = () => {
               // buildMap(response, container)
               setLoadingEsri(false)
               setEsriData(response)
+              
+              setLeftWidth(topRef?.clientWidth/2 - 8)
           },
           error => {
             console.log('Error:', error)        }
@@ -447,10 +454,6 @@ const Container = () => {
   const handleLoading = (isLoading) => {
     setSubmit(isLoading)
   }
-
-    const leftRef = createRef();
-  const splitPaneRef = createRef();
-  const drawerContRef = createRef();
 
   const onMouseDown = (e, bar) => {
     setBar(bar)
@@ -536,9 +539,9 @@ const Container = () => {
     <div className={classes.root}>
       <div className={classes.drawerCont} ref={drawerContRef}>
         <div style={{position:'relative', width: 'calc(82px + .5rem)'}}>
-          <NavMenu setPage={setPage} page={page}/>
+          <NavMenu setPage={setPage} page={page} hideDrawer={hideDrawer} setHideDrawer={setHideDrawer}/>
         </div>
-        <Drawer loading={loading} page={page} data={parcelInfo} setSelected={setSelected} selected={selected} section={section} setSection={setSection}/>
+        <Drawer hideDrawer={hideDrawer} loading={loading} page={page} data={parcelInfo} setSelected={setSelected} selected={selected} section={section} setSection={setSection}/>
       </div>
       <div className={classes.mapView}>
         <AppBar handleClickOpen={handleClickOpen} />
@@ -551,7 +554,7 @@ const Container = () => {
           <div {...mapContProps} ref={splitPaneRef} className="splitPane" ref={e => setTopRef(e)}>
             <div {...defaultAltProps} ref={leftRef}>
               {esriData ?
-                <EsriMap loading={loadingEsri} esriData={esriData}/>   
+                <EsriMap loading={loadingEsri} esriData={esriData} selected={selected}/>   
                 :
                 <Fragment>
                     <span className={classes.circularProgress}>
@@ -560,7 +563,7 @@ const Container = () => {
                 </Fragment>                
               }
             </div>
-            <div {...dividerProps} onMouseDown={(e) => onMouseDown(e, 'horz')}>
+            <div {...dividerProps} onMouseDown={e => onMouseDown(e, 'horz')}>
               <div {...dividerHandle}>
                 <span {...dividerHandleBarVert}></span>
                 <span {...dividerHandleBarVert}></span>

@@ -18,7 +18,7 @@ const drawerProps = {
     }
 };
 
-const Drawer = ({loading, data, setSelected, selected, page, setSection, section}) => {
+const Drawer = ({loading, data, setSelected, selected, page, setSection, section, hideDrawer}) => {
 
     const [open, setOpen] = useState(null);
     const [drawerData, setDrawerData] = useState();
@@ -78,7 +78,7 @@ const Drawer = ({loading, data, setSelected, selected, page, setSection, section
     }, [page, selected, segmentCount, section, open])
    
 
-        if (data !== null) {
+        if (data !== null && hideDrawer === false) {
         return (
             <div {...drawerProps} className={`scroll`}>
                 <div style={{paddingBottom: '1rem'}}> 

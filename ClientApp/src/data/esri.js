@@ -11,6 +11,8 @@ import BasemapToggle from "@arcgis/core/widgets/BasemapToggle"
 import Basemap from "@arcgis/core/Basemap"
 import Point from "@arcgis/core/geometry/Point"
 import Polygon from "@arcgis/core/geometry/Polygon"
+import Attribution from "@arcgis/core/widgets/Attribution";
+import Zoom from "@arcgis/core/widgets/Zoom";
 import _ from "lodash";
 
 let polylist = []
@@ -119,6 +121,10 @@ const lblgraphicslayer = new GraphicsLayer({
     id: 'lblgraphicslayer'
 })
 
+const selectedgraphicslayer = new GraphicsLayer({
+    id: 'selectedgraphicslayer'
+})
+
 lblgraphicslayer.minScale = 3000
 
 const lineSymbol = {
@@ -126,6 +132,8 @@ const lineSymbol = {
     color: 'cyan', // RGB color values as an array
     width: 4
 };
+
+let selectedLayers = []
 
 export const createCityLayer = () => {
     return (new MapImageLayer({
@@ -156,7 +164,6 @@ const OCB = new Basemap({
     baseLayers: [OCbasemapLayer],
     title: "Orange County",
     id: "ocbasemap",
-
     thumbnailUrl: "BasemapThumb.jpg"
 })
 
@@ -185,7 +192,6 @@ const parcellayer = new MapImageLayer({
 })
 
 const map = new Map({
-    //basemap: "streets-night-vector"
     basemap: OCB
 })
 
@@ -212,10 +218,11 @@ const clearup = (view) => {
     lblgraphicslayer.graphics.removeAll();
     graphicslayer.graphics.removeAll();
     graphicslayer2.graphics.removeAll();
+    selectedgraphicslayer.graphics.removeAll()
     view.graphics.removeAll();
 }
 
-const createFeature = (path, words, hid, oid, oidlist)  => {
+const createFeature = (path, words, hid, oid, oidlist, selected)  => {
 
     const myAtt = {
         legal: words,
@@ -257,18 +264,29 @@ const createFeature = (path, words, hid, oid, oidlist)  => {
         }
     });
 
+    var newGraphic = new Graphic({
+        geometry: myline,
+        attributes: myAtt,
+        symbol: {
+            type: "simple-line",
+            color: 'blue',
+            width: 3
+        }, 
+        visible: false
+    });
+
+        selectedLayers.push(newGraphic)
+
     oid2line[oid] = mygraphic
 }
 
-const ericJson = (jsonData, view) => {
+const ericJson = (jsonData, view, selected) => {
     clearup(view)
     // const dict = jsonData;
-    console.log('jsonData', jsonData)
     let pnum = 0;
     let mkey = 'Parcel'
     const parcels = jsonData.Parcels
     _.forEach(parcels, (value, key) => {
-        // console.log('Parcels:', value[0].Segments)
         pnum += 1
         mkey = 'Parcel' + pnum
         const dictionary = value[0]['Segments'];
@@ -292,6 +310,14 @@ const ericJson = (jsonData, view) => {
             pnum: 'Parcel' + pnum
         };
 
+        
+        // var newGraphic = new Graphic({
+        //     geometry: poly,
+        //     attributes: pAtt,
+        //     symbol: polygonSymbol
+        // });
+    
+        
         var newGraphic = new Graphic({
             geometry: poly,
             attributes: pAtt,
@@ -426,7 +452,7 @@ const ericJson = (jsonData, view) => {
                 const y2 = str.split(',')[1].split(' ')[2]
                 const path = [[x, y, 0], [x2, y2, 0]]
 
-                createFeature(path, words, hid, oid, oidlist);
+                createFeature(path, words, hid, oid, oidlist, selected);
             } 
             else if (shapetype == 'Curve') {
                 const cstr = str.split(', ')
@@ -445,22 +471,18 @@ const ericJson = (jsonData, view) => {
                     item1.push(item2)
                 })
 
-                createFeature(item1, words, hid, oid, oidlist);
+                createFeature(item1, words, hid, oid, oidlist, selected);
             }
         })
     })
-    // }
-    // $('#apncount').text(pnum)
-    // lblgraphicslayer.when(function () {
-    //     view.goTo(polylist, {
-    //         zoom: 10
-    //     });
-    // });
+    graphicslayer.when(function () {
+        view.goTo({
+            target: polylist
+        });
+    });
 }
 
-export const buildMap = (json, mapRef, cityLayers) => {
-
-    // console.log('Building Map')
+export const buildMap = (json, mapRef, cityLayers, selected) => {
 
     config.request.timeout = 300000
 
@@ -486,11 +508,18 @@ export const buildMap = (json, mapRef, cityLayers) => {
         nextBasemap: oceagle
     })
 
+    const zoom = new Zoom({
+        view: view
+    })
+
+    view.ui.move("zoom", "bottom-right")
+
     // view.ui.add("reset-map", "top-left")
     // view.ui.add(btoggle, "bottom-left")
 
     map.add(graphicslayer)
     map.add(graphicslayer2)
+    map.add(selectedgraphicslayer)
 
     map.add(lblgraphicslayer)
 
@@ -501,7 +530,7 @@ export const buildMap = (json, mapRef, cityLayers) => {
         //myUpload()
     })
 
-    ericJson(json, view)
+    ericJson(json, view, selected)
 
     view.on("hold", function (event) {
         view.hitTest(event).then(function (response) {
@@ -582,7 +611,18 @@ export const buildMap = (json, mapRef, cityLayers) => {
     console.log('Finished')
 }
 
+export const selectedLayer = (selected) => {
+    selectedLayers.forEach(e => e.visible = false)
+    if (selected) {
+        let select = selected - 1
+        selectedLayers[select].visible = true
+    }
+    selectedgraphicslayer.graphics.removeAll()
+    selectedgraphicslayer.graphics.addMany(selectedLayers);
+}
+
 export default {
   buildMap,
-  createCityLayer
+  createCityLayer,
+  selectedLayer
 }

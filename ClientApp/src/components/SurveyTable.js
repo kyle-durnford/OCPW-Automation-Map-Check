@@ -680,7 +680,7 @@ useEffect(() => {
  
     return (
       <div {...tableContainerProps}>
-      <div {...tableTabRowProps}>
+      <div {...tableTabRowProps} className='noselect'>
         <div {...tabInner}>
           {tabArray.map((e, i) => (
             <div 

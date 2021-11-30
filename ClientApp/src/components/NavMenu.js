@@ -8,6 +8,8 @@ import monument from "../assets/monument.svg"
 import reference from "../assets/reference.svg"
 import checklist from "../assets/checklist.svg"
 import report from "../assets/report.svg"
+import show from "../assets/show.svg"
+import hide from "../assets/hide.svg"
 import './NavMenu.css';
 
 const drawerWidth = 100;
@@ -72,14 +74,28 @@ const columnProps = {
     borderRadius: '.5rem', 
     position: 'fixed', 
     top: '0', 
-    left: '0'},
+    left: '0',
+    position: 'relative'
+  },
 };
 
 const iconProps = {
 };
 
+const bottomProps = {
+  style: {
+    width: '1rem',
+    height: '1rem',
+    margin: '0 auto',
+    cursor: 'pointer',
+    position: 'absolute',
+    bottom: '1rem',
+    left: '40%'
+  }
+}
 
-const NavMenu = ({setPage, page}) => {
+
+const NavMenu = ({setPage, page, hideDrawer, setHideDrawer}) => {
   const classes = useStyles();
 
   return (
@@ -141,6 +157,13 @@ const NavMenu = ({setPage, page}) => {
                 </li> 
             </ul>
         </Nav>
+        <ul {...bottomProps}>
+          <li onClick={() => setHideDrawer(hideDrawer ? false : true)}>
+            <div {...iconProps}>
+              <img src={(hideDrawer === false ? show : hide)} className={classes.icon}></img>
+            </div>
+          </li> 
+        </ul>
       </div>
   )
 
