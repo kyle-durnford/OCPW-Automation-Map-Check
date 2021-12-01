@@ -102,7 +102,7 @@ const NavMenu = ({setPage, page, hideDrawer, setHideDrawer}) => {
       <div borderradius={8} {...columnProps}>
         <Nav variant="pills" className={classes.navbar} >
             <ul className="navbar-nav">
-                <li className={`${classes.flex} ${classes.tab} ${classes.link}`} onClick={() => setPage('project')} {...(page === 'project' ? {...selectedTab} : null)}>
+                <li className={`${classes.flex} ${classes.tab} ${classes.link} navHover`} onClick={() => setPage('project')} {...(page === 'project' ? {...selectedTab} : null)}>
                   <div {...iconProps}>
                     <Project className={classes.icon} color={'#fff'}/>
                   </div>
@@ -111,7 +111,7 @@ const NavMenu = ({setPage, page, hideDrawer, setHideDrawer}) => {
                   </div> 
                 </li> 
               
-                <li className={`${classes.flex} ${classes.tab} ${classes.link}`} onClick={() => setPage('legal')} {...(page === 'legal' ? {...selectedTab} : null)}>
+                <li className={`${classes.flex} ${classes.tab} ${classes.link} navHover`} onClick={() => setPage('legal')} {...(page === 'legal' ? {...selectedTab} : null)}>
                   <div {...iconProps}>
                     <img src={iconLegal} className={classes.icon}></img>
                   </div>
@@ -120,34 +120,34 @@ const NavMenu = ({setPage, page, hideDrawer, setHideDrawer}) => {
                   </div> 
                 </li> 
 
-                <li className={`${classes.flex} ${classes.tab} ${classes.link}`} onClick={() => setPage('monument')} {...(page === 'monument' ? {...selectedTab} : null)}>
+                {/* <li className={`${classes.flex} ${classes.tab} ${classes.link} navHover`} onClick={() => setPage('monument')} {...(page === 'monument' ? {...selectedTab} : null)}>
                   <div {...iconProps}>
                     <img src={monument} className={classes.icon}></img>
                   </div>
                   <div className={classes.title}>
                     Monument
                   </div> 
-                </li> 
+                </li>  */}
           
-                <li className={`${classes.flex} ${classes.tab} ${classes.link}`} onClick={() => setPage('reference')} {...(page === 'reference' ? {...selectedTab} : null)}>
+                {/* <li className={`${classes.flex} ${classes.tab} ${classes.link} navHover`} onClick={() => setPage('reference')} {...(page === 'reference' ? {...selectedTab} : null)}>
                   <div {...iconProps}>
                     <img src={reference} className={classes.icon}></img>
                   </div>
                   <div className={classes.title}>
                     Reference
                   </div> 
-                </li> 
+                </li>  */}
 
-                <li className={`${classes.flex} ${classes.tab} ${classes.link}`} onClick={() => setPage('check')} {...(page === 'check' ? {...selectedTab} : null)}>
+                {/* <li className={`${classes.flex} ${classes.tab} ${classes.link} navHover`} onClick={() => setPage('check')} {...(page === 'check' ? {...selectedTab} : null)}>
                   <div {...iconProps}>
                     <img src={checklist} className={classes.icon}></img>
                   </div>
                   <div className={classes.title}>
                     Check List
                   </div> 
-                </li>
+                </li> */}
               
-                <li className={`${classes.flex} ${classes.tab} ${classes.link}`} onClick={() => setPage('report')} {...(page === 'report' ? {...selectedTab} : null)}>
+                <li className={`${classes.flex} ${classes.tab} ${classes.link} navHover`} onClick={() => setPage('report')} {...(page === 'report' ? {...selectedTab} : null)}>
                   <div {...iconProps}>
                     <img src={report} className={classes.icon}></img>
                   </div>
@@ -160,7 +160,7 @@ const NavMenu = ({setPage, page, hideDrawer, setHideDrawer}) => {
         <ul {...bottomProps}>
           <li onClick={() => setHideDrawer(hideDrawer ? false : true)}>
             <div {...iconProps}>
-              <img src={(hideDrawer === false ? show : hide)} className={classes.icon}></img>
+              <img src={(hideDrawer === false ? hide : show)} className={classes.icon}></img>
             </div>
           </li> 
         </ul>

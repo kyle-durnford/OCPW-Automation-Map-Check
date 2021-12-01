@@ -512,6 +512,7 @@ export const buildMap = (json, mapRef, cityLayers, selected) => {
         view: view
     })
 
+    view.ui.add(btoggle, "bottom-left")
     view.ui.move("zoom", "bottom-right")
 
     // view.ui.add("reset-map", "top-left")

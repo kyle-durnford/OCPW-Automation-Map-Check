@@ -48,8 +48,8 @@ const ReportDrawer = ({data}) => {
 
     const paragraphs = () => {
         return data.map((e, i) => new docx.Paragraph({
-            children: [ new docx.TextRun({text: 'parcel_' + (i + 1), break: 2, bold: true}), 
-                        ...Object.entries(e[1][1][1][0]['Segments']).map((el, il) => new docx.TextRun({break: 2, text:el[1]['desc_grid']}))]
+            children: [ new docx.TextRun({text: 'parcel_' + (i + 1), break: 2, bold: true,  font: "Calibri", size: 32}), 
+                        ...Object.entries(e[1][1][1][0]['Segments']).map((el, il) => new docx.TextRun({break: 2, size: 24, font: "Calibri", text:el[1]['desc_grid']}))]
         }))
     }
 

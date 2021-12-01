@@ -17,7 +17,7 @@
         "ASPNETCORE_URLS": "http://localhost:3000",
         "FORGE_CLIENT_ID": "v1FZSxmHVFHIXrvcSK4VsdGK4cTO4F7g",
         "ASPNETCORE_ENVIRONMENT": "Development",
-        "FORGE_WEBHOOK_URL": "http://ed6f-66-244-192-10.ngrok.io"
+        "FORGE_WEBHOOK_URL": "http://3076-66-244-192-10.ngrok.io"
       }
     },
     "ForgeChckerReactApp": {

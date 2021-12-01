@@ -394,7 +394,7 @@ const Container = () => {
           modelDerivativeConnect.invoke('getConnectionId').then((id) => {
               console.log("getConnectionId ModelDerivative result: " , id)
               setModelDerivativeId(id)
-          })
+          }) 
 
           modelDerivativeConnect.on("extractionFinished", (extractionFinished) => {
             console.log('extractionFinished:', extractionFinished)
@@ -547,11 +547,11 @@ const Container = () => {
         <AppBar handleClickOpen={handleClickOpen} />
         <DialogUploadFile open={open} onClose={onDialogClose} connectionId={designAutomationId} isLoading={handleLoading}/>
         <div className={classes.mapCont}>
-        {page === 'check' && submit ?  
-          <Checklist data={parcelInfo} section={section} setSection={setSection}/>
-          : submit ?
+        {/* {page === 'check' && submit ?  
+          <Checklist data={parcelInfo} section={section} setSection={setSection}/> */}
+        { submit ?
           <div ref={e => setSplitPaneHeightRef(e)} {...rightContProps}>
-          <div {...mapContProps} ref={splitPaneRef} className="splitPane" ref={e => setTopRef(e)}>
+          <div {...mapContProps} ref={splitPaneRef} className={"splitPane", 'noselect'} ref={e => setTopRef(e)}>
             <div {...defaultAltProps} ref={leftRef}>
               {esriData ?
                 <EsriMap loading={loadingEsri} esriData={esriData} selected={selected}/>   

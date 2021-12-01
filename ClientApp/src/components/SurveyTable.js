@@ -440,12 +440,10 @@ const SurveyTable = ({loading, data, selected, setSelected, page}) => {
       let results = []
       data.map((e, i) => {
         Object.entries(data[i][1][1][1][0]['Segments']).map((row, l) => {
-          console.log(row[1])
           row[1] = {...row[1], ...{parcel: i+1}, ...{parcelId: (i+1) + ":" + (l+1)}}
           if (row.find(({ shapeType }) => shapeType === 'Line')) {
             let check1 = false
             let check2 = false
-            console.log(Object.values(Object.values(Object.values(row[1].Labels_Check))))
             if(Object.values(Object.values(Object.values(row[1].Labels_Check))).includes('None')) {
               row[1] = {...row[1], ...{status: 'none'}}
             } else {
