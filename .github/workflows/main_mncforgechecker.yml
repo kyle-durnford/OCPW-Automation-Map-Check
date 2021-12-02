@@ -53,5 +53,5 @@ jobs:
         with:
           app-name: 'mncforgechecker'
           slot-name: 'Production'
-          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_0BB029099DBF4C9B89AF54B96C1BCEBF }}
+          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_16776838BB5846B5A12725BAFCAC8F64 }}
           package: .
