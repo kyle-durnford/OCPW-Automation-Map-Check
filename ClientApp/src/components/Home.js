@@ -1,14 +1,17 @@
-import React, { Component } from 'react';
+import React, { useEffect } from 'react';
+import Container from './Container'
 
-export class Home extends Component {
-  static displayName = Home.name;
+const Home = () => {
 
-  render () {
-    return (
-        <div>
-            <h3>Automation Map Check</h3>
-            <p> Single-Page application NetCore 3.1 and React</p>
-      </div>
-    );
-  }
+  useEffect(() => {
+  }, [])
+
+  return (
+    <div>
+        <Container />
+    </div>
+  )
+
 }
+
+export default Home

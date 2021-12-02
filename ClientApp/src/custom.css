@@ -1,14 +1,15 @@
 /* Provide sufficient contrast against white background */
-a {
-  color: #0366d6;
+ .orangeOutlineButton :hover{
+  background-color: #fe805c !important;
+  color: #fff !important;
 }
 
-code {
-  color: #E01A76;
-}
-
-.btn-primary {
-  color: #fff;
-  background-color: #1b6ec2;
-  border-color: #1861ac;
+.noselect {
+  -webkit-touch-callout: none; /* iOS Safari */
+    -webkit-user-select: none; /* Safari */
+     -khtml-user-select: none; /* Konqueror HTML */
+       -moz-user-select: none; /* Old versions of Firefox */
+        -ms-user-select: none; /* Internet Explorer/Edge */
+            user-select: none; /* Non-prefixed version, currently
+                                  supported by Chrome, Edge, Opera and Firefox */
 }
