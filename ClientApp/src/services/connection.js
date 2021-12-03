@@ -13,7 +13,19 @@ export const startConnection = async => {
         })
 
     });
+}
+export const startConnection2 = async => {
 
+
+    let connection2 = new signalR.HubConnectionBuilder().withUrl("/api/signalr/modelderivative").withAutomaticReconnect().build();
+
+    connection2.start().then(() => {
+        connection2.invoke('getConnectionId2').then((id) => {
+            console.log("getConnectionId2 result: ", id)
+            return id
+        })
+
+    });
 
 }
 
@@ -142,17 +154,19 @@ export const clearAccount = async => {
 }
 
 export const translateObject = async (objectKeys, connectionId) => {
-
-  const data = {
-    data: { 
-        'bucketKey': objectKeys[0], 
-        'objectName': objectKeys[1], 
-        'connectionId': connectionId 
+    const data = {
+        data: { 
+        "bucketKey": objectKeys[0], 
+        "objectName": objectKeys[1], 
+        "connectionId": connectionId 
       }
-  }
+    }
+    const headers = {
+        'Content-Type': 'application/json',
+    }
 
-  return new Promise(function(resolve, reject) {
-    axios.post("/api/forge/modelderivative/jobs", data).then(
+    return new Promise(function (resolve, reject) {
+        axios.post("/api/forge/modelderivative/jobs", data.data, { headers: headers }).then(
       response => {
         console.log("Response: ", response)
         resolve(response.data)
