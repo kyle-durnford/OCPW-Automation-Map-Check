@@ -2,6 +2,7 @@
   "dependencies": {
     "docx": "^7.2.0",
     "file-saver": "^2.0.5",
+    "react-sticky-mouse-tooltip": "0.0.1",
     "redocx": "^1.1.4"
   }
 }

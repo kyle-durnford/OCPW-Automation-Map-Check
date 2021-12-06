@@ -144,11 +144,9 @@ export const clearAccount = async => {
 export const translateObject = async (objectKeys, connectionId) => {
 
   const data = {
-    data: { 
-        'bucketKey': objectKeys[0], 
-        'objectName': objectKeys[1], 
-        'connectionId': connectionId 
-      }
+      'bucketKey': objectKeys[0], 
+      'objectName': objectKeys[1], 
+      'connectionId': connectionId 
   }
 
   return new Promise(function(resolve, reject) {
