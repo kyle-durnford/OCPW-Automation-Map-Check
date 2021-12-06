@@ -14,20 +14,6 @@ export const startConnection = async => {
 
     });
 }
-export const startConnection2 = async => {
-
-
-    let connection2 = new signalR.HubConnectionBuilder().withUrl("/api/signalr/modelderivative").withAutomaticReconnect().build();
-
-    connection2.start().then(() => {
-        connection2.invoke('getConnectionId2').then((id) => {
-            console.log("getConnectionId2 result: ", id)
-            return id
-        })
-
-    });
-
-}
 
 export const startWorkItem = async item => {
 
