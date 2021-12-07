@@ -546,8 +546,9 @@ export const buildMap = (json, mapRef, cityLayers) => {
 
     map.add(graphicslayer)
     map.add(graphicslayer2)
+    //map.add(lblgraphicslayer)
     map.add(selectedgraphicslayer)
-    map.add(lblgraphicslayer)
+    
 
     // view.when(function () {
     //     //myUpload()
@@ -574,73 +575,74 @@ export const buildMap = (json, mapRef, cityLayers) => {
         }
     })
 
-    // view.on("pointer-down", function (event) {
-    //     let lastgeo = ''
-    //     try {
-    //         view.hitTest(event).then(function (response) {
-    //             const graphic = response.results.filter(function (result) {
-    //                 if ((result.graphic.layer === graphicslayer) && (result.graphic.layer !== graphicslayer2)) {
-    //                     console.log('Mapbe poly')
-    //                 }
-    //                 return result.graphic.layer === graphicslayer2;
-    //             })[0].graphic;
-    //             const attribute = graphic.attributes;
-    //             const hid = attribute.hid;
-    //             // const overLayGeometryExtension = viewer.getExtension('OverLayGeometry')
-    //             // if (hid) {
-    //             //     // Call Function to zoom in to object on viewer.
-    //             //     executeFitToViewHandleId(hid);
+    view.on("pointer-down", function (event) {
+        let lastgeo = ''
+        try {
+            view.hitTest(event).then(function (response) {
+                const graphic = response.results.filter(function (result) {
+                    if (result.graphic.layer === selectedgraphicslayer) {
+                        console.log('Mapbe poly')
+                    }
+                    return result.graphic.layer === selectedgraphicslayer;
+                })[0].graphic;
+                const attribute = graphic.attributes;
+                const hid = attribute.hid;
+                console.log(graphic.attributes.hid)
+                // const overLayGeometryExtension = viewer.getExtension('OverLayGeometry')
+                // if (hid) {
+                //     // Call Function to zoom in to object on viewer.
+                //     executeFitToViewHandleId(hid);
     
-    //             //     overLayGeometryExtension.searchSelectedObj(hid, viewerDbIds)
-    //             // }
+                //     overLayGeometryExtension.searchSelectedObj(hid, viewerDbIds)
+                // }
     
-    //             const geo = graphic.geometry;
-    //             view.graphics.removeAll();
-    //             // $(".lblclass").css("background-color", "white");
-    //             // $(".ptab").css("background-color", "white");
-    //             // $(".atab").removeClass("show");
-    //             // $(".headtab").addClass("collapsed");
+                const geo = graphic.geometry;
+                //view.graphics.removeAll();
+                // $(".lblclass").css("background-color", "white");
+                // $(".ptab").css("background-color", "white");
+                // $(".atab").removeClass("show");
+                // $(".headtab").addClass("collapsed");
     
     
-    //             if (lastgeo !== geo) {
-    //                 lastgeo = geo;
-    //                 //lineSymbol
+                if (lastgeo !== geo) {
+                    lastgeo = geo;
+                    //lineSymbol
     
-    //                 var graphic3 = new Graphic({
-    //                     geometry: geo,
-    //                     symbol: lineSymbol
-    //                 });
+                    var graphic3 = new Graphic({
+                        geometry: geo,
+                        symbol: lineSymbol
+                    });
     
-    //                 ////*[@id="87"]
+                    ////*[@id="87"]
     
-    //                 view.graphics.add(graphic3);
+                    view.graphics.add(graphic3);
     
-    //                 // $("#" + attribute.oid).css("background-color", "cyan");
-    //                 // var pid = $("#" + attribute.oid).attr("pid");
-    //                 // $(pid).css("background-color", "cyan");
-    //                 // var ppid = $(pid).attr("ppid");
-    //                 // var tid = $(pid).attr("tid");
-    //                 // $(ppid).addClass("show");
-    //                 // $(tid).removeClass("collapsed");
-    //                 // $(tid).attr("aria-expanded", "true")
-    //                 // $(pid)[0].scrollIntoView({
-    //                 //     behavior: "smooth", // or "auto" or "instant"
-    //                 //     block: "start" // or "end"
-    //                 // });
-    //                 // $("#" + attribute.oid)[0].scrollIntoView({
-    //                 //     behavior: "smooth", // or "auto" or "instant"
-    //                 //     block: "start" // or "end"
-    //                 // });
-    //             } else {
-    //                 //console.log('Same');
-    //             }
+                    // $("#" + attribute.oid).css("background-color", "cyan");
+                    // var pid = $("#" + attribute.oid).attr("pid");
+                    // $(pid).css("background-color", "cyan");
+                    // var ppid = $(pid).attr("ppid");
+                    // var tid = $(pid).attr("tid");
+                    // $(ppid).addClass("show");
+                    // $(tid).removeClass("collapsed");
+                    // $(tid).attr("aria-expanded", "true")
+                    // $(pid)[0].scrollIntoView({
+                    //     behavior: "smooth", // or "auto" or "instant"
+                    //     block: "start" // or "end"
+                    // });
+                    // $("#" + attribute.oid)[0].scrollIntoView({
+                    //     behavior: "smooth", // or "auto" or "instant"
+                    //     block: "start" // or "end"
+                    // });
+                } else {
+                    //console.log('Same');
+                }
     
-    //         })
-    //     } catch {
-    //         console.log('out of bounds')
-    //     }
+            })
+        } catch {
+            console.log('out of bounds')
+        }
         
-    // })
+    })
 
     console.log('Finished')
 }
