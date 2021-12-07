@@ -2,7 +2,6 @@ import React, { useState, useEffect, Fragment } from "react"
 import { CircularProgress } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import connection from '../services/connection'
-import { launchViewer } from "../data/forge";
 
 const useStyles = makeStyles(() => ({
     circularProgress: {
@@ -10,10 +9,6 @@ const useStyles = makeStyles(() => ({
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'center'
-    },
-    viewDiv: {
-        height: '100%',
-        width: '100%',
     }
 }));
 
@@ -32,23 +27,15 @@ const ForgeMap = ({loading, objectKeys, connectionId}) => {
             connection.translateObject(objectKeys, connectionId).then(
                 response => {
                     console.log('Response', response)
-                    setMapInfo(response.urn)
+                    setMapInfo(response.data)
                 },
                 error => {
-                    console.log('Error:', error)
-                }
+                    console.log('Error:', error)        }
             )
         }  
     }, [objectKeys]);
 
-    useEffect(() => {
-        console.log(mapInfo);
-        if(mapInfo){
-            launchViewer(mapInfo)
-        }
-    }, [mapInfo])
-
-    if (loading && !mapInfo) {
+    if (loading && !mapInfo) 
         return (
             <Fragment>
                 <span className={classes.circularProgress}>
@@ -56,11 +43,6 @@ const ForgeMap = ({loading, objectKeys, connectionId}) => {
                 </span>
             </Fragment>
         )
-    } else {
-        return (
-            <div className={classes.viewDiv} id='forgeViewer'/>
-        )
-    }
 }
 
 export default ForgeMap
