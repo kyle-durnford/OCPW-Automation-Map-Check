@@ -1,3 +1,4 @@
+
 import axios from "axios"
 import * as signalR from "@microsoft/signalr"
 
@@ -12,8 +13,6 @@ export const startConnection = async => {
         })
 
     });
-
-
 }
 
 export const startWorkItem = async item => {
@@ -141,15 +140,19 @@ export const clearAccount = async => {
 }
 
 export const translateObject = async (objectKeys, connectionId) => {
+    const data = {
+        data: { 
+        "bucketKey": objectKeys[0], 
+        "objectName": objectKeys[1], 
+        "connectionId": connectionId 
+      }
+    }
+    const headers = {
+        'Content-Type': 'application/json',
+    }
 
-  const data = {
-      'bucketKey': objectKeys[0], 
-      'objectName': objectKeys[1], 
-      'connectionId': connectionId 
-  }
-
-  return new Promise(function(resolve, reject) {
-    axios.post("/api/forge/modelderivative/jobs", data).then(
+    return new Promise(function (resolve, reject) {
+        axios.post("/api/forge/modelderivative/jobs", data.data, { headers: headers }).then(
       response => {
         console.log("Response: ", response)
         resolve(response.data)

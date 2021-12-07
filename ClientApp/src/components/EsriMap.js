@@ -16,13 +16,13 @@ const useStyles = makeStyles(() => ({
     }
 }));
 
-const EsriMap = ({loading, esriData, selected, setTooltip}) => {
+const EsriMap = ({loading, esriData, selected}) => {
     const classes = useStyles();
     const mapRef = useRef();
 
     useEffect(() => {
         const cityLayer = createCityLayer()
-        buildMap(esriData, mapRef.current, cityLayer, setTooltip)
+        buildMap(esriData, mapRef.current, cityLayer, selected)
     }, []);
 
     useEffect(() => {
