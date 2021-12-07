@@ -250,7 +250,6 @@ function getJsonFromDA(url) {
 
         // Set variable for other extention to access the json data
         da_jsonData = resultData;
-        console.log("DA", da_jsonData)
     });
     //$.get(url)
     //    .done(function (data) {
