@@ -14,6 +14,8 @@ import Polygon from "@arcgis/core/geometry/Polygon"
 import Attribution from "@arcgis/core/widgets/Attribution";
 import Zoom from "@arcgis/core/widgets/Zoom";
 import _ from "lodash";
+import Popup from "@arcgis/core/widgets/Popup";
+import { LevelFormat } from "docx";
 
 let polylist = []
 let par2poly = {}
@@ -201,7 +203,7 @@ const polygonSymbol = {
     outline: {
         // autocasts as new SimpleLineSymbol()
         color: 'red',
-        width: 1
+        width: 2
     }
 }
 
@@ -222,7 +224,7 @@ const clearup = (view) => {
     view.graphics.removeAll();
 }
 
-const createFeature = (path, words, hid, oid, oidlist, selected)  => {
+const createFeature = (path, words, hid, oid, oidlist)  => {
 
     const myAtt = {
         legal: words,
@@ -280,7 +282,7 @@ const createFeature = (path, words, hid, oid, oidlist, selected)  => {
     oid2line[oid] = mygraphic
 }
 
-const ericJson = (jsonData, view, selected) => {
+const ericJson = (jsonData, view) => {
     clearup(view)
     // const dict = jsonData;
     let pnum = 0;
@@ -307,7 +309,8 @@ const ericJson = (jsonData, view, selected) => {
             apn: '#apnresults' + pnum,
             tid: "#tabp" + pnum,
             ppid: '#tabapn' + pnum,
-            pnum: 'Parcel' + pnum
+            pnum: 'Parcel' + pnum,
+            pstring: 'Parcel ' + pnum
         };
 
         
@@ -452,7 +455,7 @@ const ericJson = (jsonData, view, selected) => {
                 const y2 = str.split(',')[1].split(' ')[2]
                 const path = [[x, y, 0], [x2, y2, 0]]
 
-                createFeature(path, words, hid, oid, oidlist, selected);
+                createFeature(path, words, hid, oid, oidlist);
             } 
             else if (shapetype == 'Curve') {
                 const cstr = str.split(', ')
@@ -471,7 +474,7 @@ const ericJson = (jsonData, view, selected) => {
                     item1.push(item2)
                 })
 
-                createFeature(item1, words, hid, oid, oidlist, selected);
+                createFeature(item1, words, hid, oid, oidlist);
             }
         })
     })
@@ -482,7 +485,7 @@ const ericJson = (jsonData, view, selected) => {
     });
 }
 
-export const buildMap = (json, mapRef, cityLayers, selected) => {
+export const buildMap = (json, mapRef, cityLayers) => {
 
     config.request.timeout = 300000
 
@@ -508,105 +511,135 @@ export const buildMap = (json, mapRef, cityLayers, selected) => {
         nextBasemap: oceagle
     })
 
-    const zoom = new Zoom({
-        view: view
-    })
-
     view.ui.add(btoggle, "bottom-left")
     view.ui.move("zoom", "bottom-right")
-
     // view.ui.add("reset-map", "top-left")
-    // view.ui.add(btoggle, "bottom-left")
+
+    view.popup = {
+        dockEnabled: true,
+        position: 'top-right',
+        autoOpenEnabled: false,
+        dockOptions: {
+            buttonEnabled: false,
+            breakpoint: false
+        }
+    }
+    view.on("hold", function (event) {
+        view.hitTest(event).then(function (response) {
+            try {
+                const graphic = response.results.filter(function (result) {
+                    // if (result.graphic.layer === graphicslayer) {
+                    //     //console.log('Maybe poly')
+                    // }
+                    return result.graphic.layer === graphicslayer;
+                })[0].graphic;
+                view.popup.open({
+                    title: graphic.attributes.pstring,
+                })
+            } catch {
+                view.popup.open({
+                    title: "No Parcel Found",
+                })
+            }
+        })
+    })
 
     map.add(graphicslayer)
     map.add(graphicslayer2)
     map.add(selectedgraphicslayer)
-
     map.add(lblgraphicslayer)
 
+    // view.when(function () {
+    //     //myUpload()
+    // })
 
-    // console.log('Finished')
+    ericJson(json, view)
 
-    view.when(function () {
-        //myUpload()
-    })
-
-    ericJson(json, view, selected)
-
-    view.on("hold", function (event) {
-        view.hitTest(event).then(function (response) {
-            const graphic = response.results.filter(function (result) {
-                if (result.graphic.layer === graphicslayer) {
-                    //console.log('Maybe poly')
+    view.on("pointer-down", e => {
+        try {
+            view.hitTest(e).then(response => {
+                if(response.results.length > 0){
+                    const graphic = response.results.filter(result => {
+                        if (result.graphic.layer === selectedgraphicslayer) {
+                            return result.graphic.layer
+                        } else {
+                            console.log('miss')
+                        }
+                    })[0].graphic
+                    console.log(graphic)
                 }
-                return result.graphic.layer === graphicslayer;
-            })[0].graphic;
-            const apn = graphic.attributes.apn;
-            // $(apn).click();
-        })
+            })
+        } catch {
+            console.log('none')
+        }
     })
 
     // view.on("pointer-down", function (event) {
     //     let lastgeo = ''
-    //     view.hitTest(event).then(function (response) {
-    //         const graphic = response.results.filter(function (result) {
-    //             if ((result.graphic.layer === graphicslayer) && (result.graphic.layer !== graphicslayer2)) {
-    //                 //console.log('Mapbe poly')
+    //     try {
+    //         view.hitTest(event).then(function (response) {
+    //             const graphic = response.results.filter(function (result) {
+    //                 if ((result.graphic.layer === graphicslayer) && (result.graphic.layer !== graphicslayer2)) {
+    //                     console.log('Mapbe poly')
+    //                 }
+    //                 return result.graphic.layer === graphicslayer2;
+    //             })[0].graphic;
+    //             const attribute = graphic.attributes;
+    //             const hid = attribute.hid;
+    //             // const overLayGeometryExtension = viewer.getExtension('OverLayGeometry')
+    //             // if (hid) {
+    //             //     // Call Function to zoom in to object on viewer.
+    //             //     executeFitToViewHandleId(hid);
+    
+    //             //     overLayGeometryExtension.searchSelectedObj(hid, viewerDbIds)
+    //             // }
+    
+    //             const geo = graphic.geometry;
+    //             view.graphics.removeAll();
+    //             // $(".lblclass").css("background-color", "white");
+    //             // $(".ptab").css("background-color", "white");
+    //             // $(".atab").removeClass("show");
+    //             // $(".headtab").addClass("collapsed");
+    
+    
+    //             if (lastgeo !== geo) {
+    //                 lastgeo = geo;
+    //                 //lineSymbol
+    
+    //                 var graphic3 = new Graphic({
+    //                     geometry: geo,
+    //                     symbol: lineSymbol
+    //                 });
+    
+    //                 ////*[@id="87"]
+    
+    //                 view.graphics.add(graphic3);
+    
+    //                 // $("#" + attribute.oid).css("background-color", "cyan");
+    //                 // var pid = $("#" + attribute.oid).attr("pid");
+    //                 // $(pid).css("background-color", "cyan");
+    //                 // var ppid = $(pid).attr("ppid");
+    //                 // var tid = $(pid).attr("tid");
+    //                 // $(ppid).addClass("show");
+    //                 // $(tid).removeClass("collapsed");
+    //                 // $(tid).attr("aria-expanded", "true")
+    //                 // $(pid)[0].scrollIntoView({
+    //                 //     behavior: "smooth", // or "auto" or "instant"
+    //                 //     block: "start" // or "end"
+    //                 // });
+    //                 // $("#" + attribute.oid)[0].scrollIntoView({
+    //                 //     behavior: "smooth", // or "auto" or "instant"
+    //                 //     block: "start" // or "end"
+    //                 // });
+    //             } else {
+    //                 //console.log('Same');
     //             }
-    //             return result.graphic.layer === graphicslayer2;
-    //         })[0].graphic;
-    //         const attribute = graphic.attributes;
-    //         const hid = attribute.hid;
-    //         // const overLayGeometryExtension = viewer.getExtension('OverLayGeometry')
-    //         // if (hid) {
-    //         //     // Call Function to zoom in to object on viewer.
-    //         //     executeFitToViewHandleId(hid);
-
-    //         //     overLayGeometryExtension.searchSelectedObj(hid, viewerDbIds)
-    //         // }
-
-    //         const geo = graphic.geometry;
-    //         view.graphics.removeAll();
-    //         // $(".lblclass").css("background-color", "white");
-    //         // $(".ptab").css("background-color", "white");
-    //         // $(".atab").removeClass("show");
-    //         // $(".headtab").addClass("collapsed");
-
-
-    //         if (lastgeo !== geo) {
-    //             lastgeo = geo;
-    //             //lineSymbol
-
-    //             var graphic3 = new Graphic({
-    //                 geometry: geo,
-    //                 symbol: lineSymbol
-    //             });
-
-    //             ////*[@id="87"]
-
-    //             view.graphics.add(graphic3);
-
-    //             // $("#" + attribute.oid).css("background-color", "cyan");
-    //             // var pid = $("#" + attribute.oid).attr("pid");
-    //             // $(pid).css("background-color", "cyan");
-    //             // var ppid = $(pid).attr("ppid");
-    //             // var tid = $(pid).attr("tid");
-    //             // $(ppid).addClass("show");
-    //             // $(tid).removeClass("collapsed");
-    //             // $(tid).attr("aria-expanded", "true")
-    //             // $(pid)[0].scrollIntoView({
-    //             //     behavior: "smooth", // or "auto" or "instant"
-    //             //     block: "start" // or "end"
-    //             // });
-    //             // $("#" + attribute.oid)[0].scrollIntoView({
-    //             //     behavior: "smooth", // or "auto" or "instant"
-    //             //     block: "start" // or "end"
-    //             // });
-    //         } else {
-    //             //console.log('Same');
-    //         }
-
-    //     })
+    
+    //         })
+    //     } catch {
+    //         console.log('out of bounds')
+    //     }
+        
     // })
 
     console.log('Finished')

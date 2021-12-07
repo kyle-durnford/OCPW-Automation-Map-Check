@@ -13,6 +13,7 @@ import planImage from "../assets/plan_drawing.svg"
 import connection from '../services/connection'
 // import { buildMap } from '../data/esri'
 import Checklist from "./Checklist";
+import MouseTooltip from 'react-sticky-mouse-tooltip';
 
 
 const drawerWidth = 100;
@@ -122,7 +123,8 @@ const defaultPropsRight = {
     justifyContent: 'center',
     alignItems: 'center',
     flex: "1 1 auto",
-    height: '100%'
+    height: '100%',
+    overflow: 'hidden'
   },
 };
 
@@ -224,6 +226,13 @@ const dividerHandleBarVert = {
   }
 }
 
+const tooltipProps = {
+  style: {
+    zIndex: 9999999,
+    position: 'relative'
+  }
+}
+
 const Container = () => {
   const classes = useStyles();
   const [page, setPage] = useState('project')
@@ -235,7 +244,7 @@ const Container = () => {
   const [loading, setLoading] = useState(false)
   const [loadingTable, setLoadingTable] = useState(true)
   const [loadingEsri, setLoadingEsri] = useState(true)
-  const [loadingForge, setLoadingForge] = useState(true)
+  const [loadingForge, setLoadingForge] = useState(false)
   const [designAutomationId, setDesignAutomationId] = useState()
   const [modelDerivativeId, setModelDerivativeId] = useState()
   const [designAutomationConnect, setDesignAutomationConnect] = useState(null)
@@ -256,6 +265,7 @@ const Container = () => {
   const [esriData, setEsriData] = useState()
   const [container, setContainer] = useState()
   const [hideDrawer, setHideDrawer] = useState(false)
+  const [tooltip, setTooltip] = useState(null)
 
   const leftRef = createRef();
   const splitPaneRef = createRef();
@@ -534,6 +544,10 @@ const Container = () => {
       };
   });
 
+  useEffect(() => {
+    console.log(tooltip)
+  }, [tooltip])
+
 
   return (
     <div className={classes.root}>
@@ -554,7 +568,7 @@ const Container = () => {
           <div {...mapContProps} ref={splitPaneRef} className={"splitPane", 'noselect'} ref={e => setTopRef(e)}>
             <div {...defaultAltProps} ref={leftRef}>
               {esriData ?
-                <EsriMap loading={loadingEsri} esriData={esriData} selected={selected}/>   
+                <EsriMap loading={loadingEsri} esriData={esriData} selected={selected} setTooltip={setTooltip}/>   
                 :
                 <Fragment>
                     <span className={classes.circularProgress}>
@@ -597,4 +611,4 @@ const Container = () => {
     ) 
 }
 
-export default Container
+export default 
