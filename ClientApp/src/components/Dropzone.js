@@ -43,9 +43,7 @@ const dropzoneContProps = {
   }
 }
 
-const Dropzone = ({ onChange, ...rest }) => {
-
-  const [files, setFiles] = useState([])  
+const Dropzone = ({ onChange, setFiles, files, ...rest}) => {
 
   const onDrop = useCallback((acceptedFiles) => {
     // Do something with the files

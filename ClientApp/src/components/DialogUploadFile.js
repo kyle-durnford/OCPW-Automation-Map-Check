@@ -109,6 +109,8 @@ const DialogUploadFile = ({open, onClose, connectionId, isLoading, setSubmit}) =
                                     onChange(e.target.files[0])
                                     setFiles([e.target.files[0]])
                                 }}
+                                setFiles={setFiles}
+                                files={files}
                             />
                         )}
                         name="files"
