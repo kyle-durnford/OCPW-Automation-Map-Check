@@ -8,6 +8,7 @@ import warn from '../assets/warning.svg'
 import missing from '../assets/missing.svg'
 import _ from "lodash";
 import { number } from "prop-types";
+import TriError from '../assets/TriError.js'
 
 const useStyles = makeStyles(() => ({
     circularProgress: {
@@ -410,6 +411,24 @@ const parcelErrorProps = {
   }
 }
 
+const emptyResults = {
+  style: {
+    width: '100%',
+    height: '35vh',
+    backgroundColor: '#fff3cd',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    color: '#664d03',
+    fontFamily: 'poppins, sans-serif',
+    fontWeight: '600',
+    fontSize: '1.5rem',
+    flexDirection: 'column',
+    borderRadius: '1rem',
+    margin: '.5rem 0 .5rem .5rem'
+  }
+}
+
 
 const SurveyTable = ({loading, data, selected, setSelected, page}) => {
   const classes = useStyles();
@@ -747,6 +766,11 @@ useEffect(() => {
             })}
           </tbody>
         </table>
+        {tableResults.length === 0 ?
+          <div {...emptyResults}>
+              <TriError color={'#664d03'}/>
+              <div className={classes.mapUploadTextError}>No data returned. Try adjusting your filters</div>
+          </div> : null}
       </div>
       </div>
     )
