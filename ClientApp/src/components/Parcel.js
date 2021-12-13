@@ -102,8 +102,9 @@ const parcelErrorProps = {
         width: '100%',
         borderRadius: '.5rem',
         transition: 'background .2s ease',
-        background: '#f55d6e50',
-        margin: '.5rem 0'
+        background: '#f8d7da',
+        margin: '.5rem 0',
+        color: '#842029'
     }
 }
 

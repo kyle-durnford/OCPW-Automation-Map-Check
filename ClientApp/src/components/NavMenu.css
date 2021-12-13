@@ -7,6 +7,10 @@
   background-color: #3E52BB75
 }
 
+.esri-popup__footer {
+  display: none !important;
+}
+
 html {
   font-size: 14px;
 }

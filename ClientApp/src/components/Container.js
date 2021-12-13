@@ -13,6 +13,8 @@ import planImage from "../assets/plan_drawing.svg"
 import connection from '../services/connection'
 // import { buildMap } from '../data/esri'
 import Checklist from "./Checklist";
+import TriError from '../assets/TriError.js'
+import { viewer } from '../data/forge'
 
 
 const drawerWidth = 100;
@@ -97,11 +99,29 @@ const useStyles = makeStyles((theme) => ({
     height: 'calc(100vh - 4rem - 69px)',
     cursor: 'pointer'
   },
+  flexError: {
+    background: '#ed8c9540',
+    width: '100%',
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: '1rem',
+    height: 'calc(100vh - 4rem - 69px)',
+    cursor: 'pointer'
+  },
   mapUploadText: {
     fontFamily: 'poppins, sans-serif',
     fontWeight: '600',
     fontSize: '1.5rem',
     color: '#6E7998',
+    marginTop: '1rem'
+  },
+  mapUploadTextError: {
+    fontFamily: 'poppins, sans-serif',
+    fontWeight: '600',
+    fontSize: '1.5rem',
+    color: 'rgb(245, 93, 110)',
     marginTop: '1rem'
   }
 }));
@@ -122,7 +142,9 @@ const defaultPropsRight = {
     justifyContent: 'center',
     alignItems: 'center',
     flex: "1 1 auto",
-    height: '100%'
+    height: '100%',
+    overflow: 'hidden',
+    position: 'relative'
   },
 };
 
@@ -138,6 +160,19 @@ const defaultAltProps = {
     overflow: 'hidden'
   },
 };
+
+const mapErrorProps = {
+  style: {
+    background: '#ed8c9540',
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    flex: "1 1 auto",
+    height: '100%',
+    overflow: 'hidden',
+    position: 'relative'
+  }
+}
 
 const dividerProps = {
   style: {
@@ -256,6 +291,9 @@ const Container = () => {
   const [esriData, setEsriData] = useState()
   const [container, setContainer] = useState()
   const [hideDrawer, setHideDrawer] = useState(false)
+  const [urn, setUrn] = useState(null)
+  const [forgeError, setForgeError] = useState()
+  const [appError, setAppError] = useState()
 
   const leftRef = createRef();
   const splitPaneRef = createRef();
@@ -372,6 +410,12 @@ const Container = () => {
 
           designAutomationConnect.on("onComplete", (message) => {
             console.log('onComplete:', message)
+            if(JSON.parse(message).status === 'failedDownload') {
+              setAppError('Unable to download data from Autodesk. Please try again.');
+              setTimeout(() => {
+                setAppError()
+              }, 5000)
+            }
           })
 
           designAutomationConnect.on("objKeysInputFile", (objectKeys) => {
@@ -398,6 +442,7 @@ const Container = () => {
 
           modelDerivativeConnect.on("extractionFinished", (extractionFinished) => {
             console.log('extractionFinished:', extractionFinished)
+            setUrn(extractionFinished.resourceUrn)
           });
       }).catch(e => console.log('Connection failed: ', e));
 
@@ -504,6 +549,9 @@ const Container = () => {
   const onMouseUp = () => {
     setDragging(false);
     setBar('');
+    if(viewer) {
+      viewer.resize()
+    }
   };
 
   useEffect(() => {
@@ -549,7 +597,7 @@ const Container = () => {
         <div className={classes.mapCont}>
         {/* {page === 'check' && submit ?  
           <Checklist data={parcelInfo} section={section} setSection={setSection}/> */}
-        { submit ?
+        { submit && !appError ?
           <div ref={e => setSplitPaneHeightRef(e)} {...rightContProps}>
           <div {...mapContProps} ref={splitPaneRef} className={"splitPane", 'noselect'} ref={e => setTopRef(e)}>
             <div {...defaultAltProps} ref={leftRef}>
@@ -569,8 +617,8 @@ const Container = () => {
                 <span {...dividerHandleBarVert}></span>
               </div>
             </div>
-            <div {...defaultPropsRight}>
-              <ForgeMap loading={loadingForge} objectKeys={objectKeys} connectionId={modelDerivativeId}/>
+            <div {...(forgeError ? {...mapErrorProps} : {...defaultPropsRight})}>
+              <ForgeMap loading={loadingForge} objectKeys={objectKeys} connectionId={modelDerivativeId} urn={urn} setError={setForgeError} error={forgeError}/>
             </div>
           </div>
           <div {...horizontalDividerProps} onMouseDown={(e) => onMouseDown(e, 'vert')}>
@@ -581,15 +629,24 @@ const Container = () => {
             </div>
           <SurveyTable page={page} loading={loadingTable} data={tableInfo} selected={selected} setSelected={setSelected}/>
         </div>
-          :
+         : appError ?
           <div>
             <div {...boxProps}>
-              <div className={classes.flex} onClick={() => setOpen(true)}>
-                  <img src={planImage} height='150px' width='150px' alt=""/>
-                  <div className={classes.mapUploadText}>Upload a map to get started</div>
+              <div className={classes.flexError} onClick={() => setOpen(true)}>
+                  <TriError color={'rgb(245, 93, 110)'}/>
+                  <div className={classes.mapUploadTextError}>{appError}</div>
               </div>
             </div>
           </div>
+        : 
+        <div>
+          <div {...boxProps}>
+            <div className={classes.flex} onClick={() => setOpen(true)}>
+                <img src={planImage} height='150px' width='150px' alt=""/>
+                <div className={classes.mapUploadText}>Upload a map to get started</div>
+            </div>
+          </div>
+        </div>
         }
         </div>
       </div>

@@ -1,9 +1,10 @@
-let viewer;
+export let viewer;
 let viewerDbIds;
 let da_jsonData;
 const Autodesk = window.Autodesk;
 
 export const launchViewer = (urn) => {
+    
     let options = {
         env: 'AutodeskProduction',
         api: 'derivativeV2',
@@ -12,34 +13,35 @@ export const launchViewer = (urn) => {
     }
 
     Autodesk.Viewing.Initializer(options, () => {
+         // The documentId is a string value of the URN of the model that was translated.
+        // The value assigned to documentId must be prefixed with the string urn:
+        let documentId = 'urn:' + urn;
+        //let documentId = 'urn:dXJuOmFkc2sub2JqZWN0czpvcy5vYmplY3Q6djFmenN4bWh2ZmhpeHJ2Y3NrNHZzZGdrNGN0bzRmN2ctZGVzaWduYXV0b21hdGlvbi8yMDIxMTIwODEwNTgyMV9PQy1Nb2RpZnlfQWxpc29DcmVla0Rvd25TdHJlYW1Cb3VuZGFyeTIwMjAtVjMuZHdn';
 
-        // Creatre Viewer instance
-        viewer = new Autodesk.Viewing.GuiViewer3D(document.getElementById('forgeViewer'), {extensions: ['Autodesk.DocumentBrowser']}); // 'TransExplorerExtension' , { extensions: ['ModelSummaryExtensionClass', 'Autodesk.DocumentBrowser', 'OverLayGeometry'] }
+        viewer = new Autodesk.Viewing.GuiViewer3D(document.getElementById('forgeViewer'), {extensions: ['Autodesk.DocumentBrowser']}); // 'TransExplorerExtension' , { extensions: ['ModelSummaryExtensionClass', 'Autodesk.DocumentBrowser', 'OverLayGeometry' ] }
         let startedCode = viewer.start(null, null, null, null, {
             webglInitParams: {
                 useWebGL2: false
             }
         });
 
-        if (startedCode > 0) {
-            console.error('Failed to create a Viewer: WebGL not supported.');
-            return;
-        }
+    if (startedCode > 0) {
+        console.error('Failed to create a Viewer: WebGL not supported.');
+        return;
+    }
 
+        // Creatre Viewer instance
         console.log('Initialization complete, loading a model next...');
 
-        // The documentId is a string value of the URN of the model that was translated.
-        // The value assigned to documentId must be prefixed with the string urn:
-        console.log("urn", urn)
-        let documentId = 'urn:' + urn;
-        Autodesk.Viewing.Document.load(documentId, onDocumentLoadSuccess2, onDocumentLoadFailure);
+        Autodesk.Viewing.Document.load(documentId, onDocumentLoadSuccess, onDocumentLoadFailure);
         console.log("initialization complete, creating the viewer...");
     });
 }
 
-export const onDocumentLoadSuccess2 = (viewerDocument) => {
+export const onDocumentLoadSuccess = (viewerDocument) => {
     // viewerDocument is an instance of Autodesk.Viewing.Document
-    console.log("Executing onDocumentLoadSuccess2 function.")
+
+    console.log("Executing onDocumentLoadSuccess function.")
     let defaultModel = viewerDocument.getRoot().getDefaultGeometry();
     viewer.loadDocumentNode(viewerDocument, defaultModel).then(async function (model) {
         await afterViewerEvents(
@@ -49,6 +51,12 @@ export const onDocumentLoadSuccess2 = (viewerDocument) => {
                 Autodesk.Viewing.OBJECT_TREE_CREATED_EVENT
             ]
         );
+            // if (hid) {
+            //     // Call Function to zoom in to object on viewer.
+            //     executeFitToViewHandleId(hid);
+
+            //     overLayGeometryExtension.searchSelectedObj(hid, viewerDbIds)
+            // }
 
         // Run other functionalities after model is done loading.
         console.log("Viewer GEOMETRY_LOADED_EVENT and OBJECT_TREE_CREATED_EVENT is completely loaded.")
@@ -103,12 +111,13 @@ export const forgeViewerModelDbIds = () => {
 
 export default {
     launchViewer,
-    onDocumentLoadSuccess2,
+    onDocumentLoadSuccess,
     onDocumentLoadFailure,
     onDocumentLoadFailure2,
     getForgeToken,
     afterViewerEvents,
-    forgeViewerModelDbIds
+    forgeViewerModelDbIds,
+    viewer
 }
 
 // let viewer;

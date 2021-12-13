@@ -310,7 +310,8 @@ const ericJson = (jsonData, view) => {
             tid: "#tabp" + pnum,
             ppid: '#tabapn' + pnum,
             pnum: 'Parcel' + pnum,
-            pstring: 'Parcel ' + pnum
+            pstring: 'Parcel ' + pnum,
+            hid: pnum
         };
 
         
@@ -524,25 +525,6 @@ export const buildMap = (json, mapRef, cityLayers) => {
             breakpoint: false
         }
     }
-    view.on("hold", function (event) {
-        view.hitTest(event).then(function (response) {
-            try {
-                const graphic = response.results.filter(function (result) {
-                    // if (result.graphic.layer === graphicslayer) {
-                    //     //console.log('Maybe poly')
-                    // }
-                    return result.graphic.layer === graphicslayer;
-                })[0].graphic;
-                view.popup.open({
-                    title: graphic.attributes.pstring,
-                })
-            } catch {
-                view.popup.open({
-                    title: "No Parcel Found",
-                })
-            }
-        })
-    })
 
     map.add(graphicslayer)
     map.add(graphicslayer2)
@@ -556,93 +538,124 @@ export const buildMap = (json, mapRef, cityLayers) => {
 
     ericJson(json, view)
 
-    view.on("pointer-down", e => {
-        try {
-            view.hitTest(e).then(response => {
-                if(response.results.length > 0){
-                    const graphic = response.results.filter(result => {
-                        if (result.graphic.layer === selectedgraphicslayer) {
-                            return result.graphic.layer
-                        } else {
-                            console.log('miss')
-                        }
-                    })[0].graphic
-                    console.log(graphic)
-                }
-            })
-        } catch {
-            console.log('none')
-        }
-    })
+    // view.on("pointer-down", e => {
+    //     try {
+    //         view.hitTest(e).then(response => {
+    //             if(response.results.length > 0){
+    //                 const graphic = response.results.filter(result => {
+    //                     if (result.graphic.layer === selectedgraphicslayer) {
+    //                         return result.graphic.layer
+    //                     } else {
+    //                         console.log('miss')
+    //                     }
+    //                 })[0].graphic
+    //                 console.log(graphic)
+    //             }
+    //         })
+    //     } catch {
+    //         console.log('none')
+    //     }
+    // })
 
-    view.on("pointer-down", function (event) {
+    view.on("hold", function (event) {
         let lastgeo = ''
-        try {
-            view.hitTest(event).then(function (response) {
+        view.hitTest(event).then(function (response) {
+            try {
                 const graphic = response.results.filter(function (result) {
-                    if (result.graphic.layer === selectedgraphicslayer) {
-                        console.log('Mapbe poly')
-                    }
-                    return result.graphic.layer === selectedgraphicslayer;
+                    // if (result.graphic.layer === graphicslayer) {
+                    //     //console.log('Maybe poly')
+                    // }
+                    return result.graphic.layer === graphicslayer;
                 })[0].graphic;
+                view.popup.open({
+                    title: graphic.attributes.pstring,
+                })
                 const attribute = graphic.attributes;
                 const hid = attribute.hid;
-                console.log(graphic.attributes.hid)
-                // const overLayGeometryExtension = viewer.getExtension('OverLayGeometry')
+                console.log(graphic.attributes)
                 // if (hid) {
+                //     const overLayGeometryExtension = viewer.getExtension('OverLayGeometry')
                 //     // Call Function to zoom in to object on viewer.
                 //     executeFitToViewHandleId(hid);
     
                 //     overLayGeometryExtension.searchSelectedObj(hid, viewerDbIds)
                 // }
-    
-                const geo = graphic.geometry;
-                //view.graphics.removeAll();
-                // $(".lblclass").css("background-color", "white");
-                // $(".ptab").css("background-color", "white");
-                // $(".atab").removeClass("show");
-                // $(".headtab").addClass("collapsed");
-    
-    
-                if (lastgeo !== geo) {
-                    lastgeo = geo;
-                    //lineSymbol
-    
-                    var graphic3 = new Graphic({
-                        geometry: geo,
-                        symbol: lineSymbol
-                    });
-    
-                    ////*[@id="87"]
-    
-                    view.graphics.add(graphic3);
-    
-                    // $("#" + attribute.oid).css("background-color", "cyan");
-                    // var pid = $("#" + attribute.oid).attr("pid");
-                    // $(pid).css("background-color", "cyan");
-                    // var ppid = $(pid).attr("ppid");
-                    // var tid = $(pid).attr("tid");
-                    // $(ppid).addClass("show");
-                    // $(tid).removeClass("collapsed");
-                    // $(tid).attr("aria-expanded", "true")
-                    // $(pid)[0].scrollIntoView({
-                    //     behavior: "smooth", // or "auto" or "instant"
-                    //     block: "start" // or "end"
-                    // });
-                    // $("#" + attribute.oid)[0].scrollIntoView({
-                    //     behavior: "smooth", // or "auto" or "instant"
-                    //     block: "start" // or "end"
-                    // });
-                } else {
-                    //console.log('Same');
-                }
-    
-            })
-        } catch {
-            console.log('out of bounds')
-        }
-        
+            } catch {
+                view.popup.open({
+                    title: "No Parcel Found",
+                })
+            }
+        })
     })
+
+    // view.on("pointer-down", function (event) {
+    //     let lastgeo = ''
+    //     try {
+    //         view.hitTest(event).then(function (response) {
+    //             const graphic = response.results.filter(function (result) {
+    //                 if (result.graphic.layer === selectedgraphicslayer) {
+    //                     console.log('Mapbe poly')
+    //                 }
+    //                 return result.graphic.layer === selectedgraphicslayer;
+    //             })[0].graphic;
+    //             const attribute = graphic.attributes;
+    //             const hid = attribute.hid;
+    //             console.log(graphic.attributes.hid)
+    //             // const overLayGeometryExtension = viewer.getExtension('OverLayGeometry')
+    //             // if (hid) {
+    //             //     // Call Function to zoom in to object on viewer.
+    //             //     executeFitToViewHandleId(hid);
+    
+    //             //     overLayGeometryExtension.searchSelectedObj(hid, viewerDbIds)
+    //             // }
+    
+    //             const geo = graphic.geometry;
+    //             //view.graphics.removeAll();
+    //             // $(".lblclass").css("background-color", "white");
+    //             // $(".ptab").css("background-color", "white");
+    //             // $(".atab").removeClass("show");
+    //             // $(".headtab").addClass("collapsed");
+    
+    
+    //             if (lastgeo !== geo) {
+    //                 lastgeo = geo;
+    //                 //lineSymbol
+    
+    //                 var graphic3 = new Graphic({
+    //                     geometry: geo,
+    //                     symbol: lineSymbol
+    //                 });
+    
+    //                 ////*[@id="87"]
+    
+    //                 view.graphics.add(graphic3);
+    
+    //                 // $("#" + attribute.oid).css("background-color", "cyan");
+    //                 // var pid = $("#" + attribute.oid).attr("pid");
+    //                 // $(pid).css("background-color", "cyan");
+    //                 // var ppid = $(pid).attr("ppid");
+    //                 // var tid = $(pid).attr("tid");
+    //                 // $(ppid).addClass("show");
+    //                 // $(tid).removeClass("collapsed");
+    //                 // $(tid).attr("aria-expanded", "true")
+    //                 // $(pid)[0].scrollIntoView({
+    //                 //     behavior: "smooth", // or "auto" or "instant"
+    //                 //     block: "start" // or "end"
+    //                 // });
+    //                 // $("#" + attribute.oid)[0].scrollIntoView({
+    //                 //     behavior: "smooth", // or "auto" or "instant"
+    //                 //     block: "start" // or "end"
+    //                 // });
+    //             } else {
+    //                 //console.log('Same');
+    //             }
+    
+    //         })
+    //     } catch {
+    //         console.log('out of bounds')
+    //     }
+        
+    // })
 
     console.log('Finished')
 }
