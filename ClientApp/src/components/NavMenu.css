@@ -1,23 +1,5 @@
-﻿a.navbar-brand {
-  white-space: normal;
-  text-align: center;
-  word-break: break-all;
-}
-.navHover:hover{
-  background-color: #3E52BB75
-}
-
-.esri-popup__footer {
+﻿.esri-popup__footer {
   display: none !important;
-}
-
-html {
-  font-size: 14px;
-}
-@media (min-width: 768px) {
-  html {
-    font-size: 16px;
-  }
 }
 
 .rowAltColor:nth-child(odd) {
@@ -49,75 +31,6 @@ html {
 
 .box-shadow {
   box-shadow: 0 .25rem .75rem rgba(0, 0, 0, .05);
-}
-
-.orangeOutlineButton:hover{
-  background-color: #fe805c !important;
-  color: #fff !important;
-}
-
-.parcelInfo:hover {
-  background: #a0acf0 !important;
-}
-
-.parcelBorder {
-  border: 2px solid #a0acf0;
-}
-
-.scroll, .scrollAlt {
-  scroll-behavior: smooth;
-  scrollbar-width: thin;
-}
-
-.scroll {
-  scrollbar-color: #a0acf0 #fff;
-}
-
-.scrollAlt {
-  scrollbar-color: #a0acf0 #f2f4fd;
-}
-
-.scroll::-webkit-scrollbar-track
-{
-	border-radius: 10px;
-	background-color: #fff;
-}
-
-.scroll::-webkit-scrollbar
-{
-  
-	width: 8px;
-	background-color: transparent;
-}
-
-.scroll::-webkit-scrollbar-thumb
-{
-	border-radius: 10px;
-	background-color: #a0acf0 ;
-}
-
-.scrollAlt::-webkit-scrollbar
-{
-	width: 8px;
-	background-color: transparent;
-}
-
-.scrollAlt::-webkit-scrollbar-thumb
-{
-	border-radius: 10px;
-	background-color: #a0acf0;
-}
-
-.scrollAlt::-webkit-scrollbar-track-piece:end {
-  border-radius: 10px;
-  margin-bottom: 2rem;
-  background-color: #f2f4fd;
-}
-
-.scrollAlt::-webkit-scrollbar-track-piece:start {
-  border-radius: 10px;
-  margin-top: 2.5rem;
-  background-color: #f2f4fd;
 }
 
 .tableTab:hover {

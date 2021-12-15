@@ -259,7 +259,7 @@ namespace forgeDesignautomation.Controllers
             buckets.Configuration.AccessToken = oauth.access_token;
             try
             {
-                PostBucketsPayload bucketPayload = new PostBucketsPayload(bucketKey, null, PostBucketsPayload.PolicyKeyEnum.Transient);
+                PostBucketsPayload bucketPayload = new PostBucketsPayload(bucketKey, null, PostBucketsPayload.PolicyKeyEnum.Persistent);
                 await buckets.CreateBucketAsync(bucketPayload, "US");
             }
             catch { }; // in case bucket already exists

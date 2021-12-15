@@ -443,15 +443,22 @@ const SurveyTable = ({loading, data, selected, setSelected, page}) => {
   const [curveErrors, setCurveErrors] = useState(0)
   const [tabArray, setTabArray] = useState(legalTabs)
   const [sortName, setSortName] = useState()
-  const [tableResults, setTableResults] = useState([])
-  const [defaultTableResults, setDefaultTableResults] = useState([])
   const [contain, setContain] = useState(false)
   const [sortArrow, setSortArrow] = useState(['', 'default'])
   const [showError, setShowError] = useState('all')
-  const [sortedResults, setSortedResults] = useState([])
   const [sortTerm, setSortTerm] = useState('parcelId')
-  const [defaultSortedResults, setDefaultSortedResults] = useState([])
+  const [resultCheck, setResultCheck] = useState(false)
 
+  //Storing parsed table data. Defaults contain the original state before any modifying happens from sort functions.
+  const [tableResults, setTableResults] = useState([])
+  const [defaultTableResults, setDefaultTableResults] = useState([])
+  const [defaultSortedResults, setDefaultSortedResults] = useState([])
+  const [sortedResults, setSortedResults] = useState([])
+
+  //Things get a liiiiittle complicated here...
+
+
+  //When the data loads, we need to see which segments are passing and failing
   useEffect(() => {
     if(data) {
       let lines = 0;
@@ -461,14 +468,14 @@ const SurveyTable = ({loading, data, selected, setSelected, page}) => {
         Object.entries(data[i][1][1][1][0]['Segments']).map((row, l) => {
           row[1] = {...row[1], ...{parcel: i+1}, ...{parcelId: (i+1) + ":" + (l+1)}}
           if (row.find(({ shapeType }) => shapeType === 'Line')) {
-            let check1 = false
-            let check2 = false
+            let check1 = false //Checking for failing segments. if one fail is detected, we add a new key to the object with a failing value
+            let check2 = false //Same as above for passing but if a fail is detected, the success status is overwritten
             if(Object.values(Object.values(Object.values(row[1].Labels_Check))).includes('None')) {
               row[1] = {...row[1], ...{status: 'none'}}
             } else {
               Object.values(Object.values(row[1].Labels_Check)).map((el, il) => {
                 if(Object.values(el).includes('Fail') && check1 === false) {
-                    lines++
+                    lines++ //Adding up all failing line segments to report later on
                     check1 = true
                     row[1] = {...row[1], ...{status: 'fail'}}
                 } else if (Object.values(el).includes('Pass') && !Object.values(el).includes('Fail') && check2 === false) {
@@ -486,7 +493,7 @@ const SurveyTable = ({loading, data, selected, setSelected, page}) => {
             } else {
               Object.values(Object.values(row[1].Labels_Check)).map((el, il) => {
                 if(Object.values(el).includes('Fail') && check1 === false) {
-                  curves++
+                  curves++ //Adding up all failing curve segments to report later on
                   check1 = true
                   row[1] = {...row[1], ...{status: 'fail'}}
                 } else if (Object.values(el).includes('Pass') && !Object.values(el).includes('Fail') && check2 === false) {
@@ -545,6 +552,7 @@ const SurveyTable = ({loading, data, selected, setSelected, page}) => {
     setActiveColumns(column);
 };
 
+//Handle click to sort by parcel or by all
 const handleFilterClick = () => {
   if(contain === true) {
     setContain(false)
@@ -553,6 +561,7 @@ const handleFilterClick = () => {
   }
 }
 
+//Toggle through all filter functions
 const handleErrorClick = () => {
   if(showError === 'all') {
     setShowError('fail')
@@ -565,20 +574,7 @@ const handleErrorClick = () => {
   }
 }
 
-const handleSortClick = e => {
-  setSortTerm(e)
-  if(!sortName || (e !== sortName && e + 'Alt' !== sortName)) {
-    setSortArrow([e, 'down'])
-    setSortName(e +'Alt')
-  } else if(sortName === e + 'Alt') {
-    setSortArrow([e, 'up'])
-    setSortName(e)
-  } else {
-    setSortArrow([e, 'default'])
-    setSortName()
-  }
-}
-
+//Change tabs depending on page
 useEffect(() => {
 
   switch(page) {
@@ -599,6 +595,7 @@ useEffect(() => {
   }
 }, [page])
 
+
 useEffect(() => {
   setActiveColumns(tabArray[0][1])
   setActive(0)
@@ -607,8 +604,22 @@ useEffect(() => {
   //Sorts table when a heading is clicked. Multiple clicks on the same heading will toggle 
   //between sorting alphabetically/numerically and reverse alphabetically/numerically
 
+  const handleSortClick = e => {
+    setSortTerm(e)
+    if(!sortName || (e !== sortName && e + 'Alt' !== sortName)) {
+      setSortArrow([e, 'down'])
+      setSortName(e +'Alt')
+    } else if(sortName === e + 'Alt') {
+      setSortArrow([e, 'up'])
+      setSortName(e)
+    } else {
+      setSortArrow([e, 'default'])
+      setSortName()
+    }
+  }
+
   useEffect(() => {
-    let filteredResults = defaultTableResults
+    let filteredResults = defaultTableResults //reset the sort every time. This makes it a billion times easier to handle
     if(showError !== 'all') {
        filteredResults = defaultTableResults.filter(e => e?.status === showError)
     }
@@ -699,6 +710,7 @@ useEffect(() => {
       <div {...tableContainerProps}>
       <div {...tableTabRowProps} className='noselect'>
         <div {...tabInner}>
+          {/* Creating tabs for selected page */}
           {tabArray.map((e, i) => (
             <div 
             className={`tableTab`} 
@@ -714,6 +726,7 @@ useEffect(() => {
           ))}
         </div>
         <div {...tabInner}>
+          {/* Adding tabs to handle filters */}
           <div className={`tableTab`} 
           {...(contain === true ? {...tableTabSelectedProps} : {...tableTabProps})}
           onClick={() => handleFilterClick()}>Sort By {(contain === true ? "All" : "Parcel")}
@@ -729,6 +742,7 @@ useEffect(() => {
         <table {...tableProps}>
           <thead {...tableHeadProps}>
             <tr {...rowProps}>
+              {/* Create columns for selected table data */}
               {activeColumns.map((column, i) => (
                   <td
                     key={i}
@@ -742,6 +756,7 @@ useEffect(() => {
             </tr>
           </thead>
           <tbody {...tableBodyProps}>
+            {/* Create rows for each segment */}
             {tableResults?.map((e, i) => {
               //Sort what dimension is displayed
               if ((Object.entries(e)[1][1] === 'Line' && activeColumns === lineColumns) || (Object.entries(e)[1][1] === 'Curve' && activeColumns === curveColumns) ) {
@@ -751,7 +766,7 @@ useEffect(() => {
                         const value = _.get(e, column.id);
                         return (
                           <td {...dataProps} key={il} align={column.align}>
-                            {//https://stackoverflow.com/questions/46592833/how-to-use-switch-statement-inside-a-react-component
+                            {//Adding icons for passing/failing/unkown values: https://stackoverflow.com/questions/46592833/how-to-use-switch-statement-inside-a-react-component
                             {
                               'Pass': <img src={good} alt="Pass"></img>,
                               'Fail': <img src={error} alt="Fail"></img>,
@@ -766,7 +781,8 @@ useEffect(() => {
             })}
           </tbody>
         </table>
-        {tableResults.length === 0 ?
+        {tableResults.filter(e => (Object.entries(e)[1][1] === 'Line' && activeColumns === lineColumns) || (Object.entries(e)[1][1] === 'Curve' && activeColumns === curveColumns)).length === 0 ?
+        //Display warning if no rows are in the table
           <div {...emptyResults}>
               <TriError color={'#664d03'}/>
               <div className={classes.mapUploadTextError}>No data returned. Try adjusting your filters</div>

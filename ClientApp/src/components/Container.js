@@ -1,5 +1,4 @@
 import React, { useState, useEffect, createRef, Fragment } from "react"
-import { makeStyles } from '@material-ui/core/styles';
 import { HubConnectionBuilder } from "@microsoft/signalr";
 import { CircularProgress } from '@material-ui/core';
 import DialogUploadFile from './DialogUploadFile'
@@ -12,261 +11,16 @@ import AppBar from './AppBar'
 import planImage from "../assets/plan_drawing.svg"
 import connection from '../services/connection'
 // import { buildMap } from '../data/esri'
-import Checklist from "./Checklist";
+//import Checklist from "./Checklist";
 import TriError from '../assets/TriError.js'
 import { viewer } from '../data/forge'
 
-
-const drawerWidth = 100;
-
-// const Item = styled(Paper)(({ theme }) => ({
-//   ...theme.typography.body2,
-//   padding: theme.spacing(1),
-//   textAlign: 'center',
-//   color: theme.palette.text.secondary,
-// }));
-
-const useStyles = makeStyles((theme) => ({
-  root: {
-    display: 'flex',
-    height: '100vh'
-  },
-  appBar: {
-    width: `calc(100% - ${drawerWidth}px)`,
-    marginLeft: drawerWidth,
-    background : 'white',
-    border: 0,
-    
-  },
-  drawer: {
-    width: drawerWidth,
-    flexShrink: 0,
-    backgroundColor: '#F4F5FC',
-    '& .MuiDrawer-paperAnchorLeft': {
-      backgroundColor: '#F4F5FC',
-      border: 0
-    }
-  },
-  drawerCont: {
-    display: 'flex',
-    justifyContent: 'flex-start',
-    background: '#F4F5FC',
-    position: 'relative'
-  },
-  drawerPaper: {
-    width: drawerWidth,
-  },
-  button: {
-    float: 'right',
-    color: '#FE805C'
-  },
-  imgContainer: {
-    height: '10rem',
-  },
-  box: {
-    bgcolor: '#3E52BB',
-    borderColor: 'grey.500',
-    m: 1,
-    border: 1,
-    style: { width: '30rem', height: '30rem' },
-  },
-  // necessary for content to be below app bar
-  toolbar: theme.mixins.toolbar,
-  content: {
-    flexGrow: 1,
-    backgroundColor: theme.palette.background.default,
-    padding: theme.spacing(3),
-  },
-  rightToolbar: {
-    marginLeft: "auto",
-    marginRight: -12
-  },
-  mapView: {
-    width: '100%'
-  },
-  mapCont: {
-    width: '100%',
-    height: 'calc(100% - 4.4rem)'
-  },
-  flex: {
-    width: '100%',
-    display: 'flex',
-    flexDirection: 'column',
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderRadius: '1rem',
-    background: '#F4F5FC',
-    height: 'calc(100vh - 4rem - 69px)',
-    cursor: 'pointer'
-  },
-  flexError: {
-    background: '#ed8c9540',
-    width: '100%',
-    display: 'flex',
-    flexDirection: 'column',
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderRadius: '1rem',
-    height: 'calc(100vh - 4rem - 69px)',
-    cursor: 'pointer'
-  },
-  mapUploadText: {
-    fontFamily: 'poppins, sans-serif',
-    fontWeight: '600',
-    fontSize: '1.5rem',
-    color: '#6E7998',
-    marginTop: '1rem'
-  },
-  mapUploadTextError: {
-    fontFamily: 'poppins, sans-serif',
-    fontWeight: '600',
-    fontSize: '1.5rem',
-    color: 'rgb(245, 93, 110)',
-    marginTop: '1rem'
-  }
-}));
-
-const boxProps = {
-  style: {
-    background: '#FFF',
-    width: '100%', 
-    height: '40rem',
-    padding: '2rem'
-  }
-};
-
-const defaultPropsRight = {
-  style: {
-    background: '#eee',
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
-    flex: "1 1 auto",
-    height: '100%',
-    overflow: 'hidden',
-    position: 'relative'
-  },
-};
-
-const defaultAltProps = {
-  style: {
-    background: '#dff0eb',
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
-    width: 'calc(50% - .5rem)',
-    maxWidth: '85%',
-    height: '100%',
-    overflow: 'hidden'
-  },
-};
-
-const mapErrorProps = {
-  style: {
-    background: '#ed8c9540',
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
-    flex: "1 1 auto",
-    height: '100%',
-    overflow: 'hidden',
-    position: 'relative'
-  }
-}
-
-const dividerProps = {
-  style: {
-    width: '1rem',
-    content: '""',
-    backgroundColor: "#f4f5fc",
-    cursor: 'col-resize',
-    height: '100%',
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
-  }
-}
-
-const horizontalDividerProps = {
-  style: {
-    width: '100%',
-    height: '1rem',
-    content: '""',
-    backgroundColor: "#f4f5fc",
-    cursor: 'row-resize',
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
-  }
-}
-
-const mapContProps = {
-  style: {
-    display: "flex", 
-    flexDirection: "row",  
-    flexWrap: "nowrap", 
-    alignItems: 'flex-start',
-    height: '50%',
-    width: '100%',
-    minHeight: '20vh'
-  }
-}
-
-const rightContProps = {
-  style: {
-    display: "flex",
-    flexDirection: "column",
-    flexWrap: 'nowrap',
-    alignItems: 'flex-start',
-    height: '84vh',
-  }
-}
-
-const dividerHandle = {
-  style: {
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
-  }
-}
-
-const dividerHandleHorz = {
-  style: {
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
-    flexDirection: 'column'
-  }
-}
-
-const dividerHandleBarHorz = {
-  style: {
-    height: '2px',
-    width: '20px',
-    backgroundColor: '#a0acf0',
-    content: '"',
-    margin: '1px'
-  }
-}
-
-const dividerHandleBarVert = {
-  style: {
-    height: '20px',
-    width: '2px',
-    backgroundColor: '#a0acf0',
-    content: '"',
-    margin: '1px'
-  }
-}
-
 const Container = () => {
-  const classes = useStyles();
   const [page, setPage] = useState('project')
   const [submit, setSubmit] = useState(false);
   const [open, setOpen] = useState(false)
   const [tableInfo, setTableInfo] = useState(null)
   const [parcelInfo, setParcelInfo] = useState(null)
-  //const [data, setData] = useState(dummyData)
   const [loading, setLoading] = useState(false)
   const [loadingTable, setLoadingTable] = useState(true)
   const [loadingEsri, setLoadingEsri] = useState(true)
@@ -298,47 +52,6 @@ const Container = () => {
   const leftRef = createRef();
   const splitPaneRef = createRef();
   const drawerContRef = createRef();
-
-  // const getData = () => {
-  //   fetch('437oc.json', {
-  //     headers: {
-  //       'Content-Type': 'application/json',
-  //       'Accept': 'application/json'
-  //     }
-  //   })
-  //   .then(response => {
-  //     return response.json();
-  //   })
-  //   .then(myData => {
-  //     // console.log(myData);
-  //     setData(myData);
-      
-  //   })
-  // }
-
-  // useEffect(()=> {
-  //   getData()
-  // },[])
-
-  // useEffect(() => {
-  //   if (submit === true) {
-  //     getData()
-  //     // setData(dummyData);
-  //   }
-  // },[submit])
-
-  // useEffect(() => {
-  //   if (data === null) {
-  //     setLoading(false);
-  //   } else {
-  //     setLoading(true);
-  //   }
-  // }, [data])
-
-      
-  // const setMapRef = (mapRef) => {
-  //   setContainer(mapRef)
-  // }
 
   useEffect(() => {
     const designAutomation = new HubConnectionBuilder().withUrl("/api/signalr/designautomation").withAutomaticReconnect().build();
@@ -412,9 +125,6 @@ const Container = () => {
             console.log('onComplete:', message)
             if(JSON.parse(message).status === 'failedDownload') {
               setAppError('Unable to download data from Autodesk. Please try again.');
-              setTimeout(() => {
-                setAppError()
-              }, 5000)
             }
           })
 
@@ -486,7 +196,7 @@ const Container = () => {
   //   modelDerivativeConnect.on('extractionFinished', (extractionFinished) => {
   //     console.log('extractionFinished:', extractionFinished)
   //   });
-  // }  
+  // }
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -500,6 +210,12 @@ const Container = () => {
     setSubmit(isLoading)
   }
 
+  //Handling resizable map containers
+  //There is a vertical bar and a horizontal bar
+  //TODO:
+    //1. Add the ability to choose between 1-4 map containers (depending on how many maps we will need)
+    //2. Add handles for the additional maps when necessary
+
   const onMouseDown = (e, bar) => {
     setBar(bar)
     setSeparatorYPosition(e.clientY);
@@ -507,13 +223,15 @@ const Container = () => {
     setDragging(true);
   };
 
+  //Making sure the maps don't get too small. Theres is also a min-width in the css as a backup
   const MIN_WIDTH = 150;
   const MIN_HEIGHT = 150;
+
 
   const onMouseMove = (e) => {
 
     if (dragging && bar === "horz") {
-      const newLeftWidth = leftWidth + e.clientX - separatorXPosition;
+      const newLeftWidth = leftWidth + e.clientX - separatorXPosition; //Current width of left panel + mouse position - current handle bar position
       setSeparatorXPosition(e.clientX);
 
       if (newLeftWidth < MIN_WIDTH) {
@@ -550,7 +268,7 @@ const Container = () => {
     setDragging(false);
     setBar('');
     if(viewer) {
-      viewer.resize()
+      viewer.resize() //Resize forge map when finished resizing container.
     }
   };
 
@@ -582,71 +300,77 @@ const Container = () => {
       };
   });
 
-
+  //TODO: Create a component for the loading spinners and create an orange county themed loading spinner.
+  //Also probably want to create a component for the error displays (TriError)
+  
   return (
-    <div className={classes.root}>
-      <div className={classes.drawerCont} ref={drawerContRef}>
-        <div style={{position:'relative', width: 'calc(82px + .5rem)'}}>
+    <div className='root'>
+      <div className='drawercont' ref={drawerContRef}>
+        <div className="drawercont__navcont">
           <NavMenu setPage={setPage} page={page} hideDrawer={hideDrawer} setHideDrawer={setHideDrawer}/>
         </div>
         <Drawer hideDrawer={hideDrawer} loading={loading} page={page} data={parcelInfo} setSelected={setSelected} selected={selected} section={section} setSection={setSection}/>
       </div>
-      <div className={classes.mapView}>
+      <div className='mapcont'>
         <AppBar handleClickOpen={handleClickOpen} />
         <DialogUploadFile open={open} onClose={onDialogClose} connectionId={designAutomationId} isLoading={handleLoading}/>
-        <div className={classes.mapCont}>
+        <div className="mapcont__view">
         {/* {page === 'check' && submit ?  
           <Checklist data={parcelInfo} section={section} setSection={setSection}/> */}
         { submit && !appError ?
-          <div ref={e => setSplitPaneHeightRef(e)} {...rightContProps}>
-          <div {...mapContProps} ref={splitPaneRef} className={"splitPane", 'noselect'} ref={e => setTopRef(e)}>
-            <div {...defaultAltProps} ref={leftRef}>
-              {esriData ?
-                <EsriMap loading={loadingEsri} esriData={esriData} selected={selected}/>   
-                :
-                <Fragment>
-                    <span className={classes.circularProgress}>
-                        <CircularProgress size={48} />
-                    </span>
-                </Fragment>                
-              }
-            </div>
-            <div {...dividerProps} onMouseDown={e => onMouseDown(e, 'horz')}>
-              <div {...dividerHandle}>
-                <span {...dividerHandleBarVert}></span>
-                <span {...dividerHandleBarVert}></span>
+          <div ref={e => setSplitPaneHeightRef(e)} className="mapcont__view__cont">
+            <div className="splitpane" ref={splitPaneRef} ref={e => setTopRef(e)}>
+              <div className='splitpane__map splitpane__map--left' ref={leftRef}>
+
+                {esriData ?
+
+                  <EsriMap loading={loadingEsri} esriData={esriData} selected={selected}/>   
+
+                  :
+
+                  <Fragment>
+                      <span className="spinner">
+                          <CircularProgress size={48} />
+                      </span>
+                  </Fragment>                
+                }
+              </div>
+              <div className="splitpane__divider splitpane__divider--ver" onMouseDown={e => onMouseDown(e, 'horz')}>
+                <div className="splitpane__divider__handle splitpane__divider__handle--ver">
+                  <span className="splitpane__divider__handle__bar splitpane__divider__handle__bar--ver"></span>
+                  <span className="splitpane__divider__handle__bar splitpane__divider__handle__bar--ver"></span>
+                </div>
+              </div>
+              <div className={(forgeError ? 'splitpane__map splitpane__map--error' : 'splitpane__map splitpane__map--right')}>
+                <ForgeMap loading={loadingForge} objectKeys={objectKeys} connectionId={modelDerivativeId} urn={urn} setError={setForgeError} error={forgeError}/>
               </div>
             </div>
-            <div {...(forgeError ? {...mapErrorProps} : {...defaultPropsRight})}>
-              <ForgeMap loading={loadingForge} objectKeys={objectKeys} connectionId={modelDerivativeId} urn={urn} setError={setForgeError} error={forgeError}/>
-            </div>
+            <div className="splitpane__divider splitpane__divider--hor" onMouseDown={(e) => onMouseDown(e, 'vert')}>
+            <div className="splitpane__divider__handle splitpane__divider__handle--hor">
+                  <span className="splitpane__divider__handle__bar splitpane__divider__handle__bar--hor"></span>
+                  <span className="splitpane__divider__handle__bar splitpane__divider__handle__bar--hor"></span>
+                </div>
+              </div>
+            <SurveyTable page={page} loading={loadingTable} data={tableInfo} selected={selected} setSelected={setSelected}/>
           </div>
-          <div {...horizontalDividerProps} onMouseDown={(e) => onMouseDown(e, 'vert')}>
-          <div {...dividerHandleHorz}>
-                <span {...dividerHandleBarHorz}></span>
-                <span {...dividerHandleBarHorz}></span>
+
+        : appError ?
+
+            <div className="upload">
+              <div className="upload__zone upload__zone--error" onClick={() => setOpen(true)}>
+                  <TriError color={'#842029'}/>
+                  <div className='upload__text upload__text--error'>{appError}</div>
               </div>
             </div>
-          <SurveyTable page={page} loading={loadingTable} data={tableInfo} selected={selected} setSelected={setSelected}/>
-        </div>
-         : appError ?
-          <div>
-            <div {...boxProps}>
-              <div className={classes.flexError} onClick={() => setOpen(true)}>
-                  <TriError color={'rgb(245, 93, 110)'}/>
-                  <div className={classes.mapUploadTextError}>{appError}</div>
-              </div>
-            </div>
-          </div>
+
         : 
-        <div>
-          <div {...boxProps}>
-            <div className={classes.flex} onClick={() => setOpen(true)}>
+        
+          <div className="upload">
+            <div className="upload__zone" onClick={() => setOpen(true)}>
                 <img src={planImage} height='150px' width='150px' alt=""/>
-                <div className={classes.mapUploadText}>Upload a map to get started</div>
+                <div className='upload__text'>Upload a map to get started</div>
             </div>
           </div>
-        </div>
         }
         </div>
       </div>

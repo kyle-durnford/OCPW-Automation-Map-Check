@@ -97,6 +97,8 @@ const DialogUploadFile = ({open, onClose, connectionId, isLoading, setSubmit}) =
     onClose(false)
   };
 
+  //TODO: Rip out all the MUI stuff
+
   return (
     <div>
         <Dialog open={open} onClose={onClose} aria-labelledby="form-dialog-title">

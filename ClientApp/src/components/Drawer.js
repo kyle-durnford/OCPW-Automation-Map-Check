@@ -4,20 +4,6 @@ import ProjectDrawer from './ProjectDrawer.js';
 import ReportDrawer from './ReportDrawer.js';
 import CheckDrawer from './CheckDrawer.js'
 
-const drawerProps = {
-    style: {
-        padding: '1rem .5rem 1rem 1rem',
-        fontFamily: 'poppins',
-        fontWeight: 600,
-        fontSize: '1.5rem',
-        margin: '.5rem 0',
-        width: '20vw',
-        maxHeight: 'calc(100vh - 1rem)',
-        overflow: 'auto',
-        borderRight: '.5rem solid #F4F5FC'
-    }
-};
-
 const Drawer = ({loading, data, setSelected, selected, page, setSection, section, hideDrawer}) => {
 
     const [open, setOpen] = useState(null);
@@ -25,8 +11,6 @@ const Drawer = ({loading, data, setSelected, selected, page, setSection, section
     const [parcelCount, setParcelCount] = useState();
     const [segmentCount, setSegmentCount] = useState([0,0])
     const [parcelData, setParcelData] = useState()
-
-    //if no data is loaded, return null
 
     useEffect(() => {
         if (data !== null) {
@@ -38,9 +22,9 @@ const Drawer = ({loading, data, setSelected, selected, page, setSection, section
 
             setParcelData(Object.entries(Object.entries(Object.entries(values[1]))))
         }
-    }, [data])
+    }, [data]) //wait for data and get the relevant part of the JSON response
 
-    useEffect(() => {
+    useEffect(() => { //Count how many line and curve segments there are for the details panel
         if (parcelData) {
             setParcelCount(parcelData.length)
             let lines = 0
@@ -58,14 +42,13 @@ const Drawer = ({loading, data, setSelected, selected, page, setSection, section
         }
     }, [parcelData])
 
-    useEffect(() => {
-        if (parcelData !== null) {
+    useEffect(() => { //Should probably make this a switch for readability
+        if (parcelData) {
    
             if (page === 'report') {
                 setDrawerData(() => { return (<ReportDrawer data={parcelData}/>)})
             } else if (page === 'legal' || page === 'monument' || page === 'reference') {
                 const parcels = parcelData.map((e, i) => {
-                    console.log(open, selected)
                     return <Parcel loading={loading} page={page} data={parcelData[i][1][1][1]} setSelected={setSelected} selected={selected} key={i} parcelNum={i} page={page} open={open} setOpen={setOpen} /> 
                 })
                 setDrawerData(parcels)
@@ -80,8 +63,8 @@ const Drawer = ({loading, data, setSelected, selected, page, setSection, section
 
         if (data !== null && hideDrawer === false) {
         return (
-            <div {...drawerProps} className={`scroll`}>
-                <div style={{paddingBottom: '1rem'}}> 
+            <div className="drawer scroll scroll--alt">
+                <div className="drawer__title"> 
                 {//https://stackoverflow.com/questions/46592833/how-to-use-switch-statement-inside-a-react-component
                     {
                     'project': <p>Project Summary</p>,
