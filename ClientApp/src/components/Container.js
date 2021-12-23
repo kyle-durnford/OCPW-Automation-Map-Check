@@ -324,7 +324,7 @@ const Container = () => {
 
                 {esriData ?
 
-                  <EsriMap loading={loadingEsri} esriData={esriData} selected={selected}/>   
+                  <EsriMap esriData={esriData} selected={selected} setSelected={setSelected}/>   
 
                   :
 

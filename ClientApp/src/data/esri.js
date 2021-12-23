@@ -111,8 +111,8 @@ const lods = [
     }
 ]
 
-const graphicslayer = new GraphicsLayer({
-    id: 'graphicslayer'
+const parcellayer = new GraphicsLayer({
+    id: 'parcellayer'
 })
 
 const graphicslayer2 = new GraphicsLayer({
@@ -136,6 +136,7 @@ const lineSymbol = {
 };
 
 let selectedLayers = []
+let parcelLayers = []
 
 export const createCityLayer = () => {
     return (new MapImageLayer({
@@ -177,7 +178,7 @@ const oceagle = new Basemap({
 })
 
 
-const parcellayer = new MapImageLayer({
+const parcelimagelayer = new MapImageLayer({
     url: "https://www.ocgis.com/survey/rest/services/WebApps/Map_Layers_Associated_Documents/MapServer",
     sublayers: [
         {
@@ -218,7 +219,7 @@ const clearup = (view) => {
     lblgroupstart = {}
     lblgroupend = {}
     lblgraphicslayer.graphics.removeAll();
-    graphicslayer.graphics.removeAll();
+    parcellayer.graphics.removeAll();
     graphicslayer2.graphics.removeAll();
     selectedgraphicslayer.graphics.removeAll()
     view.graphics.removeAll();
@@ -261,7 +262,7 @@ const createFeature = (path, words, hid, oid, oidlist)  => {
         attributes: myAtt,
         symbol: {
             type: "simple-line",
-            color: color,
+            color: 'red',
             width: 3
         }
     });
@@ -277,6 +278,8 @@ const createFeature = (path, words, hid, oid, oidlist)  => {
         visible: false
     });
 
+
+        parcelLayers.push(mygraphic)
         selectedLayers.push(newGraphic)
 
     oid2line[oid] = mygraphic
@@ -328,7 +331,7 @@ const ericJson = (jsonData, view) => {
             symbol: polygonSymbol
         });
 
-        graphicslayer.graphics.add(newGraphic);
+        
 
         _.forEach(dictionary, (value, key) => {
             // console.log('Key', key)
@@ -479,19 +482,21 @@ const ericJson = (jsonData, view) => {
             }
         })
     })
-    graphicslayer.when(function () {
+    parcellayer.graphics.removeAll()
+    parcellayer.graphics.addMany(parcelLayers);
+    parcellayer.when(function () {
         view.goTo({
-            target: polylist
+            target: parcellayer
         });
     });
 }
 
-export const buildMap = (json, mapRef, cityLayers) => {
+export const buildMap = (json, mapRef, cityLayers, setSelected) => {
 
     config.request.timeout = 300000
 
     map.add(cityLayers)
-    map.add(parcellayer)
+    map.add(parcelimagelayer)
     map.add(streetlayers)
 
     const view = new MapView({
@@ -526,7 +531,7 @@ export const buildMap = (json, mapRef, cityLayers) => {
         }
     }
 
-    map.add(graphicslayer)
+    map.add(parcellayer)
     map.add(graphicslayer2)
     //map.add(lblgraphicslayer)
     map.add(selectedgraphicslayer)
@@ -545,6 +550,14 @@ export const buildMap = (json, mapRef, cityLayers) => {
                     const graphic = response.results.filter(result => {
                         if (result.graphic.layer === selectedgraphicslayer) {
                             console.log('hit')
+                            //Unselect the selected layer
+                            //TODO: Unselect from table and parcel
+                            selectedLayers.forEach(e => e.visible = false)
+                            selectedgraphicslayer.graphics.removeAll()
+                            selectedgraphicslayer.graphics.addMany(selectedLayers);
+                            return result.graphic.layer
+                        } else if (result.graphic.layer === parcellayer){
+                            console.log('hit1')
                             return result.graphic.layer
                         } else {
                             console.log('miss')
@@ -552,6 +565,7 @@ export const buildMap = (json, mapRef, cityLayers) => {
                     })[0].graphic
                     console.log(graphic)
                     console.log(graphic.attributes.oid)
+                    setSelected(graphic.attributes.oid)
                 }
             })
         } catch {
@@ -564,10 +578,10 @@ export const buildMap = (json, mapRef, cityLayers) => {
         view.hitTest(event).then(function (response) {
             try {
                 const graphic = response.results.filter(function (result) {
-                    // if (result.graphic.layer === graphicslayer) {
+                    // if (result.graphic.layer === parcellayer) {
                     //     //console.log('Maybe poly')
                     // }
-                    return result.graphic.layer === graphicslayer;
+                    return result.graphic.layer === parcellayer;
                 })[0].graphic;
                 view.popup.open({
                     title: graphic.attributes.pstring,
