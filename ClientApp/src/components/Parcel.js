@@ -83,7 +83,7 @@ const Parcel = ({loading, setSelected, selected, data, parcelNum, open, setOpen,
             <div className="parcel__top" onClick={e => handleClick()}>
                 <div> 
                     {{
-                    'legal': <p>Parcel {parcelNum + 1}{(parcelErrors.filter(e => e > 0).length > 0 ? <span className="parcel__erroricon">{parcelErrors.filter(e => e > 0).length}</span>: null)}</p>,
+                    'legal': <p>Parcel {parcelNum + 1}{(parcelErrors.filter(e => e > 0).length > 0 ? <span className="erroricon">{parcelErrors.filter(e => e > 0).length}</span>: null)}</p>,
                     'monument': <p>Point {parcelNum + 1}</p>,
                     'reference': <p>Reference {parcelNum + 1}</p>,
                     }[page]}

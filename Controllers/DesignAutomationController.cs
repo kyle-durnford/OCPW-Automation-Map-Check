@@ -296,7 +296,7 @@ namespace forgeDesignautomation.Controllers
             string ossJsonOCBoundaryObjectKey = "ocboundaryinputfile"; // avoid overriding
             XrefTreeArgument ocBoundaryArgument = new XrefTreeArgument()
             {
-                Url = string.Format("https://developer.api.autodesk.com/oss/v2/buckets/{0}/objects/{1}", "rercferf3", ossJsonOCBoundaryObjectKey),
+                Url = string.Format("https://developer.api.autodesk.com/oss/v2/buckets/{0}/objects/{1}", "rercferf2", ossJsonOCBoundaryObjectKey),
                 Verb = Verb.Get,
                 Headers = new Dictionary<string, string>()
                 {
@@ -308,7 +308,7 @@ namespace forgeDesignautomation.Controllers
             string ossJsonOCEpochDatumObjectKey = "ocepochdatuminputfile";
             XrefTreeArgument ocEpochDatumArgument = new XrefTreeArgument()
             {
-                Url = string.Format("https://developer.api.autodesk.com/oss/v2/buckets/{0}/objects/{1}", "rercferf3", ossJsonOCEpochDatumObjectKey),
+                Url = string.Format("https://developer.api.autodesk.com/oss/v2/buckets/{0}/objects/{1}", "rercferf2", ossJsonOCEpochDatumObjectKey),
                 Verb = Verb.Get,
                 Headers = new Dictionary<string, string>()
                 {

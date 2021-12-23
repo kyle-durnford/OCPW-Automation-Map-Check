@@ -10,18 +10,6 @@ import _ from "lodash";
 import { number } from "prop-types";
 import TriError from '../assets/TriError.js'
 
-const useStyles = makeStyles(() => ({
-    circularProgress: {
-      //padding: '9em 0',
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-      flex: "1",
-      width: '100%',
-      minHeight: '20vh'
-    }
-}));
-
 const lineColumns = [
   {
     id: 'parcelId',
@@ -247,191 +235,7 @@ const relativedColumns = [
   },
 ]
 
-//end of columns
-
-const rowProps = {
-  style: {
-    fontFamily: 'poppins, sans-serif',
-    fontSize: '.9rem',
-    width: '100%',
-    cursor: 'pointer'
-  }
-}
-
-const dataProps = {
-  style: {
-    padding: '.5rem 0 .5rem 1rem',
-    overflow: 'hidden',
-    textOverflow: 'ellipses',
-    whiteSpace: 'nowrap',
-    width: 'calc(min-content + .5rem)'
-  }
-}
-
-const dataTopProps = {
-  style: {
-    padding: '.5rem 0 .5rem 1rem',
-    fontSize: '.75rem',
-    lineHeight: '1.15',
-    textAlign: 'left',
-    cursor: 'pointer',
-  }
-}
-
-const dataTopInner = {
-  style: {
-    display: 'flex',
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'flex-start'
-  }
-}
-
-const tableContProps = {
-  style: {
-    width: 'auto', 
-    overflow: 'auto', 
-    height: '100%',
-    margin: '0rem 1rem 0rem 1rem',
-    padding: '0 1rem 0 0',
-  }
-}
-
-const tableContainerProps = {
-  style: {
-    flex: "1",
-    minHeight: '20vh',
-    width: '100%'
-  }
-}
-
-const tableProps = {
-  style: {
-    tableLayout: 'auto',
-    width: '100%',
-    borderCollaps: 'inherit',
-    borderSpacing: '0px',
-    position: 'relative',
-    overflow: 'auto',
-    display: 'table',
-    borderCollapse: 'collapse',
-    paddingRight: '1rem',
-    textAlign: 'left',
-  }
-}
-
-const tableHeadProps = {
-  style: {
-    textTransform: 'uppercase',
-    fontWeight: '600',
-    width: '100%',
-    backgroundColor: '#fff',
-    display: 'table-header-group',
-    top: '0',
-    position: 'sticky',
-  }
-}
-
-const tableBodyProps = {
-  style: {
-    display: 'table-row-group',
-    width: '100%',
-  }
-}
-
-const tableTitleProps = {
-  style: {
-    fontFamily: 'poppins, sans-serif',
-    fontSize: '1.25rem',
-    fontWeight: '600',
-    padding: '1rem 0 .5rem 2rem'
-  }
-}
-
-const tableTabProps = {
-  style: {
-    fontFamily: 'poppins, sans-serif',
-    fontWeight: '600',
-    fontSize: '1rem',
-    color: '#bbb',
-    padding: '.25rem .5rem',
-    borderTop: '.3rem solid #fff',
-    transition: 'border-color .2s ease, color .2s ease',
-    cursor: 'pointer'
-  }
-}
-
-const tableTabSelectedProps = {
-  style: {
-    fontFamily: 'poppins, sans-serif',
-    fontWeight: '600',
-    fontSize: '1rem',
-    color: 'rgb(87, 110, 239)',
-    padding: '.25rem .5rem',
-    borderTop: '.3rem solid rgb(87, 110, 239)',
-    transition: 'border-color .2s ease, color .2s ease',
-    cursor: 'pointer'
-  }
-}
-
-const tableTabRowProps = {
-  style: {
-    display: 'flex',
-    justifyContent: 'space-between',
-    flexWrap: 'nowrap',
-    textTransform: 'uppercase',
-    margin: '0 2rem'
-  }
-}
-
-const tabInner = {
-  style: {
-    display: 'flex',
-    justifyContent: 'flex-start',
-    flexWrap: 'nowrap',
-    textTransform: 'uppercase',
-    margin: '0'
-  }
-}
-
-const parcelErrorProps = {
-  style: {
-      fontSize: '.65rem',
-      backgroundColor: '#f55d6e',
-      marginLeft: '1rem',
-      color: '#fff',
-      padding: '.35rem',
-      borderRadius: '100%',
-      width: '24px',
-      height: '24px',
-      display: 'inline-block',
-      lineHeight: '1.2',
-      textAlign: 'center',
-      verticalAlign: 'middle'
-  }
-}
-
-const emptyResults = {
-  style: {
-    width: '100%',
-    height: '35vh',
-    backgroundColor: '#fff3cd',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    color: '#664d03',
-    fontFamily: 'poppins, sans-serif',
-    fontWeight: '600',
-    fontSize: '1.5rem',
-    flexDirection: 'column',
-    borderRadius: '1rem',
-    margin: '.5rem 0 .5rem .5rem'
-  }
-}
-
-
 const SurveyTable = ({loading, data, selected, setSelected, page}) => {
-  const classes = useStyles();
   const referenceTabs = [['References', referenceColumns], [ 'Timeline', timelineColumns]];
   const legalTabs = [['Line Check', lineColumns], ['Curve Check', curveColumns]];
   const monumentTabs = [['Monuments', monumentsColumns], ['History', historyColumns], ['Timeline', monumentTimelineColumns], ['Relatived', relativedColumns]];
@@ -699,73 +503,74 @@ useEffect(() => {
     
   if (loading || !data) 
     return (
-        <Fragment>
-            <span className={classes.circularProgress} {...tableContainerProps}>
-                <CircularProgress size={48} />
-            </span>
-        </Fragment>
+      <div className="survey">
+        <div className="spinner">
+            <CircularProgress size={48} />
+        </div>
+      </div>
     )
  
     return (
-      <div {...tableContainerProps}>
-      <div {...tableTabRowProps} className='noselect'>
-        <div {...tabInner}>
+      <div className="survey">
+      <div className='noselect survey__tab-row'>
+        <div className='survey__tab-col'>
           {/* Creating tabs for selected page */}
           {tabArray.map((e, i) => (
             <div 
-            className={`tableTab`} 
-            {...(active === i) ? {...tableTabSelectedProps} : {...tableTabProps}} 
+            className={(active === i) ? 'survey__tab survey__tab--selected' : 'survey__tab'} 
             onClick={() => handleClick(i, e[1])}
-            >{e[0]} 
+            >{e[0]}  
             {(lineErrors > 0 && e[0] === "Line Check" ? 
-            <span {...parcelErrorProps}>{lineErrors}</span> : 
+            <span className="error-icon">{lineErrors}</span> : 
             curveErrors > 0 && e[0] === "Curve Check" ? 
-            <span {...parcelErrorProps}>{curveErrors}</span> 
+            <span className="error-icon">{curveErrors}</span> 
             : null)}
             </div>
           ))}
         </div>
-        <div {...tabInner}>
+        <div className="survey__tab-col">
           {/* Adding tabs to handle filters */}
-          <div className={`tableTab`} 
-          {...(contain === true ? {...tableTabSelectedProps} : {...tableTabProps})}
+          <div
+          className={(showError === 'fail' || showError === 'pass' || showError === 'none' ? 'survey__tab survey__tab--selected' : 'survey__tab')}
           onClick={() => handleFilterClick()}>Sort By {(contain === true ? "All" : "Parcel")}
           </div>
-          <div className={`tableTab`} 
-          {...(showError === 'fail' || showError === 'pass' || showError === 'none' ? {...tableTabSelectedProps} : {...tableTabProps})}
+          <div
+          className={(showError === 'fail' || showError === 'pass' || showError === 'none' ? 'survey__tab survey__tab--selected' : 'survey__tab')}
           onClick={() => handleErrorClick()}>Filter {(showError === 'fail' ? 'Passing': showError === 'pass' ? "Unknown" : showError === 'none' ? 'All' : "Failing")}
           </div>
         </div>
       </div>
-      {(page === 'legal' || page === 'project' ? <div {...tableTitleProps}>Dimension {(activeColumns === lineColumns) ? "Line" : "Curve"} Check</div> : null)}
-      <div {...tableContProps} className={`scrollAlt`}>
-        <table {...tableProps}>
-          <thead {...tableHeadProps}>
-            <tr {...rowProps}>
+      <div className="survey__title">Dimension {(activeColumns === lineColumns) ? "Line" : "Curve"} Check</div>
+      <div className='scroll scroll--alt table-cont'>
+        <table className="table">
+          <thead className="table__head">
+            <tr className="table__head__row">
               {/* Create columns for selected table data */}
               {activeColumns.map((column, i) => (
                   <td
                     key={i}
                     align={column.align}
-                    {...dataTopProps}
                     onClick={e => handleSortClick(column.id)}
                   >
-                    <div {...dataTopInner}><span>{column.label}</span><span style={{padding: '0 .5rem'}}>{(column.id === sortArrow[0] ? (sortArrow[1] === 'down' ? '▼' : sortArrow[1] === 'up' ? "▲" : '▶' ) : '▶')}</span></div>
+                    <div className="table__head__cell">
+                      <span>{column.label}</span>
+                      <span style={{padding: '0 .5rem', flex: '1'}}>{(column.id === sortArrow[0] ? (sortArrow[1] === 'down' ? '▼' : sortArrow[1] === 'up' ? "▲" : '▶' ) : '▶')}</span>
+                    </div>
                   </td>
                 ))}
             </tr>
           </thead>
-          <tbody {...tableBodyProps}>
+          <tbody className="table__body">
             {/* Create rows for each segment */}
             {tableResults?.map((e, i) => {
               //Sort what dimension is displayed
               if ((Object.entries(e)[1][1] === 'Line' && activeColumns === lineColumns) || (Object.entries(e)[1][1] === 'Curve' && activeColumns === curveColumns) ) {
                   return(
-                  <tr ref={(e['oid'] === selected ? itemEl : null)} className={(e['oid'] === selected ? 'rowSelectColor' : 'rowAltColor')} {...rowProps} role="checkbox" tabIndex={-1} key={i} onClick={() => e['oid'] !== selected ? setSelected(e['oid']) : setSelected()}>
+                  <tr ref={(e['oid'] === selected ? itemEl : null)} className={(e['oid'] === selected ? 'table__row table__row--selected' : 'table__row')} role="checkbox" tabIndex={-1} key={i} onClick={() => e['oid'] !== selected ? setSelected(e['oid']) : setSelected()}>
                       {activeColumns.map((column, il) => {
                         const value = _.get(e, column.id);
                         return (
-                          <td {...dataProps} key={il} align={column.align}>
+                          <td className='table__cell' key={il} align={column.align}>
                             {//Adding icons for passing/failing/unkown values: https://stackoverflow.com/questions/46592833/how-to-use-switch-statement-inside-a-react-component
                             {
                               'Pass': <img src={good} alt="Pass"></img>,
@@ -783,9 +588,9 @@ useEffect(() => {
         </table>
         {tableResults.filter(e => (Object.entries(e)[1][1] === 'Line' && activeColumns === lineColumns) || (Object.entries(e)[1][1] === 'Curve' && activeColumns === curveColumns)).length === 0 ?
         //Display warning if no rows are in the table
-          <div {...emptyResults}>
+          <div className="empty-results">
               <TriError color={'#664d03'}/>
-              <div className={classes.mapUploadTextError}>No data returned. Try adjusting your filters</div>
+              <div>No data returned. Try adjusting your filters</div>
           </div> : null}
       </div>
       </div>

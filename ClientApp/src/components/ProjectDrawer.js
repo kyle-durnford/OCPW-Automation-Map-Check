@@ -10,12 +10,12 @@ const ProjectDrawer = ({parcelCount, lines, curves}) => {
             <div>
                 <div className="info__row">
                     <div className="info__block">
-                        <p>#6531</p>
-                        <p className="info__title">Review</p>
-                    </div>
-                    <div className="info__block">
                         <p>{parcelCount}</p>
                         <p className="info__title">Parcels</p>
+                    </div>
+                    <div className="info__block">
+                        <p>{lines + curves}</p>
+                        <p className="info__title">Total Segments</p>
                     </div>
                 </div>
                 <div className="info__row">
@@ -28,7 +28,7 @@ const ProjectDrawer = ({parcelCount, lines, curves}) => {
                         <p className="info__title">Curve Segments</p>
                     </div>
                 </div>
-                <div className="info__row">
+                {/* <div className="info__row">
                     <div className="info__block">
                         <p>{lines + curves}</p>
                         <p className="info__title">Total Segments</p>
@@ -54,7 +54,7 @@ const ProjectDrawer = ({parcelCount, lines, curves}) => {
                         <p className="info__title">Geodetic Ties</p>
                     </div>
                     <div></div>
-                </div>
+                </div> */}
             </div>
         </div>
     )

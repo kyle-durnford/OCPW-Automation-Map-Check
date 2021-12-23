@@ -1,6 +1,6 @@
 {
-  "dependencies": {},
-  "scripts": {
-    "sassy": "sass --watch ClientApp/src/styles/main.sass ClientApp/src/main.css"
+    "dependencies": {},
+    "scripts": {
+      "sassy": "sass --watch ClientApp/src/styles/main.sass ClientApp/src/main.css"
+    }
   }
-}

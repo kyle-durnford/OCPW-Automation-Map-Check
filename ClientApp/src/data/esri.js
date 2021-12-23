@@ -538,24 +538,26 @@ export const buildMap = (json, mapRef, cityLayers) => {
 
     ericJson(json, view)
 
-    // view.on("pointer-down", e => {
-    //     try {
-    //         view.hitTest(e).then(response => {
-    //             if(response.results.length > 0){
-    //                 const graphic = response.results.filter(result => {
-    //                     if (result.graphic.layer === selectedgraphicslayer) {
-    //                         return result.graphic.layer
-    //                     } else {
-    //                         console.log('miss')
-    //                     }
-    //                 })[0].graphic
-    //                 console.log(graphic)
-    //             }
-    //         })
-    //     } catch {
-    //         console.log('none')
-    //     }
-    // })
+    view.on("pointer-down", e => {
+        try {
+            view.hitTest(e).then(response => {
+                if(response.results.length > 0){
+                    const graphic = response.results.filter(result => {
+                        if (result.graphic.layer === selectedgraphicslayer) {
+                            console.log('hit')
+                            return result.graphic.layer
+                        } else {
+                            console.log('miss')
+                        }
+                    })[0].graphic
+                    console.log(graphic)
+                    console.log(graphic.attributes.oid)
+                }
+            })
+        } catch {
+            console.log('none')
+        }
+    })
 
     view.on("hold", function (event) {
         let lastgeo = ''

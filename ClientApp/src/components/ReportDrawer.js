@@ -33,8 +33,8 @@ const ReportDrawer = ({data}) => {
         } 
         return (
             <div className="report">
-                <button type="button" className="button--outline" onClick={() => generate()}>Generate Full Report</button>
-                {(success ? <div className="validation--success"><img src={good} alt="Pass" style={{marginRight: '.5rem'}}></img>Success</div> : null)}
+                <button type="button" className="button button--outline button--full" onClick={() => generate()}>Generate Full Report</button>
+                {(success ? <div className="validation validation--success" style={{marginTop: '1rem'}}><img src={good} alt="Pass" style={{marginRight: '.5rem'}}></img>Success</div> : null)}
             </div>
         )
     }
