@@ -71,10 +71,14 @@ const Parcel = ({loading, setSelected, selected, data, parcelNum, open, setOpen,
     });
        
     const parcelInfo = Object.entries(data[0]['Segments']).map((e, i) => {
-        if (selected === e[1]['oid']) {
+        if (selected === e[1]['oid'] && !Object.values(Object.values(e[1].Labels_Check)[0]).includes('Fail') && !Object.values(Object.values(e[1].Labels_Check)[1]).includes('Fail')) {
             return <li ref={itemEl} onClick={() => handleSelect(e[1]['oid'])} className="parcel__data parcel__data--selected" key={i}> {Object.entries(data[0]['Segments'])[i][1].desc_grid}</li>
+        } else if ((selected === e[1]['oid'] && Object.values(Object.values(e[1].Labels_Check)[0]).includes('Fail')) || (selected === e[1]['oid'] && Object.values(Object.values(e[1].Labels_Check)[1]).includes('Fail'))) {
+            return <li onClick={() => handleSelect(e[1]['oid'])} className='parcel__data parcel__data--selected parcel__data--selected--error' key={i}> {Object.entries(data[0]['Segments'])[i][1].desc_grid}</li>
+        } else if (Object.values(Object.values(e[1].Labels_Check)[0]).includes('Fail') || Object.values(Object.values(e[1].Labels_Check)[1]).includes('Fail')){
+            return <li onClick={() => handleSelect(e[1]['oid'])} className='parcel__data parcel__data--error' key={i}> {Object.entries(data[0]['Segments'])[i][1].desc_grid}</li>
         } else {
-            return <li onClick={() => handleSelect(e[1]['oid'])} className={(Object.values(Object.values(e[1].Labels_Check)[0]).includes('Fail') || Object.values(Object.values(e[1].Labels_Check)[1]).includes('Fail') ? 'parcel__data parcel__data--error' : 'parcel__data')} key={i}> {Object.entries(data[0]['Segments'])[i][1].desc_grid}</li>
+            return <li onClick={() => handleSelect(e[1]['oid'])} className='parcel__data' key={i}> {Object.entries(data[0]['Segments'])[i][1].desc_grid}</li>
         }
     }); 
 
@@ -83,7 +87,7 @@ const Parcel = ({loading, setSelected, selected, data, parcelNum, open, setOpen,
             <div className="parcel__top" onClick={e => handleClick()}>
                 <div> 
                     {{
-                    'legal': <p>Parcel {parcelNum + 1}{(parcelErrors.filter(e => e > 0).length > 0 ? <span className="erroricon">{parcelErrors.filter(e => e > 0).length}</span>: null)}</p>,
+                    'legal': <p>Parcel {parcelNum + 1}{(parcelErrors.filter(e => e > 0).length > 0 ? <span className="error-icon">{parcelErrors.filter(e => e > 0).length}</span>: null)}</p>,
                     'monument': <p>Point {parcelNum + 1}</p>,
                     'reference': <p>Reference {parcelNum + 1}</p>,
                     }[page]}

@@ -82,7 +82,7 @@ html {
 .table {
   table-layout: auto;
   width: 100%;
-  border-collaps: inherit;
+  border-collapse: inherit;
   border-spacing: 0px;
   position: relative;
   overflow: auto;
@@ -130,7 +130,7 @@ html {
   background-color: #e8ebfc;
 }
 .table__row--selected {
-  background-color: #a0acf0;
+  background-color: #a0acf0 !important;
 }
 .table__row:hover {
   background-color: #b9c2f5;
@@ -432,11 +432,12 @@ html {
 }
 .parcel__data--error:hover {
   background: #a0acf0;
-  color: #000;
 }
 .parcel__data--selected {
   background: #a0acf0;
-  color: #000;
+}
+.parcel__data--selected--error {
+  color: #842029;
 }
 .parcel__data--selected:hover {
   background: #a0acf0;
@@ -527,9 +528,13 @@ html {
   transition: border-color 0.2s ease, color 0.2s ease;
   cursor: pointer;
 }
+.survey__tab:hover {
+  color: #b9c2f5;
+  border-top: 0.3rem solid #a0acf0;
+}
 .survey__tab--selected {
   color: #576EEF;
-  borderTop: 0.3rem solid #576EEF;
+  border-top: 0.3rem solid #576EEF;
 }
 .survey__title {
   font-family: poppins, sans-serif;
@@ -558,6 +563,11 @@ html {
   flex-direction: column;
   border-radius: 1rem;
   margin: 0.5rem 0 0.5rem 0.5rem;
+}
+
+.esri {
+  width: 100%;
+  height: 100%;
 }
 
 /*# sourceMappingURL=main.css.map */
