@@ -1,10 +1,6 @@
 {
-  "dependencies": {
-    "@fortawesome/fontawesome-svg-core": "^1.2.36",
-    "@fortawesome/free-solid-svg-icons": "^5.15.4",
-    "@fortawesome/react-fontawesome": "^0.1.16",
-    "docx": "^7.2.0",
-    "file-saver": "^2.0.5",
-    "redocx": "^1.1.4"
+    "dependencies": {},
+    "scripts": {
+      "sassy": "sass --watch ClientApp/src/styles/main.sass ClientApp/src/main.css"
+    }
   }
-}

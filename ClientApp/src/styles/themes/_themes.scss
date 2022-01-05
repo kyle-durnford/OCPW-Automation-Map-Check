@@ -1,0 +1,11 @@
+//This file has to be .scss to support a multi-line map
+@import '../abstracts/global';
+
+$themes: (
+    'light': (
+        'backgroundColor': #fff
+    ),
+    'dark': (
+        'backgroundColor': #000
+    )
+);

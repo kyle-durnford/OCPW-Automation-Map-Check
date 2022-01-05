@@ -13,11 +13,13 @@
       "launchBrowser": true,
       "environmentVariables": {
         "FORGE_CALLBACK_URL": "http://localhost:3000/api/forge/callback/oauth",
-        "FORGE_CLIENT_SECRET": "FCtgPprQFxOikzFm",
+        "FORGE_CLIENT_SECRET1": "FCtgPprQFxOikzFm",
+        "FORGE_CLIENT_SECRET": "fnA9V11EktdHjMr3",
         "ASPNETCORE_URLS": "http://localhost:3000",
-        "FORGE_CLIENT_ID": "v1FZSxmHVFHIXrvcSK4VsdGK4cTO4F7g",
+        "FORGE_CLIENT_ID1": "v1FZSxmHVFHIXrvcSK4VsdGK4cTO4F7g",
+        "FORGE_CLIENT_ID": "l9ZOgsFXlswrI6GRQiK4UEnZeBe5Her0",
         "ASPNETCORE_ENVIRONMENT": "Development",
-        "FORGE_WEBHOOK_URL": "http://f65e-66-244-192-10.ngrok.io"
+        "FORGE_WEBHOOK_URL": "http://5885-66-244-192-10.ngrok.io"
       }
     },
     "ForgeChckerReactApp": {

@@ -1,0 +1,67 @@
+@import '../abstracts/variables'
+//This file handles styling for table components. 
+//For more more styling regarding the surveyTable component, see: _surveytable.sass
+
+.table
+    table-layout: auto
+    width: 100%
+    border-collapse: inherit
+    border-spacing: 0px
+    position: relative
+    overflow: auto
+    display: table
+    border-collapse: collapse
+    padding-right: 1rem
+    text-align: left
+
+    &__head
+        text-transform: uppercase
+        font-weight: 600
+        background-color: $white
+        display: table-header-group
+        top: 0
+        position: sticky
+
+        &__row
+            font-family: poppins, sans-serif
+            font-size: .9rem
+            cursor: pointer
+
+        &__cell
+            padding: .5rem 0 .5rem .5rem
+            font-size: .7rem
+            line-height: 1.15
+            text-align: left
+            cursor: pointer
+            display: flex
+            flex-direction: row
+            align-items: center
+            justify-content: flex-start
+            width: 5.5rem
+
+    &__body
+        display: table-row-group
+        width: 100%
+
+    &__row
+        font-family: poppins, sans-serif
+        font-size: .9rem
+        width: 100%
+        cursor: pointer
+
+        &:nth-of-type(even)
+            background-color: $ocpurple2
+
+        &--selected
+            background-color: $ocpurple !important
+
+        &:hover
+            background-color: $ocpurple3
+
+    &__cell
+        padding: .5rem 0 .5rem 1rem
+        overflow: hidden
+        text-overflow: ellipses
+        white-space: nowrap
+        width: min-content
+

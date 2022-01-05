@@ -3,26 +3,12 @@ import { CircularProgress } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import { buildMap, createCityLayer, selectedLayer } from '../data/esri'
 
-const useStyles = makeStyles(() => ({
-    circularProgress: {
-      //padding: '9em 0',
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center'
-    },
-    viewDiv: {
-        height: '100%',
-        width: '100%',
-    }
-}));
-
-const EsriMap = ({loading, esriData, selected}) => {
-    const classes = useStyles();
+const EsriMap = ({esriData, selected, setSelected}) => {
     const mapRef = useRef();
 
     useEffect(() => {
         const cityLayer = createCityLayer()
-        buildMap(esriData, mapRef.current, cityLayer, selected)
+        buildMap(esriData, mapRef.current, cityLayer, setSelected)
     }, []);
 
     useEffect(() => {
@@ -41,7 +27,7 @@ const EsriMap = ({loading, esriData, selected}) => {
 
 
     return (
-        <div className={classes.viewDiv} ref={mapRef}/>
+        <div className="esri" ref={mapRef}/>
     )
 
 }

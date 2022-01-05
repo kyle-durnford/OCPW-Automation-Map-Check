@@ -111,8 +111,8 @@ const lods = [
     }
 ]
 
-const graphicslayer = new GraphicsLayer({
-    id: 'graphicslayer'
+const parcellayer = new GraphicsLayer({
+    id: 'parcellayer'
 })
 
 const graphicslayer2 = new GraphicsLayer({
@@ -136,6 +136,7 @@ const lineSymbol = {
 };
 
 let selectedLayers = []
+let parcelLayers = []
 
 export const createCityLayer = () => {
     return (new MapImageLayer({
@@ -177,7 +178,7 @@ const oceagle = new Basemap({
 })
 
 
-const parcellayer = new MapImageLayer({
+const parcelimagelayer = new MapImageLayer({
     url: "https://www.ocgis.com/survey/rest/services/WebApps/Map_Layers_Associated_Documents/MapServer",
     sublayers: [
         {
@@ -203,7 +204,7 @@ const polygonSymbol = {
     outline: {
         // autocasts as new SimpleLineSymbol()
         color: 'red',
-        width: 2
+        width: 0
     }
 }
 
@@ -218,7 +219,7 @@ const clearup = (view) => {
     lblgroupstart = {}
     lblgroupend = {}
     lblgraphicslayer.graphics.removeAll();
-    graphicslayer.graphics.removeAll();
+    parcellayer.graphics.removeAll();
     graphicslayer2.graphics.removeAll();
     selectedgraphicslayer.graphics.removeAll()
     view.graphics.removeAll();
@@ -261,7 +262,7 @@ const createFeature = (path, words, hid, oid, oidlist)  => {
         attributes: myAtt,
         symbol: {
             type: "simple-line",
-            color: color,
+            color: 'red',
             width: 3
         }
     });
@@ -277,7 +278,9 @@ const createFeature = (path, words, hid, oid, oidlist)  => {
         visible: false
     });
 
-        selectedLayers.push(newGraphic)
+
+    parcelLayers.push(mygraphic)
+    selectedLayers.push(newGraphic)
 
     oid2line[oid] = mygraphic
 }
@@ -313,22 +316,17 @@ const ericJson = (jsonData, view) => {
             pstring: 'Parcel ' + pnum,
             hid: pnum
         };
-
         
-        // var newGraphic = new Graphic({
-        //     geometry: poly,
-        //     attributes: pAtt,
-        //     symbol: polygonSymbol
-        // });
-    
-        
-        var newGraphic = new Graphic({
+        let newGraphic = new Graphic({
             geometry: poly,
             attributes: pAtt,
             symbol: polygonSymbol
         });
 
-        graphicslayer.graphics.add(newGraphic);
+        graphicslayer2.graphics.add(newGraphic)
+        console.log(parcellayer.graphics)
+
+        
 
         _.forEach(dictionary, (value, key) => {
             // console.log('Key', key)
@@ -479,19 +477,21 @@ const ericJson = (jsonData, view) => {
             }
         })
     })
-    graphicslayer.when(function () {
+    parcellayer.graphics.removeAll()
+    parcellayer.graphics.addMany(parcelLayers);
+    parcellayer.when(function () {
         view.goTo({
-            target: polylist
+            target: parcellayer.graphics
         });
     });
 }
 
-export const buildMap = (json, mapRef, cityLayers) => {
+export const buildMap = (json, mapRef, cityLayers, setSelected) => {
 
     config.request.timeout = 300000
 
     map.add(cityLayers)
-    map.add(parcellayer)
+    map.add(parcelimagelayer)
     map.add(streetlayers)
 
     const view = new MapView({
@@ -526,7 +526,7 @@ export const buildMap = (json, mapRef, cityLayers) => {
         }
     }
 
-    map.add(graphicslayer)
+    map.add(parcellayer)
     map.add(graphicslayer2)
     //map.add(lblgraphicslayer)
     map.add(selectedgraphicslayer)
@@ -538,18 +538,21 @@ export const buildMap = (json, mapRef, cityLayers) => {
 
     ericJson(json, view)
 
-    // view.on("pointer-down", e => {
+    // view.on("mouse-over", e => {
     //     try {
     //         view.hitTest(e).then(response => {
     //             if(response.results.length > 0){
     //                 const graphic = response.results.filter(result => {
-    //                     if (result.graphic.layer === selectedgraphicslayer) {
+    //                     if (result.graphic.layer === parcellayer) {
+    //                         console.log('hit')
     //                         return result.graphic.layer
     //                     } else {
     //                         console.log('miss')
     //                     }
     //                 })[0].graphic
-    //                 console.log(graphic)
+    //                  console.log(graphic)
+    //                  console.log(graphic.attributes.oid)
+    //                 // setSelected(graphic.attributes.oid)
     //             }
     //         })
     //     } catch {
@@ -557,15 +560,115 @@ export const buildMap = (json, mapRef, cityLayers) => {
     //     }
     // })
 
+    view.on("pointer-move", e => {
+        try {
+            view.hitTest(e).then(response => {
+                if(response.results.length > 0){
+                    try {
+                        const graphic = response.results.filter(result => {
+                            if (result.graphic.layer === parcellayer){
+                               document.body.style.cursor = 'pointer'
+                               return result.graphic.layer
+                           }
+                       })[0].graphic
+
+                       let i = 0
+
+                        parcelLayers.forEach(e => {
+                            i++
+                            if (i == graphic.attributes.oid) {
+                                e.symbol = {
+                                    type: "simple-line",
+                                    color: 'blue',
+                                    width: 3
+                                }
+                            } else {
+                                e.symbol = {
+                                    type: "simple-line",
+                                    color: 'red',
+                                    width: 3
+                                }
+                            }
+
+                            parcellayer.graphics.removeAll()
+                            parcellayer.graphics.addMany(parcelLayers)
+                            //console.log(graphic.attributes.oid)
+                        })
+                    } catch {
+                        document.body.style.cursor = 'default'
+
+                        parcelLayers.forEach(e => {
+                            e.symbol = {
+                                type: "simple-line",
+                                color: 'red',
+                                width: 3
+                            }
+                        })
+                        parcellayer.graphics.removeAll()
+                        parcellayer.graphics.addMany(parcelLayers)
+                    }
+
+                } else {
+                    document.body.style.cursor = 'default'
+                    
+                    parcelLayers.forEach(e => {
+                        e.symbol = {
+                            type: "simple-line",
+                            color: 'red',
+                            width: 3
+                        }
+                    })
+                    parcellayer.graphics.removeAll()
+                    parcellayer.graphics.addMany(parcelLayers)
+                }
+            })
+        } catch {
+            console.log('none')
+        }
+    })
+
+    view.on("pointer-down", e => {
+        try {
+            view.hitTest(e).then(response => {
+                if(response.results.length > 0){
+                    try {
+                        const graphic = response.results.filter(result => {
+                            if (result.graphic.layer === selectedgraphicslayer) {
+                                //Unselect the selected layer
+                                //TODO: Unselect from table and parcel
+                                selectedLayers.forEach(e => e.visible = false)
+                                selectedgraphicslayer.graphics.removeAll()
+                                selectedgraphicslayer.graphics.addMany(selectedLayers);
+                                return result.graphic.layer
+                            } else if (result.graphic.layer === parcellayer){
+                                
+                                return result.graphic.layer
+                            }
+                        })[0].graphic
+                        console.log(graphic)
+                        console.log(graphic.attributes.oid)
+                        setSelected(graphic.attributes.oid)
+                    } catch {
+                        console.log('unselected')
+                    }
+                    
+                }
+            })
+        } catch {
+            console.log('none')
+        }
+    })
+
     view.on("hold", function (event) {
         let lastgeo = ''
         view.hitTest(event).then(function (response) {
             try {
                 const graphic = response.results.filter(function (result) {
-                    // if (result.graphic.layer === graphicslayer) {
-                    //     //console.log('Maybe poly')
-                    // }
-                    return result.graphic.layer === graphicslayer;
+                    if (result.graphic.layer === graphicslayer2) {
+                        //console.log('Maybe poly')
+                        return result.graphic.layer === graphicslayer2;
+                    }
+                    
                 })[0].graphic;
                 view.popup.open({
                     title: graphic.attributes.pstring,

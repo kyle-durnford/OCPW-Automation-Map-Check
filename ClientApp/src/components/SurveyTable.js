@@ -10,18 +10,6 @@ import _ from "lodash";
 import { number } from "prop-types";
 import TriError from '../assets/TriError.js'
 
-const useStyles = makeStyles(() => ({
-    circularProgress: {
-      //padding: '9em 0',
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-      flex: "1",
-      width: '100%',
-      minHeight: '20vh'
-    }
-}));
-
 const lineColumns = [
   {
     id: 'parcelId',
@@ -247,191 +235,7 @@ const relativedColumns = [
   },
 ]
 
-//end of columns
-
-const rowProps = {
-  style: {
-    fontFamily: 'poppins, sans-serif',
-    fontSize: '.9rem',
-    width: '100%',
-    cursor: 'pointer'
-  }
-}
-
-const dataProps = {
-  style: {
-    padding: '.5rem 0 .5rem 1rem',
-    overflow: 'hidden',
-    textOverflow: 'ellipses',
-    whiteSpace: 'nowrap',
-    width: 'calc(min-content + .5rem)'
-  }
-}
-
-const dataTopProps = {
-  style: {
-    padding: '.5rem 0 .5rem 1rem',
-    fontSize: '.75rem',
-    lineHeight: '1.15',
-    textAlign: 'left',
-    cursor: 'pointer',
-  }
-}
-
-const dataTopInner = {
-  style: {
-    display: 'flex',
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'flex-start'
-  }
-}
-
-const tableContProps = {
-  style: {
-    width: 'auto', 
-    overflow: 'auto', 
-    height: '100%',
-    margin: '0rem 1rem 0rem 1rem',
-    padding: '0 1rem 0 0',
-  }
-}
-
-const tableContainerProps = {
-  style: {
-    flex: "1",
-    minHeight: '20vh',
-    width: '100%'
-  }
-}
-
-const tableProps = {
-  style: {
-    tableLayout: 'auto',
-    width: '100%',
-    borderCollaps: 'inherit',
-    borderSpacing: '0px',
-    position: 'relative',
-    overflow: 'auto',
-    display: 'table',
-    borderCollapse: 'collapse',
-    paddingRight: '1rem',
-    textAlign: 'left',
-  }
-}
-
-const tableHeadProps = {
-  style: {
-    textTransform: 'uppercase',
-    fontWeight: '600',
-    width: '100%',
-    backgroundColor: '#fff',
-    display: 'table-header-group',
-    top: '0',
-    position: 'sticky',
-  }
-}
-
-const tableBodyProps = {
-  style: {
-    display: 'table-row-group',
-    width: '100%',
-  }
-}
-
-const tableTitleProps = {
-  style: {
-    fontFamily: 'poppins, sans-serif',
-    fontSize: '1.25rem',
-    fontWeight: '600',
-    padding: '1rem 0 .5rem 2rem'
-  }
-}
-
-const tableTabProps = {
-  style: {
-    fontFamily: 'poppins, sans-serif',
-    fontWeight: '600',
-    fontSize: '1rem',
-    color: '#bbb',
-    padding: '.25rem .5rem',
-    borderTop: '.3rem solid #fff',
-    transition: 'border-color .2s ease, color .2s ease',
-    cursor: 'pointer'
-  }
-}
-
-const tableTabSelectedProps = {
-  style: {
-    fontFamily: 'poppins, sans-serif',
-    fontWeight: '600',
-    fontSize: '1rem',
-    color: 'rgb(87, 110, 239)',
-    padding: '.25rem .5rem',
-    borderTop: '.3rem solid rgb(87, 110, 239)',
-    transition: 'border-color .2s ease, color .2s ease',
-    cursor: 'pointer'
-  }
-}
-
-const tableTabRowProps = {
-  style: {
-    display: 'flex',
-    justifyContent: 'space-between',
-    flexWrap: 'nowrap',
-    textTransform: 'uppercase',
-    margin: '0 2rem'
-  }
-}
-
-const tabInner = {
-  style: {
-    display: 'flex',
-    justifyContent: 'flex-start',
-    flexWrap: 'nowrap',
-    textTransform: 'uppercase',
-    margin: '0'
-  }
-}
-
-const parcelErrorProps = {
-  style: {
-      fontSize: '.65rem',
-      backgroundColor: '#f55d6e',
-      marginLeft: '1rem',
-      color: '#fff',
-      padding: '.35rem',
-      borderRadius: '100%',
-      width: '24px',
-      height: '24px',
-      display: 'inline-block',
-      lineHeight: '1.2',
-      textAlign: 'center',
-      verticalAlign: 'middle'
-  }
-}
-
-const emptyResults = {
-  style: {
-    width: '100%',
-    height: '35vh',
-    backgroundColor: '#fff3cd',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    color: '#664d03',
-    fontFamily: 'poppins, sans-serif',
-    fontWeight: '600',
-    fontSize: '1.5rem',
-    flexDirection: 'column',
-    borderRadius: '1rem',
-    margin: '.5rem 0 .5rem .5rem'
-  }
-}
-
-
 const SurveyTable = ({loading, data, selected, setSelected, page}) => {
-  const classes = useStyles();
   const referenceTabs = [['References', referenceColumns], [ 'Timeline', timelineColumns]];
   const legalTabs = [['Line Check', lineColumns], ['Curve Check', curveColumns]];
   const monumentTabs = [['Monuments', monumentsColumns], ['History', historyColumns], ['Timeline', monumentTimelineColumns], ['Relatived', relativedColumns]];
@@ -443,15 +247,22 @@ const SurveyTable = ({loading, data, selected, setSelected, page}) => {
   const [curveErrors, setCurveErrors] = useState(0)
   const [tabArray, setTabArray] = useState(legalTabs)
   const [sortName, setSortName] = useState()
-  const [tableResults, setTableResults] = useState([])
-  const [defaultTableResults, setDefaultTableResults] = useState([])
   const [contain, setContain] = useState(false)
   const [sortArrow, setSortArrow] = useState(['', 'default'])
   const [showError, setShowError] = useState('all')
-  const [sortedResults, setSortedResults] = useState([])
   const [sortTerm, setSortTerm] = useState('parcelId')
-  const [defaultSortedResults, setDefaultSortedResults] = useState([])
+  const [resultCheck, setResultCheck] = useState(false)
 
+  //Storing parsed table data. Defaults contain the original state before any modifying happens from sort functions.
+  const [tableResults, setTableResults] = useState([])
+  const [defaultTableResults, setDefaultTableResults] = useState([])
+  const [defaultSortedResults, setDefaultSortedResults] = useState([])
+  const [sortedResults, setSortedResults] = useState([])
+
+  //Things get a liiiiittle complicated here...
+
+
+  //When the data loads, we need to see which segments are passing and failing
   useEffect(() => {
     if(data) {
       let lines = 0;
@@ -461,14 +272,14 @@ const SurveyTable = ({loading, data, selected, setSelected, page}) => {
         Object.entries(data[i][1][1][1][0]['Segments']).map((row, l) => {
           row[1] = {...row[1], ...{parcel: i+1}, ...{parcelId: (i+1) + ":" + (l+1)}}
           if (row.find(({ shapeType }) => shapeType === 'Line')) {
-            let check1 = false
-            let check2 = false
+            let check1 = false //Checking for failing segments. if one fail is detected, we add a new key to the object with a failing value
+            let check2 = false //Same as above for passing but if a fail is detected, the success status is overwritten
             if(Object.values(Object.values(Object.values(row[1].Labels_Check))).includes('None')) {
               row[1] = {...row[1], ...{status: 'none'}}
             } else {
               Object.values(Object.values(row[1].Labels_Check)).map((el, il) => {
                 if(Object.values(el).includes('Fail') && check1 === false) {
-                    lines++
+                    lines++ //Adding up all failing line segments to report later on
                     check1 = true
                     row[1] = {...row[1], ...{status: 'fail'}}
                 } else if (Object.values(el).includes('Pass') && !Object.values(el).includes('Fail') && check2 === false) {
@@ -486,7 +297,7 @@ const SurveyTable = ({loading, data, selected, setSelected, page}) => {
             } else {
               Object.values(Object.values(row[1].Labels_Check)).map((el, il) => {
                 if(Object.values(el).includes('Fail') && check1 === false) {
-                  curves++
+                  curves++ //Adding up all failing curve segments to report later on
                   check1 = true
                   row[1] = {...row[1], ...{status: 'fail'}}
                 } else if (Object.values(el).includes('Pass') && !Object.values(el).includes('Fail') && check2 === false) {
@@ -545,6 +356,7 @@ const SurveyTable = ({loading, data, selected, setSelected, page}) => {
     setActiveColumns(column);
 };
 
+//Handle click to sort by parcel or by all
 const handleFilterClick = () => {
   if(contain === true) {
     setContain(false)
@@ -553,6 +365,7 @@ const handleFilterClick = () => {
   }
 }
 
+//Toggle through all filter functions
 const handleErrorClick = () => {
   if(showError === 'all') {
     setShowError('fail')
@@ -565,20 +378,7 @@ const handleErrorClick = () => {
   }
 }
 
-const handleSortClick = e => {
-  setSortTerm(e)
-  if(!sortName || (e !== sortName && e + 'Alt' !== sortName)) {
-    setSortArrow([e, 'down'])
-    setSortName(e +'Alt')
-  } else if(sortName === e + 'Alt') {
-    setSortArrow([e, 'up'])
-    setSortName(e)
-  } else {
-    setSortArrow([e, 'default'])
-    setSortName()
-  }
-}
-
+//Change tabs depending on page
 useEffect(() => {
 
   switch(page) {
@@ -599,6 +399,7 @@ useEffect(() => {
   }
 }, [page])
 
+
 useEffect(() => {
   setActiveColumns(tabArray[0][1])
   setActive(0)
@@ -607,8 +408,22 @@ useEffect(() => {
   //Sorts table when a heading is clicked. Multiple clicks on the same heading will toggle 
   //between sorting alphabetically/numerically and reverse alphabetically/numerically
 
+  const handleSortClick = e => {
+    setSortTerm(e)
+    if(!sortName || (e !== sortName && e + 'Alt' !== sortName)) {
+      setSortArrow([e, 'down'])
+      setSortName(e +'Alt')
+    } else if(sortName === e + 'Alt') {
+      setSortArrow([e, 'up'])
+      setSortName(e)
+    } else {
+      setSortArrow([e, 'default'])
+      setSortName()
+    }
+  }
+
   useEffect(() => {
-    let filteredResults = defaultTableResults
+    let filteredResults = defaultTableResults //reset the sort every time. This makes it a billion times easier to handle
     if(showError !== 'all') {
        filteredResults = defaultTableResults.filter(e => e?.status === showError)
     }
@@ -688,70 +503,75 @@ useEffect(() => {
     
   if (loading || !data) 
     return (
-        <Fragment>
-            <span className={classes.circularProgress} {...tableContainerProps}>
-                <CircularProgress size={48} />
-            </span>
-        </Fragment>
+      <div className="survey">
+        <div className="spinner">
+            <CircularProgress size={48} />
+        </div>
+      </div>
     )
  
     return (
-      <div {...tableContainerProps}>
-      <div {...tableTabRowProps} className='noselect'>
-        <div {...tabInner}>
+      <div className="survey">
+      <div className='noselect survey__tab-row'>
+        <div className='survey__tab-col'>
+          {/* Creating tabs for selected page */}
           {tabArray.map((e, i) => (
             <div 
-            className={`tableTab`} 
-            {...(active === i) ? {...tableTabSelectedProps} : {...tableTabProps}} 
+            className={(active === i) ? 'survey__tab survey__tab--selected' : 'survey__tab'} 
             onClick={() => handleClick(i, e[1])}
-            >{e[0]} 
+            >{e[0]}  
             {(lineErrors > 0 && e[0] === "Line Check" ? 
-            <span {...parcelErrorProps}>{lineErrors}</span> : 
+            <span className="error-icon">{lineErrors}</span> : 
             curveErrors > 0 && e[0] === "Curve Check" ? 
-            <span {...parcelErrorProps}>{curveErrors}</span> 
+            <span className="error-icon">{curveErrors}</span> 
             : null)}
             </div>
           ))}
         </div>
-        <div {...tabInner}>
-          <div className={`tableTab`} 
-          {...(contain === true ? {...tableTabSelectedProps} : {...tableTabProps})}
+        <div className="survey__tab-col">
+          {/* Adding tabs to handle filters */}
+          <div
+          className={(showError === 'fail' || showError === 'pass' || showError === 'none' ? 'survey__tab survey__tab--selected' : 'survey__tab')}
           onClick={() => handleFilterClick()}>Sort By {(contain === true ? "All" : "Parcel")}
           </div>
-          <div className={`tableTab`} 
-          {...(showError === 'fail' || showError === 'pass' || showError === 'none' ? {...tableTabSelectedProps} : {...tableTabProps})}
+          <div
+          className={(showError === 'fail' || showError === 'pass' || showError === 'none' ? 'survey__tab survey__tab--selected' : 'survey__tab')}
           onClick={() => handleErrorClick()}>Filter {(showError === 'fail' ? 'Passing': showError === 'pass' ? "Unknown" : showError === 'none' ? 'All' : "Failing")}
           </div>
         </div>
       </div>
-      {(page === 'legal' || page === 'project' ? <div {...tableTitleProps}>Dimension {(activeColumns === lineColumns) ? "Line" : "Curve"} Check</div> : null)}
-      <div {...tableContProps} className={`scrollAlt`}>
-        <table {...tableProps}>
-          <thead {...tableHeadProps}>
-            <tr {...rowProps}>
+      <div className="survey__title">Dimension {(activeColumns === lineColumns) ? "Line" : "Curve"} Check</div>
+      <div className='scroll scroll--alt table-cont'>
+        <table className="table">
+          <thead className="table__head">
+            <tr className="table__head__row">
+              {/* Create columns for selected table data */}
               {activeColumns.map((column, i) => (
                   <td
                     key={i}
                     align={column.align}
-                    {...dataTopProps}
                     onClick={e => handleSortClick(column.id)}
                   >
-                    <div {...dataTopInner}><span>{column.label}</span><span style={{padding: '0 .5rem'}}>{(column.id === sortArrow[0] ? (sortArrow[1] === 'down' ? '▼' : sortArrow[1] === 'up' ? "▲" : '▶' ) : '▶')}</span></div>
+                    <div className="table__head__cell">
+                      <span>{column.label}</span>
+                      <span style={{padding: '0 .5rem', flex: '1'}}>{(column.id === sortArrow[0] ? (sortArrow[1] === 'down' ? '▼' : sortArrow[1] === 'up' ? "▲" : '▶' ) : '▶')}</span>
+                    </div>
                   </td>
                 ))}
             </tr>
           </thead>
-          <tbody {...tableBodyProps}>
+          <tbody className="table__body">
+            {/* Create rows for each segment */}
             {tableResults?.map((e, i) => {
               //Sort what dimension is displayed
               if ((Object.entries(e)[1][1] === 'Line' && activeColumns === lineColumns) || (Object.entries(e)[1][1] === 'Curve' && activeColumns === curveColumns) ) {
                   return(
-                  <tr ref={(e['oid'] === selected ? itemEl : null)} className={(e['oid'] === selected ? 'rowSelectColor' : 'rowAltColor')} {...rowProps} role="checkbox" tabIndex={-1} key={i} onClick={() => e['oid'] !== selected ? setSelected(e['oid']) : setSelected()}>
+                  <tr ref={(e['oid'] === selected ? itemEl : null)} className={(e['oid'] === selected ? 'table__row table__row--selected' : 'table__row')} role="checkbox" tabIndex={-1} key={i} onClick={() => e['oid'] !== selected ? setSelected(e['oid']) : setSelected()}>
                       {activeColumns.map((column, il) => {
                         const value = _.get(e, column.id);
                         return (
-                          <td {...dataProps} key={il} align={column.align}>
-                            {//https://stackoverflow.com/questions/46592833/how-to-use-switch-statement-inside-a-react-component
+                          <td className='table__cell' key={il} align={column.align}>
+                            {//Adding icons for passing/failing/unkown values: https://stackoverflow.com/questions/46592833/how-to-use-switch-statement-inside-a-react-component
                             {
                               'Pass': <img src={good} alt="Pass"></img>,
                               'Fail': <img src={error} alt="Fail"></img>,
@@ -766,10 +586,11 @@ useEffect(() => {
             })}
           </tbody>
         </table>
-        {tableResults.length === 0 ?
-          <div {...emptyResults}>
+        {tableResults.filter(e => (Object.entries(e)[1][1] === 'Line' && activeColumns === lineColumns) || (Object.entries(e)[1][1] === 'Curve' && activeColumns === curveColumns)).length === 0 ?
+        //Display warning if no rows are in the table
+          <div className="empty-results">
               <TriError color={'#664d03'}/>
-              <div className={classes.mapUploadTextError}>No data returned. Try adjusting your filters</div>
+              <div>No data returned. Try adjusting your filters</div>
           </div> : null}
       </div>
       </div>

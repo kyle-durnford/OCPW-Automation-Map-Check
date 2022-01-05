@@ -2,6 +2,8 @@ import React, {useState, useEffect, useCallback} from 'react'
 import good from '../assets/check.svg'
 import error from '../assets/error.svg'
 
+//Main Checklist that replaces the map (WIP) 
+
 const checklistCategory = {
     style: {
         fontWeight: '600',
