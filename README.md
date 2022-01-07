@@ -39,7 +39,7 @@ Under Debug tab see the Environment Variables section and add:
 - `FORGE_CLIENT_SECRET` : use your secret here
 - `FORGE_WEBHOOK_URL` : use the ngrok forwarding URL from previous step
 
-**Visual Sutdio Code** (Windows, MacOS):
+**Visual Studio Code** (Windows, MacOS):
 
 Open the `webapp` folder (only), at the bottom-right, select **Yes** and **Restore**. This restores the packages (e.g. Autodesk.Forge) and creates the launch.json file. See *Tips & Tricks* for .NET Core on MacOS.
 
@@ -58,6 +58,8 @@ At the `.vscode\launch.json`, find the env vars and add your Forge Client ID, Se
 ```
 
 **How to use this sample**
+
+Before you start the app, run `npm run sassy` to compile the sass files into main.css.
 
 Open `http://localhost:3000` to start the app, if first time, click on `Define Activity`, upload a dwg file that contais civil 3d parcel objects, select the `Activity` and, finally, `Start workitem`. 
 
