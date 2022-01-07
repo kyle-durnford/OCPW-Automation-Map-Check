@@ -60,6 +60,8 @@ At the `.vscode\launch.json`, find the env vars and add your Forge Client ID, Se
 
 **How to use this sample**
 
+Before you start the app, run `npm run sassy` to compile the sass files into main.css.
+
 Open `http://localhost:3000` to start the app, if first time, click on `Define Activity`, upload a dwg file that contais civil 3d parcel objects, select the `Activity` and, finally, `Start workitem`. 
 
 # Further Reading
