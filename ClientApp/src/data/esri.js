@@ -346,10 +346,8 @@ const ericJson = (jsonData, view) => {
         });
 
         graphicslayer2.graphics.add(newGraphic)
-        console.log(parcellayer.graphics)
 
-        
-
+    
         _.forEach(dictionary, (value, key) => {
             // console.log('Key', key)
 
@@ -509,7 +507,7 @@ const ericJson = (jsonData, view) => {
     });
 }
 
-export const buildMap = (json, mapRef, cityLayers, setSelected) => {
+export const buildMap = (json, mapRef, cityLayers, setSelected, selected) => {
 
     config.request.timeout = 300000
 
@@ -631,6 +629,10 @@ export const buildMap = (json, mapRef, cityLayers, setSelected) => {
                         parcellayer.graphics.addMany(parcelLayers)
                     }
 
+                } else if (selected){
+                    document.body.style.cursor = 'default'
+                    selectedLayer(selected)
+
                 } else {
                     document.body.style.cursor = 'default'
                     
@@ -655,6 +657,7 @@ export const buildMap = (json, mapRef, cityLayers, setSelected) => {
             view.hitTest(e).then(response => {
                 if(response.results.length > 0){
                     try {
+                        let check = 0
                         const graphic = response.results.filter(result => {
                             if (result.graphic.layer === selectedgraphicslayer) {
                                 //Unselect the selected layer
@@ -662,15 +665,20 @@ export const buildMap = (json, mapRef, cityLayers, setSelected) => {
                                 selectedLayers.forEach(e => e.visible = false)
                                 selectedgraphicslayer.graphics.removeAll()
                                 selectedgraphicslayer.graphics.addMany(selectedLayers);
+                                check = 1
                                 return result.graphic.layer
                             } else if (result.graphic.layer === parcellayer){
-                                
                                 return result.graphic.layer
                             }
                         })[0].graphic
                         console.log(graphic)
                         console.log(graphic.attributes.oid)
-                        setSelected(graphic.attributes.oid)
+                        if (check == 1) {
+                            setSelected(null)
+                        } else {
+                            setSelected(graphic.attributes.oid)
+                        }
+
                     } catch {
                         console.log('unselected')
                     }

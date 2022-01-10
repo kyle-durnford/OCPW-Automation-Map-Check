@@ -299,9 +299,6 @@ const SurveyTable = ({loading, data, selected, setSelected, page}) => {
   const [defaultSortedResults, setDefaultSortedResults] = useState([])
   const [sortedResults, setSortedResults] = useState([])
 
-  //Things get a liiiiittle complicated here...
-
-
   //When the data loads, we need to see which segments are passing and failing
   useEffect(() => {
     if(data) {
