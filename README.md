@@ -40,7 +40,7 @@ Under Debug tab see the Environment Variables section and add:
 - `FORGE_CLIENT_SECRET` : use your secret here
 - `FORGE_WEBHOOK_URL` : use the ngrok forwarding URL from previous step
 
-**Visual Sutdio Code** (Windows, MacOS):
+**Visual Studio Code** (Windows, MacOS):
 
 Open the `webapp` folder (only), at the bottom-right, select **Yes** and **Restore**. This restores the packages (e.g. Autodesk.Forge) and creates the launch.json file. See *Tips & Tricks* for .NET Core on MacOS.
 

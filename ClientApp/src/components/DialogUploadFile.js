@@ -98,6 +98,7 @@ const DialogUploadFile = ({open, onClose, connectionId, isLoading, setSubmit}) =
   };
 
   //TODO: Rip out all the MUI stuff
+  //TODO: Submit doesn't work when a file is dragged
 
   return (
     <div>
