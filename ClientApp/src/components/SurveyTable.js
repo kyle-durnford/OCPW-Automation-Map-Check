@@ -275,7 +275,7 @@ const relativedColumns = [
   },
 ]
 
-const SurveyTable = ({loading, data, selected, setSelected, page}) => {
+const SurveyTable = ({loading, data, selected, setSelected, page, lineErrors, setLineErrors, curveErrors, setCurveErrors}) => {
   const referenceTabs = [['References', referenceColumns], [ 'Timeline', timelineColumns]];
   const legalTabs = [['Line Check', lineColumns], ['Curve Check', curveColumns]];
   const monumentTabs = [['Monuments', monumentsColumns], ['History', historyColumns], ['Timeline', monumentTimelineColumns], ['Relatived', relativedColumns]];
@@ -283,8 +283,7 @@ const SurveyTable = ({loading, data, selected, setSelected, page}) => {
   const [active, setActive] = useState(0);
   const [activeColumns, setActiveColumns] = useState(lineColumns)
   const [row, setRow] = useState(null)
-  const [lineErrors, setLineErrors] = useState(0)
-  const [curveErrors, setCurveErrors] = useState(0)
+ 
   const [tabArray, setTabArray] = useState(legalTabs)
   const [sortName, setSortName] = useState()
   const [contain, setContain] = useState(false)

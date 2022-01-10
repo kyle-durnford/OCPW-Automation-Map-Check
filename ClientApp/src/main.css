@@ -78,6 +78,14 @@ html {
   border-radius: 0.5rem;
   font-size: 1rem;
 }
+.validation--error {
+  background-color: #f8d7da;
+  color: #f55d6e;
+  padding: 0.5rem;
+  width: 100%;
+  border-radius: 0.5rem;
+  font-size: 1rem;
+}
 
 .table {
   table-layout: auto;
@@ -492,6 +500,7 @@ html {
 .info__title {
   font-size: 0.8rem;
   color: #6E7998;
+  max-width: 80%;
 }
 
 .report {

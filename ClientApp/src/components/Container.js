@@ -48,6 +48,8 @@ const Container = () => {
   const [urn, setUrn] = useState(null)
   const [forgeError, setForgeError] = useState()
   const [appError, setAppError] = useState()
+  const [lineErrors, setLineErrors] = useState(0)
+  const [curveErrors, setCurveErrors] = useState(0)
 
   const leftRef = createRef();
   const splitPaneRef = createRef();
@@ -309,7 +311,7 @@ const Container = () => {
         <div className="drawercont__navcont">
           <NavMenu setPage={setPage} page={page} hideDrawer={hideDrawer} setHideDrawer={setHideDrawer}/>
         </div>
-        <Drawer hideDrawer={hideDrawer} loading={loading} page={page} data={parcelInfo} setSelected={setSelected} selected={selected} section={section} setSection={setSection}/>
+        <Drawer hideDrawer={hideDrawer} loading={loading} page={page} data={parcelInfo} setSelected={setSelected} selected={selected} section={section} setSection={setSection} lineErrors={lineErrors} curveErrors={curveErrors}/>
       </div>
       <div className='mapcont'>
         <AppBar handleClickOpen={handleClickOpen} />
@@ -351,7 +353,7 @@ const Container = () => {
                   <span className="splitpane__divider__handle__bar splitpane__divider__handle__bar--hor"></span>
                 </div>
               </div>
-            <SurveyTable page={page} loading={loadingTable} data={tableInfo} selected={selected} setSelected={setSelected}/>
+            <SurveyTable page={page} loading={loadingTable} data={tableInfo} selected={selected} setSelected={setSelected} lineErrors={lineErrors} setLineErrors={setLineErrors} curveErrors={curveErrors} setCurveErrors={setCurveErrors}/>
           </div>
 
         : appError ?
