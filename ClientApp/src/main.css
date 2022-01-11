@@ -71,7 +71,7 @@ html {
 }
 
 .validation--success {
-  background-color: #ebfaf0;
+  background-color: #dbf8e5;
   color: #5bd381;
   padding: 0.5rem;
   width: 100%;
@@ -153,9 +153,7 @@ html {
 
 .error-icon {
   font-size: 0.65rem;
-  background-color: #f55d6e;
-  margin-left: 1rem;
-  color: #fff;
+  margin-left: 0.5rem;
   padding: 0.35rem;
   border-radius: 100%;
   width: 24px;
@@ -164,6 +162,14 @@ html {
   line-height: 1.2;
   text-align: center;
   vertical-align: middle;
+}
+.error-icon--error {
+  background-color: #f55d6e;
+  color: #fff;
+}
+.error-icon--warning {
+  background-color: #fcc057;
+  color: #fff;
 }
 
 .spinner {
@@ -332,7 +338,7 @@ html {
   box-shadow: 0px 0px 10px 0px #7f90f330;
 }
 .splitpane__map--left {
-  background: #ebfaf0;
+  background: #dbf8e5;
   width: calc(50% - 2rem);
   max-width: 85%;
   margin: 0 0.25rem 0.25rem 1rem;
@@ -443,11 +449,30 @@ html {
 .parcel__data--error:hover {
   background: #a0acf0;
 }
+.parcel__data--warning {
+  background: #fff3cd;
+  margin: 0.5rem 0;
+  color: #664d03;
+}
+.parcel__data--warning:hover {
+  background: #a0acf0;
+}
+.parcel__data--success {
+  background: #dbf8e5;
+  margin: 0.5rem 0;
+  color: #37af5d;
+}
+.parcel__data--success:hover {
+  background: #a0acf0;
+}
 .parcel__data--selected {
   background: #a0acf0;
 }
 .parcel__data--selected--error {
   color: #842029;
+}
+.parcel__data--selected--warning {
+  color: #664d03;
 }
 .parcel__data--selected:hover {
   background: #a0acf0;

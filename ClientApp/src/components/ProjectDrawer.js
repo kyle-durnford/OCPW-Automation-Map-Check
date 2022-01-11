@@ -3,11 +3,11 @@ import good from '../assets/check.svg'
 import error from '../assets/error.svg'
 import Project from "../assets/Project.js"
 
-const ProjectDrawer = ({parcelCount, lines, curves, lineErrors, curveErrors}) => {
+const ProjectDrawer = ({parcelCount, lines, curves, lineErrors, curveErrors, lineMissing, curveMissing}) => {
 
-    const linePercent = Math.round((100 - (lineErrors/lines*100)) * 10) / 10
-    const curvePercent = Math.round((100 - (curveErrors/curves*100)) * 10) / 10
-    const totalPercent = Math.round((100 - (((lineErrors + curveErrors)/(lines + curves)) * 100)) * 10) / 10
+    const linePercent = Math.round((100 - ((lineMissing + lineErrors)/lines*100)) * 10) / 10
+    const curvePercent = Math.round((100 - ((curveMissing + curveErrors)/curves*100)) * 10) / 10
+    const totalPercent = Math.round((100 - (((lineMissing + curveMissing + lineErrors + curveErrors)/(lines + curves)) * 100)) * 10) / 10
 
     return (
         <div className="project">
@@ -46,18 +46,38 @@ const ProjectDrawer = ({parcelCount, lines, curves, lineErrors, curveErrors}) =>
                 </div>
                 <div className="info__row">
                     <div className="info__block">
+                        <p>{lineMissing}</p>
+                        <p className="info__title">Line Segment Warnings</p>
+                    </div>
+                    <div className="info__block">
+                        <p>{curveMissing}</p>
+                        <p className="info__title">Curve Segment Warnings</p>
+                    </div>
+                </div>
+                <div className="info__row">
+                    <div className="info__block">
+                        <p>{(lines + curves) - (lineMissing + lineErrors + curveErrors + curveMissing)}</p>
+                        <p className="info__title">Total Passing</p>
+                    </div>
+                    <div className="info__block">
+                        <p>{lineMissing + lineErrors + curveErrors + curveMissing}</p>
+                        <p className="info__title">Total Failing</p>
+                    </div>
+                </div>
+                <div className="info__row">
+                    <div className="info__block">
                         <p>{linePercent}%</p>
-                        <p className="info__title">Line Segment Passing</p>
+                        <p className="info__title">Line Segment Passing %</p>
                     </div>
                     <div className="info__block">
                         <p>{curvePercent}%</p>
-                        <p className="info__title">Curve Segment Passing</p>
+                        <p className="info__title">Curve Segment Passing %</p>
                     </div>
                 </div>
                 <div className="info__row">
                     <div className="info__block">
                         <p>{totalPercent}%</p>
-                        <p className="info__title">Total Passing</p>
+                        <p className="info__title">Total Passing %</p>
                     </div>
                     <div className="info__block">
                         <p></p>

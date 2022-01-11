@@ -67,11 +67,11 @@ const lineColumns = [
     label: 'Bearing Check',
     align: 'center',
   },
-  {
-    id: 'northorientation',
-    label: 'North Orientation',
-    align: 'center',
-  },
+  // { Commented out because it has no value in JSON at the moment
+  //   id: 'northorientation',
+  //   label: 'North Orientation',
+  //   align: 'center',
+  // },
 ];
 
 const curveColumns = [
@@ -144,6 +144,16 @@ const curveColumns = [
     id: 'Labels_Check.Arc_EndPoint_Check.Difference',
     label: 'Difference End Tangency',
     align: 'left',
+  },
+  {
+    id: 'Labels_Check.ArcDelta_Check.SigFig_Check',
+    label: 'Angle Sig Figs',
+    align: 'left'
+  },
+  {
+    id: 'Labels_Check.ArcLength_Check.SigFig_Check',
+    label: 'Length Sig Figs',
+    align: 'left'
   },
   {
     id: 'Labels_Check.Arc_StartPoint_Check.Arc_StartPoint_Check',
@@ -275,7 +285,7 @@ const relativedColumns = [
   },
 ]
 
-const SurveyTable = ({loading, data, selected, setSelected, page, lineErrors, setLineErrors, curveErrors, setCurveErrors}) => {
+const SurveyTable = ({loading, data, selected, setSelected, page, lineErrors, setLineErrors, curveErrors, setCurveErrors, lineMissing, curveMissing, setLineMissing, setCurveMissing}) => {
   const referenceTabs = [['References', referenceColumns], [ 'Timeline', timelineColumns]];
   const legalTabs = [['Line Check', lineColumns], ['Curve Check', curveColumns]];
   const monumentTabs = [['Monuments', monumentsColumns], ['History', historyColumns], ['Timeline', monumentTimelineColumns], ['Relatived', relativedColumns]];
@@ -303,6 +313,8 @@ const SurveyTable = ({loading, data, selected, setSelected, page, lineErrors, se
     if(data) {
       let lines = 0;
       let curves = 0;
+      let curveCountMissing = 0
+      let lineCountMissing = 0
       let results = []
       data.map((e, i) => {
         Object.entries(data[i][1][1][1][0]['Segments']).map((row, l) => {
@@ -312,6 +324,7 @@ const SurveyTable = ({loading, data, selected, setSelected, page, lineErrors, se
             let check2 = false //Same as above for passing but if a fail is detected, the success status is overwritten
             if(Object.values(Object.values(Object.values(row[1].Labels_Check))).includes('None')) {
               row[1] = {...row[1], ...{status: 'none'}}
+              lineCountMissing++
             } else {
               Object.values(Object.values(row[1].Labels_Check)).map((el, il) => {
                 if(Object.values(el).includes('Fail') && check1 === false) {
@@ -328,8 +341,9 @@ const SurveyTable = ({loading, data, selected, setSelected, page, lineErrors, se
             let check1 = false
             let check2 = false
             console.log(Object.values(Object.values(Object.values(row[1].Labels_Check))))
-            if(Object.values(Object.values(Object.values(row[1].Labels_Check)))[0] === 'None') {
+            if(Object.values(Object.values(Object.values(row[1].Labels_Check))).includes('None')) {
               row[1] = {...row[1], ...{status: 'none'}}
+              curveCountMissing++
             } else {
               Object.values(Object.values(row[1].Labels_Check)).map((el, il) => {
                 if(Object.values(el).includes('Fail') && check1 === false) {
@@ -348,6 +362,8 @@ const SurveyTable = ({loading, data, selected, setSelected, page, lineErrors, se
       })
       setLineErrors(lines)
       setCurveErrors(curves)
+      setLineMissing(lineCountMissing)
+      setCurveMissing(curveCountMissing)
       setDefaultTableResults(results)
       setTableResults(results)
     }
@@ -557,9 +573,14 @@ useEffect(() => {
             onClick={() => handleClick(i, e[1])}
             >{e[0]}  
             {(lineErrors > 0 && e[0] === "Line Check" ? 
-            <span className="error-icon">{lineErrors}</span> : 
+            <span className="error-icon error-icon--error">{lineErrors}</span> : 
             curveErrors > 0 && e[0] === "Curve Check" ? 
-            <span className="error-icon">{curveErrors}</span> 
+            <span className="error-icon error-icon--error">{curveErrors}</span> 
+            : null)}
+             {(lineMissing > 0 && e[0] === "Line Check" ? 
+            <span className="error-icon error-icon--warning">{lineMissing}</span> : 
+            curveMissing > 0 && e[0] === "Curve Check" ? 
+            <span className="error-icon error-icon--warning">{curveMissing}</span> 
             : null)}
             </div>
           ))}
