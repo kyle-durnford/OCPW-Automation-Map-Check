@@ -21,7 +21,7 @@ Clone this project or download it. It's recommended to install [Git for Windows]
     
 **ngrok**
 
-When a `Workitem` completes, **Design Automation** can notify our application. As the app is running locally (i.e. `localhost`), it's not reacheable from the internet. `ngrok` tool creates a temporary address that channels notifications to our `localhost` address.
+When a CAD file is uploaded and done processing, **Design Automation API** and **Model Derivative API** can notify our application when it is complete. As the app is running locally (i.e. `localhost`), it's not reacheable from the internet. `ngrok` tool creates a temporary address that channels notifications to our `localhost` address.
 
 After [download ngrok](https://ngrok.com/), run `ngrok http 3000 -host-header="localhost:3000"`, then copy the `http` address into the `FORGE_WEBHOOK_URL` environment variable (see next). For this sample, do not use the `https` address.
 
