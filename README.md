@@ -1,7 +1,6 @@
 # OCPW-Automation-Map-Check
 ## Description
-
-Webapp interface that uses Design Automation to extract the `Parcel` data from Civil 3d objects.
+Webapp that uses Forge Design Automation Autodesk technology to automatically identify dimension erros on civil 3D parcels. The dimension errors are reported back to the Land Surveyor or Civil Engineer who created the CAD file.
 
 ## Data flow diagram
 ![](https://github.com/e-hermoso/OCPW-Automation-Map-Check/blob/main/media/aboutapp/img/Data%20Flow%20Forge%20Checker.jpg)
