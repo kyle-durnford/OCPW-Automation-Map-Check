@@ -1,6 +1,6 @@
 # OCPW-Automation-Map-Check
 ## Description
-Webapp that uses Forge Design Automation Autodesk technology to automatically identify dimension erros on civil 3D parcels. The dimension errors are reported back to the Land Surveyor or Civil Engineer who created the CAD file.
+Web app that uses Forge Design Automation Autodesk technology to automatically identify dimension erros on civil 3D parcels. The dimension errors are reported back to the Land Surveyor or Civil Engineer who created the CAD file.
 
 ## Application Structure
 Visual Studio ASP.NET Core and React app template was used to create this project.
