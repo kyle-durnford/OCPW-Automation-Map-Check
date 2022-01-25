@@ -60,6 +60,7 @@ At the `.vscode\launch.json`, find the env vars and add your Forge Client ID, Se
 },
 ```
 **Node.js**
+
 Check if node is installed by typing `node -v`. If node is not installed please install [download here](https://nodejs.org/en/download/).
 
 **How to use this sample**
