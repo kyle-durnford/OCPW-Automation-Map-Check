@@ -59,12 +59,14 @@ At the `.vscode\launch.json`, find the env vars and add your Forge Client ID, Se
     "FORGE_WEBHOOK_URL": "http://1234.ngrok.io",
 },
 ```
+**Node.js**
+Check if node is installed by typing `node -v`. If node is not installed please install [download here](https://nodejs.org/en/download/).
 
 **How to use this sample**
 
 Before you start the app, run `npm run sassy` to compile the sass files into main.css.
 
-Open `http://localhost:3000` to start the app, if first time, click on `Define Activity`, upload a dwg file that contais civil 3d parcel objects, select the `Activity` and, finally, `Start workitem`. 
+Open `http://localhost:3000` to start the app, upload a dwg file that contais civil 3d parcel objects, fill out the form and finally `Start workitem`. 
 
 # Further Reading
 
