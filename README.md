@@ -15,7 +15,8 @@ Visual Studio ASP.NET Core and React app template was used to create this projec
 1. **Forge Account**: Learn how to create a Forge Account, activate subscription and create an app at [this tutorial](http://learnforge.autodesk.io/#/account/). 
 2. **Visual Studio**: [Either Community (Windows)](https://visualstudio.microsoft.com/downloads/) or **Visual Studio Code**:[Code (Windows, MacOS).](https://code.visualstudio.com/download)
 3. **.NET Core** basic knowledge with C#
-4. **ngrok**: Routing tool, [download here](https://ngrok.com/). 
+4. **Node.js** basic knowledge with Javascript [download here](https://nodejs.org/en/download/).
+5. **ngrok**: Routing tool, [download here](https://ngrok.com/). 
 ## Running locally
 
 Clone this project or download it. It's recommended to install [Git for Windows](https://git-scm.com/download/win) if you are using windows. To clone it via command line, use the following (**Terminal** on MacOSX/Linux, **Git Shell** on Windows):
