@@ -10,7 +10,7 @@ const EsriMap = ({esriData, selected, setSelected, open}) => {
     }, []);
 
     useEffect(() => {
-        selectedLayer(selected)
+        selectedLayer(selected, open)
     }, [selected])
 
     useEffect(() => {

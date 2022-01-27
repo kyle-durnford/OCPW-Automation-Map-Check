@@ -139,6 +139,7 @@ const lineSymbol = {
 let selectedLayers = []
 let parcelLayers = []
 let parcelLabels = []
+let segmentLabels = []
 
 export const createCityLayer = () => {
     return (new MapImageLayer({
@@ -409,6 +410,7 @@ const ericJson = (jsonData, view) => {
 
                 }
             });
+            segmentLabels.push(lblGraphic)
             lblGraphics.push(lblGraphic)
 
             lblgroup[oid] = lblGraphic;
@@ -553,8 +555,8 @@ export const buildMap = (json, mapRef, cityLayers, setSelected, selected) => {
 
     map.add(parcellayer)
     map.add(graphicslayer2)
-    
     map.add(selectedgraphicslayer)
+    map.add(lblgraphicslayer)
     
 
     // view.when(function () {
@@ -798,29 +800,30 @@ export const buildMap = (json, mapRef, cityLayers, setSelected, selected) => {
     console.log('Finished')
 }
 
-export const selectedLayer = selected => {
+export const selectedLayer = (selected, open) => {
     selectedLayers.forEach(e => e.visible = false)
+    console.log(open)
     if (selected) {
         let select = selected - 1
         selectedLayers[select].visible = true
-        console.log(selectedLayers)
+        selectedgraphicslayer.graphics.removeAll()
+        selectedgraphicslayer.graphics.addMany(selectedLayers);
+        lblgraphicslayer.graphics.removeAll()
+        lblgraphicslayer.graphics.add(segmentLabels[select]);
+    } else if (open >= 0 ){
+        selectedgraphicslayer.graphics.removeAll()
+        selectedgraphicslayer.graphics.addMany(selectedLayers);
+        lblgraphicslayer.graphics.removeAll()
+        lblgraphicslayer.graphics.addMany(parcelLabels[open]);
+        
     }
-    selectedgraphicslayer.graphics.removeAll()
-    selectedgraphicslayer.graphics.addMany(selectedLayers);
 }
 
-export const selectedParcel = open => {
-    console.log(open)
-    console.log(lblgraphicslayer)
-    console.log(parcelLabels)
-    console.log(parcelLabels[open])
-    lblgraphicslayer.graphics.addMany(parcelLabels[0]);
-    console.log(lblgraphicslayer)
-    // if(open) {
-    //     console.log('hi')
-    //     lblgraphicslayer.graphics.removeAll()
-    //     lblgraphicslayer.graphics.addMany(parcelLabels[0]);
-    // }
+export const selectedParcel = (open) => {
+    if(open >= 0) {
+        lblgraphicslayer.graphics.removeAll()
+        lblgraphicslayer.graphics.addMany(parcelLabels[open]);
+    }
 }
 
 export default {
