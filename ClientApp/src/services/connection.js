@@ -139,6 +139,21 @@ export const clearAccount = async => {
   })
 }
 
+export const deleteManifest = async(urn) => {
+  return new Promise(function(resolve, reject) {
+    axios.delete("api/forge/modelderivative/v2/designdata/" + urn + "/manifest").then(
+      response => {
+        console.log("Urn cleared: ", response)
+        resolve(response)
+      },
+      error => {
+        console.log("Urn cleared error:", error)
+        reject(error)
+      }
+    )
+  })
+}
+
 export const translateObject = async (objectKeys, connectionId) => {
     const data = {
         data: { 
@@ -188,6 +203,7 @@ export default {
   createActivity,
   getActivity,
   clearAccount,
+  deleteManifest,
   getTableInfo,
   translateObject
 }

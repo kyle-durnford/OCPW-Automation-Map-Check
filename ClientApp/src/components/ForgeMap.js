@@ -5,9 +5,8 @@ import connection from '../services/connection'
 import TriError from '../assets/TriError.js'
 import { launchViewer } from "../data/forge";
 
-const ForgeMap = ({loading, objectKeys, connectionId, urn, error, setError}) => {
+const ForgeMap = ({objectKeys, connectionId, urn, error, setError, mapInfo, setMapInfo}) => {
 
-    const [mapInfo, setMapInfo] = useState()
     const [didMount, setDidMount] = useState(false)
     
     useEffect(() => { 
@@ -20,7 +19,6 @@ const ForgeMap = ({loading, objectKeys, connectionId, urn, error, setError}) => 
             .then(
                 response => {
                     console.log('Response', response)
-                    setMapInfo(response)
                     setError()
                 },
                 error => {
@@ -33,7 +31,7 @@ const ForgeMap = ({loading, objectKeys, connectionId, urn, error, setError}) => 
 
     useEffect(()=> {
         if(urn) {
-            launchViewer(urn)
+            launchViewer(urn, setMapInfo)
         }
     }, [urn]) // wait for the translation to finish
 
@@ -44,7 +42,7 @@ const ForgeMap = ({loading, objectKeys, connectionId, urn, error, setError}) => 
                 <p></p>
             </span>
         )
-    } else if (loading && !mapInfo)  {
+    } else if (!mapInfo)  {
         return (
             <span className='spinner'>
                 <CircularProgress size={48} />

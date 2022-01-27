@@ -3,7 +3,7 @@ let viewerDbIds;
 let da_jsonData;
 const Autodesk = window.Autodesk;
 
-export const launchViewer = (urn) => {
+export const launchViewer = (urn, setMapInfo) => {
     
     let options = {
         env: 'AutodeskProduction',
@@ -36,6 +36,7 @@ export const launchViewer = (urn) => {
         Autodesk.Viewing.Document.load(documentId, onDocumentLoadSuccess, onDocumentLoadFailure);
         console.log("initialization complete, creating the viewer...");
     });
+    setMapInfo("loaded")
 }
 
 export const onDocumentLoadSuccess = (viewerDocument) => {
@@ -67,6 +68,7 @@ export const onDocumentLoadSuccess = (viewerDocument) => {
 
     });
     console.log("Check if Viewer is completely loaded.")
+    return ""
 }
 
 export const onDocumentLoadFailure = (viewerErrorCode) => {

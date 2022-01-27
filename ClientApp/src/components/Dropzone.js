@@ -51,7 +51,7 @@ const Dropzone = ({ onChange, setFiles, files, ...rest}) => {
     setFiles(acceptedFiles)
   }, []);
 
-  const { getRootProps, getInputProps, isDragActive } = useDropzone({ onDrop });
+  const { getRootProps, getInputProps, isDragActive } = useDropzone({ onDrop, multiple: false });
 
   const removeFile = i => {
     setFiles(files.filter((v, j) => j !== i))
@@ -61,7 +61,7 @@ const Dropzone = ({ onChange, setFiles, files, ...rest}) => {
     <div>
       {files.map((file, i) =>
         file !== null ? (
-            <div key={file.id} {...dropFileProps}>{file.name} <small> {file.size} bytes</small>
+            <div key={file.id} {...dropFileProps}>{file.name} <small> {Math.round(file.size / 1024)} KB</small>
               <button
                 style={{cursor: 'pointer'}}
                 type="button"

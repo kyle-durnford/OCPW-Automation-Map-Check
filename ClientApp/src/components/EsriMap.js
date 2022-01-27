@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef, Fragment } from "react"
-import { buildMap, createCityLayer, selectedLayer } from '../data/esri'
+import { buildMap, createCityLayer, selectedLayer, selectedParcel } from '../data/esri'
 
-const EsriMap = ({esriData, selected, setSelected}) => {
+const EsriMap = ({esriData, selected, setSelected, open}) => {
     const mapRef = useRef();
 
     useEffect(() => {
@@ -12,6 +12,10 @@ const EsriMap = ({esriData, selected, setSelected}) => {
     useEffect(() => {
         selectedLayer(selected)
     }, [selected])
+
+    useEffect(() => {
+        selectedParcel(open)
+    }, [open])
 
     return (
         <div className="esri" ref={mapRef}/>

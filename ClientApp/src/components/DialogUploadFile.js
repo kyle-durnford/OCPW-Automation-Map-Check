@@ -1,4 +1,4 @@
-import React, { useState } from "react"
+import React, { useState, useEffect } from "react"
 import Button from '@material-ui/core/Button';
 import { makeStyles } from '@material-ui/core';
 import TextField from '@material-ui/core/TextField';
@@ -45,7 +45,8 @@ const dialogTitleProps = {
 
 const inputContProps = {
     style: {
-        margin: 'calc(2rem - 8px) 0'
+        margin: 'calc(2rem - 8px) 0',
+        width: '100%'
     }
 } 
 
@@ -69,7 +70,7 @@ const buttonSolidProps = {
     }
 };
 
-const DialogUploadFile = ({open, onClose, connectionId, isLoading, setSubmit}) => {
+const DialogUploadFile = ({open, onClose, connectionId, isLoading, setSubmit, setEsriData, setTableInfo, setMapInfo, setParcelInfo}) => {
   const classes = useStyles();  
   const [submitAttempted, setSubmitAttempted] = useState()
   const [files, setFiles] = useState([])
@@ -78,6 +79,10 @@ const DialogUploadFile = ({open, onClose, connectionId, isLoading, setSubmit}) =
   const { handleSubmit, control, getValues } = useForm();
 
   const onSubmit = data => {
+    setEsriData(null)
+    setTableInfo(null)
+    setMapInfo(null)
+    setParcelInfo(null)
     const formData = new FormData()
     formData.append('inputFile', data.files);
     formData.append('data', JSON.stringify({
@@ -91,11 +96,18 @@ const DialogUploadFile = ({open, onClose, connectionId, isLoading, setSubmit}) =
             console.log('Work Started', response)
         },
         error => {
-           console.log('Error:', error)        }
+           console.log('Error:', error)
+        }
     )
     isLoading(true)
     onClose(false)
   };
+
+  useEffect(() => {
+      if (files) {
+        console.log(files)
+      }
+  }, [files])
 
   //TODO: Rip out all the MUI stuff
   //TODO: Submit doesn't work when a file is dragged
@@ -166,7 +178,7 @@ const DialogUploadFile = ({open, onClose, connectionId, isLoading, setSubmit}) =
                         )}
                         rules={{ required: 'Number of parcels required' }}
                     />
-                    <Controller
+                    {/* <Controller
                         name="rsNumber"
                         control={control}
                         defaultValue=""
@@ -255,7 +267,7 @@ const DialogUploadFile = ({open, onClose, connectionId, isLoading, setSubmit}) =
                             helperText={error ? error.message : null}
                         />
                         )}
-                    />
+                    /> */}
                     <div>
                         <Button {...buttonSolidProps} type="submit" variant="contained" color="primary">
                             Start Work Item

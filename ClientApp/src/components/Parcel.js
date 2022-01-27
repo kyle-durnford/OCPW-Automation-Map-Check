@@ -72,7 +72,6 @@ const Parcel = ({loading, setSelected, selected, data, parcelNum, open, setOpen,
 
     const parcelMissing = Object.entries(data[0]['Segments']).map((e, i) => {
         let parcelMissingCount = 0;
-        console.log(e)
         
         Object.values(e[1].Labels_Check).map((el, il) => {
             if(el == 'None') {
@@ -82,8 +81,6 @@ const Parcel = ({loading, setSelected, selected, data, parcelNum, open, setOpen,
 
         return parcelMissingCount
     });
-
-    console.log(parcelMissing)
        
     const parcelInfo = Object.entries(data[0]['Segments']).map((e, i) => {
         if (selected === e[1]['oid'] && (!Object.values(Object.values(e[1].Labels_Check)[0]).includes('Fail') && !Object.values(Object.values(e[1].Labels_Check)).includes('None')) && (!Object.values(Object.values(e[1].Labels_Check)[1]).includes('Fail') && !Object.values(Object.values(e[1].Labels_Check)).includes('None'))) {

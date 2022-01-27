@@ -4,9 +4,8 @@ import ProjectDrawer from './ProjectDrawer.js';
 import ReportDrawer from './ReportDrawer.js';
 import CheckDrawer from './CheckDrawer.js'
 
-const Drawer = ({loading, data, setSelected, selected, page, setSection, section, hideDrawer, lineErrors, curveErrors, lineMissing, curveMissing}) => {
+const Drawer = ({loading, data, setSelected, selected, page, setSection, section, hideDrawer, lineErrors, curveErrors, lineMissing, curveMissing, open, setOpen}) => {
 
-    const [open, setOpen] = useState(null);
     const [drawerData, setDrawerData] = useState();
     const [parcelCount, setParcelCount] = useState();
     const [segmentCount, setSegmentCount] = useState([0,0])
