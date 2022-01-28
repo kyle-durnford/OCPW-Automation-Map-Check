@@ -43,15 +43,16 @@ const dropzoneContProps = {
   }
 }
 
-const Dropzone = ({ onChange, setFiles, files, ...rest}) => {
+const Dropzone = ({ onChange, ...rest }) => {
 
-  const onDrop = useCallback((acceptedFiles) => {
-    // Do something with the files
-    console.log({ acceptedFiles });
+  const [files, setFiles] = useState([])  
+
+  const onDrop = acceptedFiles => {
     setFiles(acceptedFiles)
-  }, []);
+    onChange(acceptedFiles)
+  }
 
-  const { getRootProps, getInputProps, isDragActive } = useDropzone({ onDrop, multiple: false });
+  const { getRootProps, getInputProps, isDragActive } = useDropzone({ onDrop });
 
   const removeFile = i => {
     setFiles(files.filter((v, j) => j !== i))
@@ -61,7 +62,7 @@ const Dropzone = ({ onChange, setFiles, files, ...rest}) => {
     <div>
       {files.map((file, i) =>
         file !== null ? (
-            <div key={file.id} {...dropFileProps}>{file.name} <small> {Math.round(file.size / 1024)} KB</small>
+            <div key={file.id} {...dropFileProps}>{file.name} <small> {file.size} bytes</small>
               <button
                 style={{cursor: 'pointer'}}
                 type="button"
@@ -82,7 +83,7 @@ const Dropzone = ({ onChange, setFiles, files, ...rest}) => {
 
   return (
     <div {...dropzoneProps} {...getRootProps()}>
-      <input {...getInputProps({ onChange })} />
+      <input {...getInputProps()} />
       {isDragActive ? (
         <p {...dropzoneContProps} {...dropTextProps}>Drop the files here ...</p>
       ) : (
