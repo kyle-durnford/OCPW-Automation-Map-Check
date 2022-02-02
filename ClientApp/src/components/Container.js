@@ -55,6 +55,8 @@ const Container = () => {
   const [curveMissing, setCurveMissing] = useState(0)
   const [restart, setRestart] = useState(0)
   const [open, setOpen] = useState(null);
+  const [files, setFiles] = useState([]);
+  const [windowWidth, setWindowWidth] = useState(window.innerWidth)
 
   const leftRef = createRef();
   const splitPaneRef = createRef();
@@ -226,6 +228,8 @@ const Container = () => {
   // }
 
   const handleClickOpen = () => {
+    setFiles([])
+    console.log(files.length)
     setOpenDialog(true);
   };
 
@@ -234,6 +238,7 @@ const Container = () => {
   }
 
   const handleLoading = (isLoading) => {
+    setAppError(null)
     setSubmit(isLoading)
   }
 
@@ -254,8 +259,12 @@ const Container = () => {
   const MIN_WIDTH = 150;
   const MIN_HEIGHT = 150;
 
+  const onResize = e => {
+    setWindowWidth(e.target.innerWidth)
+  }
 
-  const onMouseMove = (e) => {
+
+  const onMouseMove = e => {
 
     if (dragging && bar === "horz") {
       const newLeftWidth = leftWidth + e.clientX - separatorXPosition; //Current width of left panel + mouse position - current handle bar position
@@ -320,16 +329,19 @@ const Container = () => {
   useEffect(() => {
     document.addEventListener('mousemove', onMouseMove);
     document.addEventListener('mouseup', onMouseUp);
+    window.addEventListener('resize', onResize)
 
       return () => {
       document.removeEventListener('mousemove', onMouseMove);
       document.removeEventListener('mouseup', onMouseUp);
+      document.removeEventListener('resize', onResize)
       };
   });
 
   //TODO: Create a component for the loading spinners and create an orange county themed loading spinner.
   //Also probably want to create a component for the error displays (TriError)
-  
+  if (windowWidth >= 1024) {
+
   return (
     <div className='root'>
       <div className='drawercont' ref={drawerContRef}>
@@ -340,7 +352,7 @@ const Container = () => {
       </div>
       <div className='mapcont'>
         <AppBar handleClickOpen={handleClickOpen} />
-        <DialogUploadFile open={openDialog} onClose={onDialogClose} connectionId={designAutomationId} isLoading={handleLoading} setEsriData={setEsriData} setTableInfo={setTableInfo} setMapInfo={setMapInfo} setParcelInfo={setParcelInfo}/>
+        <DialogUploadFile open={openDialog} onClose={onDialogClose} connectionId={designAutomationId} isLoading={handleLoading} setEsriData={setEsriData} setTableInfo={setTableInfo} setMapInfo={setMapInfo} setParcelInfo={setParcelInfo} files={files} setFiles={setFiles}/>
         <div className="mapcont__view">
         {/* {page === 'check' && submit ?  
           <Checklist data={parcelInfo} section={section} setSection={setSection}/> */}
@@ -351,7 +363,7 @@ const Container = () => {
 
                 {esriData ?
 
-                  <EsriMap esriData={esriData} selected={selected} setSelected={setSelected} open={open}/>   
+                  <EsriMap esriData={esriData} selected={selected} setSelected={setSelected} open={open} setOpen={setOpen}/>   
 
                   :
 
@@ -403,6 +415,14 @@ const Container = () => {
       </div>
     </div> 
     ) 
+} else {
+  return(
+    <div className="size-error">
+      <h1 className="size-error__title">Please open this app on a larger screen</h1>
+    </div>
+    
+  )
+}
 }
 
 export default Container

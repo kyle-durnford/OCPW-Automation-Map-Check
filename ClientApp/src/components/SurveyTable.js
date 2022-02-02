@@ -1,13 +1,9 @@
-import React, { useState, useEffect, useCallback, Fragment} from "react"
+import React, { useState, useEffect, useCallback } from "react"
 import { CircularProgress } from '@material-ui/core';
-import { makeStyles } from '@material-ui/core/styles';
 import good from '../assets/check.svg'
 import error from '../assets/error.svg'
-import Filter from '../assets/Filter.js'
-import warn from '../assets/warning.svg'
 import missing from '../assets/missing.svg'
 import _ from "lodash";
-import { number } from "prop-types";
 import TriError from '../assets/TriError.js'
 
 const lineColumns = [
@@ -571,6 +567,7 @@ useEffect(() => {
             <div 
             className={(active === i) ? 'survey__tab survey__tab--selected' : 'survey__tab'} 
             onClick={() => handleClick(i, e[1])}
+            key={i}
             >{e[0]}  
             {(lineErrors > 0 && e[0] === "Line Check" ? 
             <span className="error-icon error-icon--error">{lineErrors}</span> : 

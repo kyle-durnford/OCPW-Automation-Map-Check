@@ -1,12 +1,12 @@
-import React, { useState, useEffect, useRef, Fragment } from "react"
+import React, { useEffect, useRef } from "react"
 import { buildMap, createCityLayer, selectedLayer, selectedParcel } from '../data/esri'
 
-const EsriMap = ({esriData, selected, setSelected, open}) => {
+const EsriMap = ({esriData, selected, setSelected, open, setOpen}) => {
     const mapRef = useRef();
 
     useEffect(() => {
         const cityLayer = createCityLayer()
-        buildMap(esriData, mapRef.current, cityLayer, setSelected, selected)
+        buildMap(esriData, mapRef.current, cityLayer, setSelected, selected, setOpen)
     }, []);
 
     useEffect(() => {

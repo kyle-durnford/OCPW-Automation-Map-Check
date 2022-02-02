@@ -18,6 +18,7 @@ const useStyles = makeStyles(theme => ({
     flexDirection: 'column',
     justifyContent: 'center',
     alignItems: 'center',
+    fontFamily: 'poppins, sans-serif', 
     padding: theme.spacing(2),
 
     '& .MuiTextField-root': {
@@ -39,7 +40,7 @@ const dialogTitleProps = {
         fontFamily: 'poppins, sans-serif',
         fontWeight: '600',
         fontSize: '1.5rem',
-        padding: '1rem 0 0 1rem'
+        padding: '1rem 0 0 2rem'
     }
 }
 
@@ -64,16 +65,15 @@ const buttonSolidProps = {
         textTransform: 'uppercase',
         transition: 'color .2s ease, background.2s ease',
         boxShadow: 'none',
-        margin: ' calc(2rem - 8px) 8px 0',
+        marginTop: '1.5rem',
         width: '100%'
 
     }
 };
 
-const DialogUploadFile = ({open, onClose, connectionId, isLoading, setSubmit, setEsriData, setTableInfo, setMapInfo, setParcelInfo}) => {
+const DialogUploadFile = ({open, onClose, connectionId, isLoading, setSubmit, setEsriData, setTableInfo, setMapInfo, setParcelInfo, files, setFiles}) => {
   const classes = useStyles();  
   const [submitAttempted, setSubmitAttempted] = useState()
-  const [files, setFiles] = useState([])
   const [mapType, setMapType] = useState('')
 
   const { handleSubmit, control, getValues } = useForm();
@@ -106,7 +106,7 @@ const DialogUploadFile = ({open, onClose, connectionId, isLoading, setSubmit, se
     <div>
         <Dialog open={open} onClose={onClose} aria-labelledby="form-dialog-title">
             <div {...dialogTitleProps} id="form-dialog-title">Submit Map</div>
-            <DialogContent className={`scroll`} style={{padding: '0 1rem', border: '2rem 1rem solid transparent'}}>
+            <DialogContent className='scroll' style={{padding: '0 1rem', border: '2rem 1rem solid transparent'}}>
                 <form className={classes.root} onSubmit={handleSubmit(onSubmit)}>
                     <Controller
                         render={({ field: { onChange } }) => (
@@ -121,33 +121,32 @@ const DialogUploadFile = ({open, onClose, connectionId, isLoading, setSubmit, se
                         defaultValue=""
                         rules={{ required: 'File is required' }}
                     />
-                    {files.length > 0 &&
                         <Controller
                             name="mapType"
                             control={control}
                             defaultValue=""
                             render={({ field: { onChange, value }, fieldState: { error } }) => (
                                 <FormControl style={{marginTop: '2rem'}} fullWidth>
-                                    <label htmlFor="mapType">Map Type</label>
-                                    <select
-                                        className={classes.select}
+                                    <TextField
+                                        select
                                         value={value}
-                                        name="mapType"
+                                        label="Map Type"
+                                        id="map"
+                                        onChange={onChange}
+                                        fullWidth
+                                        variant="filled"
                                         onChange={(e) => {
                                             onChange(e.target.value)
                                             setMapType(e.target.value)
                                         }}
                                     >
-                                        <option value="" disabled hidden>Select...</option>
-                                        <option value={'TractMap'}>Tract Map</option>
-                                        <option value={'RecordOfSurvey'}>Record of Survey</option>
-                                    </select>
+                                        <MenuItem value={'TractMap'}>Tract Map</MenuItem>
+                                        <MenuItem value={'RecordOfSurvey'}>Record of Survey</MenuItem>
+                                    </TextField>
                                 </FormControl>
                             )}
                             rules={{ required: 'Map Type required' }}
                         />
-                    }    
-                    {mapType &&
                     <div {...inputContProps}>
                     <Controller
                         name="parcelNumber"
@@ -257,12 +256,11 @@ const DialogUploadFile = ({open, onClose, connectionId, isLoading, setSubmit, se
                         )}
                     /> */}
                     <div> 
-                        <Button {...buttonSolidProps} type="submit" variant="contained" color="primary">
+                        <button {...buttonSolidProps} type="submit">
                             Start Work Item
-                        </Button>
+                        </button>
                     </div>
                     </div>
-                    }
                 </form>
             </DialogContent>
         </Dialog>

@@ -1,5 +1,5 @@
 export let viewer;
-let viewerDbIds;
+export let viewerDbIds;
 let da_jsonData;
 const Autodesk = window.Autodesk;
 
@@ -9,7 +9,8 @@ export const launchViewer = (urn, setMapInfo) => {
         env: 'AutodeskProduction',
         api: 'derivativeV2',
         getAccessToken: getForgeToken,
-        "da_jsonData": da_jsonData
+        "da_jsonData": da_jsonData,
+        reverseMouseZoomDir: true
     }
 
     Autodesk.Viewing.Initializer(options, () => {
@@ -119,7 +120,8 @@ export default {
     getForgeToken,
     afterViewerEvents,
     forgeViewerModelDbIds,
-    viewer
+    viewer,
+    viewerDbIds
 }
 
 // let viewer;

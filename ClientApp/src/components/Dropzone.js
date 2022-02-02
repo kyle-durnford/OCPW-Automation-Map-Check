@@ -43,6 +43,15 @@ const dropzoneContProps = {
   }
 }
 
+const dropzoneContDragProps = {
+  style: {
+    fontFamily: 'poppins, sans-serif',
+    textAlign: 'center',
+    color: '#333',
+    padding: '3rem 0'
+  }
+}
+
 const Dropzone = ({ onChange, ...rest }) => {
 
   const [files, setFiles] = useState([])
@@ -123,7 +132,7 @@ const Dropzone = ({ onChange, ...rest }) => {
     <div {...dropzoneProps} {...getRootProps()}>
       <input {...getInputProps()} />
       {isDragActive ? (
-        <p {...dropzoneContProps} {...dropTextProps}>Drop the files here ...</p>
+        <p {...dropzoneContDragProps} {...dropTextProps}>Drop the files here ...</p>
       ) : (
         <div {...dropzoneContProps}>
           <h2 {...dropTitleProps}>Drag and Drop</h2>
