@@ -17,6 +17,7 @@ import Zoom from "@arcgis/core/widgets/Zoom";
 import _ from "lodash";
 import Popup from "@arcgis/core/widgets/Popup";
 import { LevelFormat } from "docx";
+import { viewer, viewerDbIds } from '../data/forge'
 
 let polylist = []
 let par2poly = {}
@@ -112,23 +113,30 @@ const lods = [
     }
 ]
 
-const parcellayer = new GraphicsLayer({
+//Creating new layers to overlay on the map
+
+
+const parcellayer = new GraphicsLayer({ //Invisible: allows the ability to click on parcels
     id: 'parcellayer'
 })
 
-const graphicslayer2 = new GraphicsLayer({
+const graphicslayer2 = new GraphicsLayer({ //Base segment drawing layer
     id: 'graphicslayer2'
 })
 
-const lblgraphicslayer = new GraphicsLayer({
+const lblgraphicslayer = new GraphicsLayer({ //Labels for segments
     id: 'lblgraphicslayer'
 })
 
-const selectedgraphicslayer = new GraphicsLayer({
+const selectedgraphicslayer = new GraphicsLayer({ //Highlights selected layer
     id: 'selectedgraphicslayer'
 })
 
-lblgraphicslayer.minScale = 3000
+let selectedLayers = [] //Stores each graphic so it's easy to select the index of the selected segment
+let parcelLayers = [] //Stores parcel layers
+let parcelLabels = [] //Stores segment labels by parcel
+let segmentLabels = [] //Stores segments labels for a parcel
+
 
 const lineSymbol = {
     type: "simple-line", // autocasts as new SimpleLineSymbol()
@@ -136,8 +144,7 @@ const lineSymbol = {
     width: 4
 };
 
-let selectedLayers = []
-let parcelLayers = []
+
 
 export const createCityLayer = () => {
     return (new MapImageLayer({
@@ -162,28 +169,6 @@ const streetlayers = new MapImageLayer({
     url: "https://www.ocgis.com/survey/rest/services/WebApps/Streets/MapServer",
     popupEnabled: false
 })
-
-const segmentLabel = {
-    labelExpressionInfo: {
-        expression: "hi"
-    },
-    symbol: {
-        type: "text",
-        color: 'green',
-        haloColor: "white",
-        font: {  // autocast as new Font()
-            family: "Ubuntu Mono",
-            size: 18,
-            weight: "bold"
-        },
-        labelPlacement: "always-horizontal",
-    }
-}
-
-const segmentLabelLayer = new FeatureLayer({
-    labelingInfo: [segmentLabel]
-})
-
 
 const OCB = new Basemap({
     baseLayers: [OCbasemapLayer],
@@ -248,6 +233,7 @@ const clearup = (view) => {
 }
 
 const createFeature = (path, words, hid, oid, oidlist)  => {
+    //Creates polylines and adds them to the selectedLayer Graphic and parcelLayer graphic
 
     const myAtt = {
         legal: words,
@@ -264,22 +250,7 @@ const createFeature = (path, words, hid, oid, oidlist)  => {
     dict[oid] = words;
     hiddict[oid] = hid;
 
-    const a = oidlist.indexOf(oid);
-
-    let color;
-
-    if (a == 0) {
-        color = 'blue'
-    } else {
-        const num = a % 2
-        if (num == 1) {
-            color = 'orange'
-        } else {
-            color = 'green'
-        }
-    }
-
-    var mygraphic = new Graphic({
+    var baseGraphic = new Graphic({ //
         geometry: myline,
         attributes: myAtt,
         symbol: {
@@ -289,7 +260,7 @@ const createFeature = (path, words, hid, oid, oidlist)  => {
         }
     });
 
-    var newGraphic = new Graphic({
+    var selectedGraphic = new Graphic({
         geometry: myline,
         attributes: myAtt,
         symbol: {
@@ -301,10 +272,10 @@ const createFeature = (path, words, hid, oid, oidlist)  => {
     });
 
 
-    parcelLayers.push(mygraphic)
-    selectedLayers.push(newGraphic)
+    parcelLayers.push(baseGraphic)
+    selectedLayers.push(selectedGraphic)
 
-    oid2line[oid] = mygraphic
+    oid2line[oid] = baseGraphic //For attaching a label to this segment
 }
 
 const ericJson = (jsonData, view) => {
@@ -339,15 +310,16 @@ const ericJson = (jsonData, view) => {
             hid: pnum
         };
         
-        let newGraphic = new Graphic({
+        let parcelGraphic = new Graphic({ //Create a polygon of a parcel
             geometry: poly,
             attributes: pAtt,
             symbol: polygonSymbol
         });
 
-        graphicslayer2.graphics.add(newGraphic)
+        graphicslayer2.graphics.add(parcelGraphic)
 
-    
+        let lblGraphics = []
+
         _.forEach(dictionary, (value, key) => {
             // console.log('Key', key)
 
@@ -389,7 +361,7 @@ const ericJson = (jsonData, view) => {
             }
 
             let point = new Point(midx, midy, view.spatialReference);
-            const lblGraphic = new Graphic({
+            const lblGraphic = new Graphic({ //Create label for segment
                 geometry: point,
                 symbol: {
                     type: "text", // autocasts as SimpleFillSymbol
@@ -407,7 +379,8 @@ const ericJson = (jsonData, view) => {
 
                 }
             });
-            lblgraphicslayer.graphics.add(lblGraphic)
+            segmentLabels.push(lblGraphic) //Individual labels for a selected segment
+            lblGraphics.push(lblGraphic) //Array of labels for selected parcel
 
             lblgroup[oid] = lblGraphic;
 
@@ -497,20 +470,23 @@ const ericJson = (jsonData, view) => {
                 createFeature(item1, words, hid, oid, oidlist);
             }
         })
+        parcelLabels.push(lblGraphics) //Gather array of labels per parcel for selected parcels
     })
+    console.log("ParcelLayer", parcelLabels)
     parcellayer.graphics.removeAll()
     parcellayer.graphics.addMany(parcelLayers);
-    parcellayer.when(function () {
+    parcellayer.when(function () { //zoom to area of interest on load
         view.goTo({
             target: parcellayer.graphics
         });
     });
 }
 
-export const buildMap = (json, mapRef, cityLayers, setSelected, selected) => {
+export const buildMap = (json, mapRef, cityLayers, setSelected, selected, setOpen) => {
 
     config.request.timeout = 300000
 
+    //Add baselayers to map
     map.add(cityLayers)
     map.add(parcelimagelayer)
     map.add(streetlayers)
@@ -526,7 +502,6 @@ export const buildMap = (json, mapRef, cityLayers, setSelected, selected) => {
         })
     })
 
-    
     const btoggle = new BasemapToggle({
         titleVisible: true,
         view: view,
@@ -537,6 +512,7 @@ export const buildMap = (json, mapRef, cityLayers, setSelected, selected) => {
     view.ui.move("zoom", "bottom-right")
     // view.ui.add("reset-map", "top-left")
 
+    //Display parcel number when clicked on
     view.popup = {
         dockEnabled: true,
         position: 'top-right',
@@ -547,10 +523,11 @@ export const buildMap = (json, mapRef, cityLayers, setSelected, selected) => {
         }
     }
 
+    //Add layers to map
     map.add(parcellayer)
     map.add(graphicslayer2)
-    map.add(lblgraphicslayer)
     map.add(selectedgraphicslayer)
+    map.add(lblgraphicslayer)
     
 
     // view.when(function () {
@@ -559,28 +536,7 @@ export const buildMap = (json, mapRef, cityLayers, setSelected, selected) => {
 
     ericJson(json, view)
 
-    // view.on("mouse-over", e => {
-    //     try {
-    //         view.hitTest(e).then(response => {
-    //             if(response.results.length > 0){
-    //                 const graphic = response.results.filter(result => {
-    //                     if (result.graphic.layer === parcellayer) {
-    //                         console.log('hit')
-    //                         return result.graphic.layer
-    //                     } else {
-    //                         console.log('miss')
-    //                     }
-    //                 })[0].graphic
-    //                  console.log(graphic)
-    //                  console.log(graphic.attributes.oid)
-    //                 // setSelected(graphic.attributes.oid)
-    //             }
-    //         })
-    //     } catch {
-    //         console.log('none')
-    //     }
-    // })
-
+    //Check if cursor is hovering a segment. If it is, highlight the segment
     view.on("pointer-move", e => {
         try {
             view.hitTest(e).then(response => {
@@ -652,6 +608,7 @@ export const buildMap = (json, mapRef, cityLayers, setSelected, selected) => {
         }
     })
 
+    //Check if segment has been clicked on. If it has been, select that segment and highlight it throughout the app
     view.on("pointer-down", e => {
         try {
             view.hitTest(e).then(response => {
@@ -661,7 +618,6 @@ export const buildMap = (json, mapRef, cityLayers, setSelected, selected) => {
                         const graphic = response.results.filter(result => {
                             if (result.graphic.layer === selectedgraphicslayer) {
                                 //Unselect the selected layer
-                                //TODO: Unselect from table and parcel
                                 selectedLayers.forEach(e => e.visible = false)
                                 selectedgraphicslayer.graphics.removeAll()
                                 selectedgraphicslayer.graphics.addMany(selectedLayers);
@@ -671,6 +627,7 @@ export const buildMap = (json, mapRef, cityLayers, setSelected, selected) => {
                                 return result.graphic.layer
                             }
                         })[0].graphic
+                        console.log(viewerDbIds)
                         console.log(graphic)
                         console.log(graphic.attributes.oid)
                         if (check == 1) {
@@ -690,6 +647,8 @@ export const buildMap = (json, mapRef, cityLayers, setSelected, selected) => {
         }
     })
 
+
+    //Check if parcel exists where mouse is long clicked. If one does, select that parcel and display the selected parcel
     view.on("hold", function (event) {
         let lastgeo = ''
         view.hitTest(event).then(function (response) {
@@ -704,13 +663,18 @@ export const buildMap = (json, mapRef, cityLayers, setSelected, selected) => {
                 view.popup.open({
                     title: graphic.attributes.pstring,
                 })
+                
                 const attribute = graphic.attributes;
                 const hid = attribute.hid;
+                setOpen(hid - 1)
+                setSelected(null)
                 console.log(graphic.attributes)
                 // if (hid) {
+                    
                 //     const overLayGeometryExtension = viewer.getExtension('OverLayGeometry')
                 //     // Call Function to zoom in to object on viewer.
-                //     executeFitToViewHandleId(hid);
+                //     console.log('Extension found')
+                //     //executeFitToViewHandleId(hid);
     
                 //     overLayGeometryExtension.searchSelectedObj(hid, viewerDbIds)
                 // }
@@ -794,14 +758,32 @@ export const buildMap = (json, mapRef, cityLayers, setSelected, selected) => {
     console.log('Finished')
 }
 
-export const selectedLayer = (selected) => {
+//Hnadles highlighting selected segment
+export const selectedLayer = (selected, open) => {
     selectedLayers.forEach(e => e.visible = false)
+    console.log(open)
     if (selected) {
         let select = selected - 1
         selectedLayers[select].visible = true
+        selectedgraphicslayer.graphics.removeAll()
+        selectedgraphicslayer.graphics.addMany(selectedLayers);
+        lblgraphicslayer.graphics.removeAll()
+        lblgraphicslayer.graphics.add(segmentLabels[select]);
+    } else if (open >= 0 ){
+        selectedgraphicslayer.graphics.removeAll()
+        selectedgraphicslayer.graphics.addMany(selectedLayers);
+        lblgraphicslayer.graphics.removeAll()
+        lblgraphicslayer.graphics.addMany(parcelLabels[open]);
+        
     }
-    selectedgraphicslayer.graphics.removeAll()
-    selectedgraphicslayer.graphics.addMany(selectedLayers);
+}
+
+//Handles adding labels to selected parcel
+export const selectedParcel = (open) => {
+    if(open >= 0) {
+        lblgraphicslayer.graphics.removeAll()
+        lblgraphicslayer.graphics.addMany(parcelLabels[open]);
+    }
 }
 
 export default {

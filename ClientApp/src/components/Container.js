@@ -18,11 +18,12 @@ import { viewer } from '../data/forge'
 const Container = () => {
   const [page, setPage] = useState('project')
   const [submit, setSubmit] = useState(false);
-  const [open, setOpen] = useState(false)
+  const [openDialog, setOpenDialog] = useState(false)
   const [tableInfo, setTableInfo] = useState(null)
   const [parcelInfo, setParcelInfo] = useState(null)
   const [loading, setLoading] = useState(false)
   const [loadingTable, setLoadingTable] = useState(true)
+  const [mapInfo, setMapInfo] = useState()
   const [loadingEsri, setLoadingEsri] = useState(true)
   const [loadingForge, setLoadingForge] = useState(true)
   const [designAutomationId, setDesignAutomationId] = useState()
@@ -48,13 +49,22 @@ const Container = () => {
   const [urn, setUrn] = useState(null)
   const [forgeError, setForgeError] = useState()
   const [appError, setAppError] = useState()
+  const [lineErrors, setLineErrors] = useState(0)
+  const [curveErrors, setCurveErrors] = useState(0)
+  const [lineMissing, setLineMissing]  = useState(0)
+  const [curveMissing, setCurveMissing] = useState(0)
+  const [restart, setRestart] = useState(0)
+  const [open, setOpen] = useState(null);
+  const [files, setFiles] = useState([]);
+  const [windowWidth, setWindowWidth] = useState(window.innerWidth)
 
   const leftRef = createRef();
   const splitPaneRef = createRef();
   const drawerContRef = createRef();
 
   useEffect(() => {
-    const designAutomation = new HubConnectionBuilder().withUrl("/api/signalr/designautomation").withAutomaticReconnect().build();
+    if(!mapInfo) {
+      const designAutomation = new HubConnectionBuilder().withUrl("/api/signalr/designautomation").withAutomaticReconnect().build();
     setDesignAutomationConnect(designAutomation)
 
     const modelDerivative = new HubConnectionBuilder().withUrl("/api/signalr/modelderivative").withAutomaticReconnect().build();
@@ -67,6 +77,11 @@ const Container = () => {
     //     error => {
     //        console.log('Error:', error)        }
     // )
+
+    // if(urn) {
+    //   connection.deleteManifest(urn)
+    //   console.log("Urn Deleted")
+    // }
 
     connection.createAppBundle().then(
         response => {
@@ -101,7 +116,8 @@ const Container = () => {
     )
 
     setDidMount(true)
-  }, [])
+    }
+  }, [mapInfo])
 
 
   useEffect(() => {
@@ -125,6 +141,10 @@ const Container = () => {
             console.log('onComplete:', message)
             if(JSON.parse(message).status === 'failedDownload') {
               setAppError('Unable to download data from Autodesk. Please try again.');
+            } else if(JSON.parse(message).status === 'failedInstructions') {
+              setAppError('There is a problem with the uploaded file. Please try again.');
+            } else {
+              setAppError(null)
             }
           })
 
@@ -146,18 +166,27 @@ const Container = () => {
 
       modelDerivativeConnect.start().then(() => {
           modelDerivativeConnect.invoke('getConnectionId').then((id) => {
-              console.log("getConnectionId ModelDerivative result: " , id)
+            console.log("getConnectionId ModelDerivative result: " , id)
+              if (id.indexOf('_') !== -1) {
+                console.log('Restarting...');
+                modelDerivativeConnect.stop();
+                const md = new HubConnectionBuilder().withUrl("/api/signalr/modelderivative").withAutomaticReconnect().build();
+                setModelDerivativeConnect(md)
+                // startConnection();
+                return;
+              }
               setModelDerivativeId(id)
           }) 
 
           modelDerivativeConnect.on("extractionFinished", (extractionFinished) => {
             console.log('extractionFinished:', extractionFinished)
+
             setUrn(extractionFinished.resourceUrn)
           });
       }).catch(e => console.log('Connection failed: ', e));
 
     }
-  }, [modelDerivativeConnect]);
+  }, [modelDerivativeConnect, restart]);
 
 
   useEffect(() => {
@@ -199,14 +228,17 @@ const Container = () => {
   // }
 
   const handleClickOpen = () => {
-    setOpen(true);
+    setFiles([])
+    console.log(files.length)
+    setOpenDialog(true);
   };
 
   const onDialogClose = () => {
-    setOpen(false)
+    setOpenDialog(false)
   }
 
   const handleLoading = (isLoading) => {
+    setAppError(null)
     setSubmit(isLoading)
   }
 
@@ -227,8 +259,12 @@ const Container = () => {
   const MIN_WIDTH = 150;
   const MIN_HEIGHT = 150;
 
+  const onResize = e => {
+    setWindowWidth(e.target.innerWidth)
+  }
 
-  const onMouseMove = (e) => {
+
+  const onMouseMove = e => {
 
     if (dragging && bar === "horz") {
       const newLeftWidth = leftWidth + e.clientX - separatorXPosition; //Current width of left panel + mouse position - current handle bar position
@@ -293,27 +329,30 @@ const Container = () => {
   useEffect(() => {
     document.addEventListener('mousemove', onMouseMove);
     document.addEventListener('mouseup', onMouseUp);
+    window.addEventListener('resize', onResize)
 
       return () => {
       document.removeEventListener('mousemove', onMouseMove);
       document.removeEventListener('mouseup', onMouseUp);
+      document.removeEventListener('resize', onResize)
       };
   });
 
   //TODO: Create a component for the loading spinners and create an orange county themed loading spinner.
   //Also probably want to create a component for the error displays (TriError)
-  
+  if (windowWidth >= 1024) {
+
   return (
     <div className='root'>
       <div className='drawercont' ref={drawerContRef}>
         <div className="drawercont__navcont">
           <NavMenu setPage={setPage} page={page} hideDrawer={hideDrawer} setHideDrawer={setHideDrawer}/>
         </div>
-        <Drawer hideDrawer={hideDrawer} loading={loading} page={page} data={parcelInfo} setSelected={setSelected} selected={selected} section={section} setSection={setSection}/>
+        <Drawer hideDrawer={hideDrawer} loading={loading} page={page} data={parcelInfo} setSelected={setSelected} selected={selected} section={section} setSection={setSection} lineErrors={lineErrors} curveErrors={curveErrors} lineMissing={lineMissing} curveMissing={curveMissing} open={open} setOpen={setOpen}/>
       </div>
       <div className='mapcont'>
         <AppBar handleClickOpen={handleClickOpen} />
-        <DialogUploadFile open={open} onClose={onDialogClose} connectionId={designAutomationId} isLoading={handleLoading}/>
+        <DialogUploadFile open={openDialog} onClose={onDialogClose} connectionId={designAutomationId} isLoading={handleLoading} setEsriData={setEsriData} setTableInfo={setTableInfo} setMapInfo={setMapInfo} setParcelInfo={setParcelInfo} files={files} setFiles={setFiles}/>
         <div className="mapcont__view">
         {/* {page === 'check' && submit ?  
           <Checklist data={parcelInfo} section={section} setSection={setSection}/> */}
@@ -324,7 +363,7 @@ const Container = () => {
 
                 {esriData ?
 
-                  <EsriMap esriData={esriData} selected={selected} setSelected={setSelected}/>   
+                  <EsriMap esriData={esriData} selected={selected} setSelected={setSelected} open={open} setOpen={setOpen}/>   
 
                   :
 
@@ -332,7 +371,7 @@ const Container = () => {
                       <span className="spinner">
                           <CircularProgress size={48} />
                       </span>
-                  </Fragment>                
+                  </Fragment>
                 }
               </div>
               <div className="splitpane__divider splitpane__divider--ver" onMouseDown={e => onMouseDown(e, 'horz')}>
@@ -342,7 +381,7 @@ const Container = () => {
                 </div>
               </div>
               <div className={(forgeError ? 'splitpane__map splitpane__map--error' : 'splitpane__map splitpane__map--right')}>
-                <ForgeMap loading={loadingForge} objectKeys={objectKeys} connectionId={modelDerivativeId} urn={urn} setError={setForgeError} error={forgeError}/>
+                <ForgeMap objectKeys={objectKeys} connectionId={modelDerivativeId} urn={urn} setError={setForgeError} error={forgeError} mapInfo={mapInfo} setMapInfo={setMapInfo}/>
               </div>
             </div>
             <div className="splitpane__divider splitpane__divider--hor" onMouseDown={(e) => onMouseDown(e, 'vert')}>
@@ -351,13 +390,13 @@ const Container = () => {
                   <span className="splitpane__divider__handle__bar splitpane__divider__handle__bar--hor"></span>
                 </div>
               </div>
-            <SurveyTable page={page} loading={loadingTable} data={tableInfo} selected={selected} setSelected={setSelected}/>
+            <SurveyTable page={page} loading={loadingTable} data={tableInfo} selected={selected} setSelected={setSelected} lineErrors={lineErrors} setLineErrors={setLineErrors} curveErrors={curveErrors} setCurveErrors={setCurveErrors} lineMissing={lineMissing} setLineMissing={setLineMissing} curveMissing={curveMissing} setCurveMissing={setCurveMissing}/>
           </div>
 
         : appError ?
 
             <div className="upload">
-              <div className="upload__zone upload__zone--error" onClick={() => setOpen(true)}>
+              <div className="upload__zone upload__zone--error" onClick={() => setOpenDialog(true)}>
                   <TriError color={'#842029'}/>
                   <div className='upload__text upload__text--error'>{appError}</div>
               </div>
@@ -366,7 +405,7 @@ const Container = () => {
         : 
         
           <div className="upload">
-            <div className="upload__zone" onClick={() => setOpen(true)}>
+            <div className="upload__zone" onClick={() => setOpenDialog(true)}>
                 <img src={planImage} height='150px' width='150px' alt=""/>
                 <div className='upload__text'>Upload a map to get started</div>
             </div>
@@ -376,6 +415,14 @@ const Container = () => {
       </div>
     </div> 
     ) 
+} else {
+  return(
+    <div className="size-error">
+      <h1 className="size-error__title">Please open this app on a larger screen</h1>
+    </div>
+    
+  )
+}
 }
 
 export default Container

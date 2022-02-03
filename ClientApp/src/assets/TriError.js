@@ -4,7 +4,7 @@ const TriError = ({color}) => {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
-      ariaHidden="true"
+      aria-hidden="true"
       className="svg-inline--fa fa-exclamation-triangle fa-w-18"
       data-icon="exclamation-triangle"
       data-prefix="far"

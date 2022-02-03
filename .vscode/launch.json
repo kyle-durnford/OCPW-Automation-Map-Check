@@ -27,7 +27,7 @@
                 "FORGE_CLIENT_ID1": "v1FZSxmHVFHIXrvcSK4VsdGK4cTO4F7g",
                 "FORGE_CLIENT_ID": "l9ZOgsFXlswrI6GRQiK4UEnZeBe5Her0",
                 "ASPNETCORE_ENVIRONMENT": "Development",
-                "FORGE_WEBHOOK_URL": "http://5885-66-244-192-10.ngrok.io"
+                "FORGE_WEBHOOK_URL": "http://310c-66-244-192-10.ngrok.io"
             },
             "sourceFileMap": {
                 "/Views": "${workspaceFolder}/Views"

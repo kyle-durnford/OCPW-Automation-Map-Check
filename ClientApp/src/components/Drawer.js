@@ -4,9 +4,8 @@ import ProjectDrawer from './ProjectDrawer.js';
 import ReportDrawer from './ReportDrawer.js';
 import CheckDrawer from './CheckDrawer.js'
 
-const Drawer = ({loading, data, setSelected, selected, page, setSection, section, hideDrawer}) => {
+const Drawer = ({loading, data, setSelected, selected, page, setSection, section, hideDrawer, lineErrors, curveErrors, lineMissing, curveMissing, open, setOpen}) => {
 
-    const [open, setOpen] = useState(null);
     const [drawerData, setDrawerData] = useState();
     const [parcelCount, setParcelCount] = useState();
     const [segmentCount, setSegmentCount] = useState([0,0])
@@ -49,11 +48,11 @@ const Drawer = ({loading, data, setSelected, selected, page, setSection, section
                 setDrawerData(() => { return (<ReportDrawer data={parcelData}/>)})
             } else if (page === 'legal' || page === 'monument' || page === 'reference') {
                 const parcels = parcelData.map((e, i) => {
-                    return <Parcel loading={loading} page={page} data={parcelData[i][1][1][1]} setSelected={setSelected} selected={selected} key={i} parcelNum={i} page={page} open={open} setOpen={setOpen} /> 
+                    return <Parcel loading={loading} page={page} data={parcelData[i][1][1][1]} setSelected={setSelected} selected={selected} key={i} parcelNum={i} page={page} open={open} setOpen={setOpen} lineMissing={lineMissing} curveMissing={curveMissing}/> 
                 })
                 setDrawerData(parcels)
             } else if (page === 'project') {
-                setDrawerData(() => {return (<ProjectDrawer lines={segmentCount[0]} curves={segmentCount[1]} parcelCount={parcelCount}/>)})
+                setDrawerData(() => {return (<ProjectDrawer lines={segmentCount[0]} curves={segmentCount[1]} parcelCount={parcelCount} lineErrors={lineErrors} curveErrors={curveErrors} lineMissing={lineMissing} curveMissing={curveMissing}/>)})
             } else if (page === 'check') {
                 setDrawerData(() => {return (<CheckDrawer setSection={setSection} section={section}/>)})
             }

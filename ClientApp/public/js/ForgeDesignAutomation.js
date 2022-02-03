@@ -214,7 +214,7 @@ function startConnection(onReady) {
                     //    console.log('Restarting...');
                     //    connection.stop(); // need to fix this..
                     //    connection = null;
-                    //    startConnection();
+                    //   startConnection();
                     //    return;
                     //}
                     console.log(id, " connectionId within .then conection2")
