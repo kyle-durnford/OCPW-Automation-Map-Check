@@ -11,7 +11,7 @@ const ProjectDrawer = ({parcelCount, lines, curves, lineErrors, curveErrors, lin
 
     return (
         <div className="project">
-            {totalPercent > 80 ? <div className="validation--success"><img src={good} alt="Pass" style={{marginRight: '.5rem'}}></img>Validation Completed</div> : <div className="validation--error"><img src={error} alt="Fail" style={{marginRight: '.5rem'}}></img>Validation Failed</div>}
+            {totalPercent > 80 ? <div className="validation--success"><img src={good} alt="Pass" style={{marginRight: '.5rem'}}></img>File meets standards</div> : <div className="validation--error"><img src={error} alt="Fail" style={{marginRight: '.5rem'}}></img>File does not meet standards</div>}
             <div className="project__title"><span className="project__title__icon"><Project color={'rgb(87, 110, 239)'}/></span><p>Details</p></div>
             <div>
                 <div className="info__row">

@@ -78,6 +78,14 @@ html {
   border-radius: 0.5rem;
   font-size: 1rem;
 }
+.validation--warning {
+  background-color: #fff3cd;
+  color: #664d03;
+  padding: 0.5rem;
+  width: 100%;
+  border-radius: 0.5rem;
+  font-size: 1rem;
+}
 .validation--error {
   background-color: #f8d7da;
   color: #f55d6e;
@@ -242,12 +250,16 @@ html {
 }
 
 .size-error {
+  position: absolute;
+  top: 0;
+  left: 0;
   display: flex;
   justify-content: center;
   align-items: center;
   width: 100vw;
   height: 100vh;
   background-color: #F4F5FC;
+  z-index: 99999999999;
 }
 .size-error__title {
   text-align: center;

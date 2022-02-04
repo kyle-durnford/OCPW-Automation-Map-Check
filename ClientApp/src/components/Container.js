@@ -44,7 +44,6 @@ const Container = () => {
   const [topRef, setTopRef] = useState();
   const [section, setSection] = useState(1);
   const [esriData, setEsriData] = useState()
-  const [container, setContainer] = useState()
   const [hideDrawer, setHideDrawer] = useState(false)
   const [urn, setUrn] = useState(null)
   const [forgeError, setForgeError] = useState()
@@ -61,6 +60,10 @@ const Container = () => {
   const leftRef = createRef();
   const splitPaneRef = createRef();
   const drawerContRef = createRef();
+
+  useEffect(() => {
+    console.log('EsriDataCheck', esriData)
+  }, [esriData])
 
   useEffect(() => {
     if(!mapInfo) {
@@ -340,9 +343,14 @@ const Container = () => {
 
   //TODO: Create a component for the loading spinners and create an orange county themed loading spinner.
   //Also probably want to create a component for the error displays (TriError)
-  if (windowWidth >= 1024) {
 
   return (
+    <>
+    {windowWidth <= 1024 ?
+      <div className="size-error">
+        <h1 className="size-error__title">Please open this app on a larger screen</h1>
+      </div>
+      : null}
     <div className='root'>
       <div className='drawercont' ref={drawerContRef}>
         <div className="drawercont__navcont">
@@ -413,16 +421,9 @@ const Container = () => {
         }
         </div>
       </div>
-    </div> 
-    ) 
-} else {
-  return(
-    <div className="size-error">
-      <h1 className="size-error__title">Please open this app on a larger screen</h1>
     </div>
-    
-  )
-}
+    </>
+    )
 }
 
 export default Container

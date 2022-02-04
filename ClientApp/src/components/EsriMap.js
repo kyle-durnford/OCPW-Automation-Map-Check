@@ -5,6 +5,7 @@ const EsriMap = ({esriData, selected, setSelected, open, setOpen}) => {
     const mapRef = useRef();
 
     useEffect(() => {
+        console.log('esriData', esriData)
         const cityLayer = createCityLayer()
         buildMap(esriData, mapRef.current, cityLayer, setSelected, selected, setOpen)
     }, []);
