@@ -35,6 +35,9 @@ html {
   border: 2px solid #fe805c;
   background-color: #fe805c;
 }
+.button--fit {
+  max-width: max-content;
+}
 .button--full {
   width: 100%;
 }
@@ -303,6 +306,7 @@ html {
   height: 50%;
   width: 100%;
   min-height: 20vh;
+  padding: 0 1rem;
   -webkit-touch-callout: none;
   -webkit-user-select: none;
   -khtml-user-select: none;
@@ -365,21 +369,22 @@ html {
 }
 .splitpane__map--left {
   background: #dbf8e5;
-  width: calc(50% - 2rem);
-  max-width: 85%;
-  margin: 0 0.25rem 0.25rem 1rem;
+  width: calc(50% - 1rem);
+  min-width: 15%;
+  margin: 0 0.25rem 0.25rem 0;
 }
 .splitpane__map--right {
-  background: #eee;
+  background: #e8ebfc;
   flex: 1 1 auto;
   position: relative;
-  margin: 0 1rem 0.25rem 0.25rem;
+  margin: 0 0 0.25rem 0.25rem;
+  min-width: 15%;
 }
 .splitpane__map--error {
   background: #f8d7da;
   flex: 1 1 auto;
   position: relative;
-  margin: 0 1rem 0.25rem 0.25rem;
+  margin: 0 0 0.25rem 0.25rem;
 }
 
 .upload {
@@ -510,8 +515,104 @@ html {
   align-items: center;
   padding: 1rem 1rem 1rem;
 }
+.appbar__button {
+  flex-basis: 0;
+  flex-grow: 1;
+  display: flex;
+  justify-content: flex-end;
+}
 .appbar__review {
   font: 600 1.5rem poppins, sans-serif;
+  flex-basis: 0;
+  flex-grow: 1;
+}
+.appbar__toggle {
+  display: flex;
+  justify-content: center;
+  font: 600 1rem poppins, sans-serif;
+  cursor: pointer;
+  flex-basis: 0;
+  flex-grow: 1;
+}
+.appbar__toggle--left {
+  border-radius: 0.5rem 0 0 0.5rem;
+  border: 2px solid #b9c2f5;
+  padding: 0.25rem 1rem;
+  transition: border 0.2s ease, background-color 0.2s ease;
+}
+.appbar__toggle--left--selected {
+  background-color: #b9c2f5;
+}
+.appbar__toggle--middle {
+  border-color: #b9c2f5;
+  border-width: 2px 0 2px 0;
+  border-style: solid;
+  padding: 0.25rem 1rem;
+  display: flex;
+  justify-content: center;
+  transition: border 0.2s ease, background-color 0.2s ease;
+}
+.appbar__toggle--middle--selected {
+  background-color: #b9c2f5;
+}
+.appbar__toggle--right {
+  border-radius: 0 0.5rem 0.5rem 0;
+  border: 2px solid #b9c2f5;
+  padding: 0.25rem 1rem;
+  transition: border 0.2s ease, background-color 0.2s ease;
+}
+.appbar__toggle--right--selected {
+  background-color: #b9c2f5;
+}
+.appbar__toggle__box--left {
+  display: block;
+  content: "";
+  width: 1.2rem;
+  height: 1rem;
+  background-color: #b9c2f5;
+  border-radius: 0.3rem;
+  transition: border 0.2s ease, background-color 0.2s ease;
+}
+.appbar__toggle__box--left--selected {
+  background-color: #fff;
+}
+.appbar__toggle__box--right {
+  display: block;
+  content: "";
+  width: 1.2rem;
+  height: 1rem;
+  background-color: #b9c2f5;
+  border-radius: 0.3rem;
+  transition: border 0.2s ease, background-color 0.2s ease;
+}
+.appbar__toggle__box--right--selected {
+  background-color: #fff;
+}
+.appbar__toggle__box--middle--left {
+  display: block;
+  content: "";
+  width: 0.5rem;
+  height: 1rem;
+  background-color: #b9c2f5;
+  border-radius: 0.3rem 0 0 0.3rem;
+  margin-right: 0.1rem;
+  transition: border 0.2s ease, background-color 0.2s ease;
+}
+.appbar__toggle__box--middle--left--selected {
+  background-color: #fff;
+}
+.appbar__toggle__box--middle--right {
+  display: block;
+  content: "";
+  width: 0.5rem;
+  height: 1rem;
+  background-color: #b9c2f5;
+  border-radius: 0 0.3rem 0.3rem 0;
+  margin-left: 0.1rem;
+  transition: border 0.2s ease, background-color 0.2s ease;
+}
+.appbar__toggle__box--middle--right--selected {
+  background-color: #fff;
 }
 
 .project {

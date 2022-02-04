@@ -57,6 +57,7 @@
     height: 50%
     width: 100%
     min-height: 20vh
+    padding: 0 1rem
 
     -webkit-touch-callout: none
     -webkit-user-select: none
@@ -120,21 +121,22 @@
 
         &--left
             background: $success
-            width: calc(50% - 2rem)
-            max-width: 85%
-            margin: 0 .25rem .25rem 1rem
+            width: calc(50% - 1rem)
+            min-width: 15%
+            margin: 0 .25rem .25rem 0
 
         &--right
-            background: #eee
+            background: $ocpurple2
             flex: 1 1 auto
             position: relative
-            margin: 0 1rem .25rem .25rem
+            margin: 0 0 .25rem .25rem
+            min-width: 15%
 
         &--error
             background: $error
             flex: 1 1 auto
             position: relative
-            margin: 0 1rem .25rem .25rem
+            margin: 0 0 .25rem .25rem
 
 .upload
     background: $white,

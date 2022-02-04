@@ -1,6 +1,5 @@
 import React, { useState, useEffect, createRef, Fragment } from "react"
 import { HubConnectionBuilder } from "@microsoft/signalr";
-import { CircularProgress } from '@material-ui/core';
 import DialogUploadFile from './DialogUploadFile'
 import SurveyTable from './SurveyTable'
 import EsriMap from './EsriMap'
@@ -14,6 +13,7 @@ import connection from '../services/connection'
 //import Checklist from "./Checklist";
 import TriError from '../assets/TriError.js'
 import { viewer } from '../data/forge'
+import { display } from "@mui/system";
 
 const Container = () => {
   const [page, setPage] = useState('project')
@@ -56,6 +56,8 @@ const Container = () => {
   const [open, setOpen] = useState(null);
   const [files, setFiles] = useState([]);
   const [windowWidth, setWindowWidth] = useState(window.innerWidth)
+  const [mapSplit, setMapSplit] = useState(2)
+  const [activeMaps, setActiveMaps] = useState(['esri', 'forge'])
 
   const leftRef = createRef();
   const splitPaneRef = createRef();
@@ -330,6 +332,17 @@ const Container = () => {
   }, [topRef, topHeight, setTopHeight])
 
   useEffect(() => {
+    if ((mapSplit === 1 || mapSplit === 3) && leftRef.current) {
+      leftRef.current.style.width = '100%'
+    } else if(mapSplit === 2 && leftRef.current) {
+      leftRef.current.style.width = 'calc(50% - 1rem)'
+    }
+    if(viewer) {
+      viewer.resize() //Resize forge map when finished resizing container.
+    }
+  }, [mapSplit, leftRef])
+
+  useEffect(() => {
     document.addEventListener('mousemove', onMouseMove);
     document.addEventListener('mouseup', onMouseUp);
     window.addEventListener('resize', onResize)
@@ -359,7 +372,7 @@ const Container = () => {
         <Drawer hideDrawer={hideDrawer} loading={loading} page={page} data={parcelInfo} setSelected={setSelected} selected={selected} section={section} setSection={setSection} lineErrors={lineErrors} curveErrors={curveErrors} lineMissing={lineMissing} curveMissing={curveMissing} open={open} setOpen={setOpen}/>
       </div>
       <div className='mapcont'>
-        <AppBar handleClickOpen={handleClickOpen} />
+        <AppBar handleClickOpen={handleClickOpen} setMapSplit={setMapSplit} mapSplit={mapSplit}/>
         <DialogUploadFile open={openDialog} onClose={onDialogClose} connectionId={designAutomationId} isLoading={handleLoading} setEsriData={setEsriData} setTableInfo={setTableInfo} setMapInfo={setMapInfo} setParcelInfo={setParcelInfo} files={files} setFiles={setFiles}/>
         <div className="mapcont__view">
         {/* {page === 'check' && submit ?  
@@ -367,28 +380,16 @@ const Container = () => {
         { submit && !appError ?
           <div ref={e => setSplitPaneHeightRef(e)} className="mapcont__view__cont">
             <div className="splitpane" ref={splitPaneRef} ref={e => setTopRef(e)}>
-              <div className='splitpane__map splitpane__map--left' ref={leftRef}>
-
-                {esriData ?
-
-                  <EsriMap esriData={esriData} selected={selected} setSelected={setSelected} open={open} setOpen={setOpen}/>   
-
-                  :
-
-                  <Fragment>
-                      <span className="spinner">
-                          <CircularProgress size={48} />
-                      </span>
-                  </Fragment>
-                }
+              <div className='splitpane__map splitpane__map--left' ref={leftRef} style={mapSplit === 3 ? {display: 'none'} : {display: 'block'}}>
+                  <EsriMap esriData={esriData} selected={selected} setSelected={setSelected} open={open} setOpen={setOpen}/>
               </div>
-              <div className="splitpane__divider splitpane__divider--ver" onMouseDown={e => onMouseDown(e, 'horz')}>
+              <div className="splitpane__divider splitpane__divider--ver" onMouseDown={e => onMouseDown(e, 'horz')} style={mapSplit === 1 || mapSplit === 3 ? {display: 'none'} : {display: 'block'}}>
                 <div className="splitpane__divider__handle splitpane__divider__handle--ver">
                   <span className="splitpane__divider__handle__bar splitpane__divider__handle__bar--ver"></span>
                   <span className="splitpane__divider__handle__bar splitpane__divider__handle__bar--ver"></span>
                 </div>
               </div>
-              <div className={(forgeError ? 'splitpane__map splitpane__map--error' : 'splitpane__map splitpane__map--right')}>
+              <div className={(forgeError ? 'splitpane__map splitpane__map--error' : 'splitpane__map splitpane__map--right')} style={mapSplit === 1 ? {display: 'none'} : {display: 'block'}}>
                 <ForgeMap objectKeys={objectKeys} connectionId={modelDerivativeId} urn={urn} setError={setForgeError} error={forgeError} mapInfo={mapInfo} setMapInfo={setMapInfo}/>
               </div>
             </div>
