@@ -49,14 +49,26 @@
         width: 100%
         cursor: pointer
 
+        //For border-radius to show on Firefox, the background-color needs to be applied
+        //to the table cell and not the row 
         &:nth-of-type(even)
-            background-color: $ocpurple2
+            td
+                background-color: $ocpurple2
 
         &--selected
-            background-color: $ocpurple !important
+            td
+                background-color: $ocpurple !important
 
         &:hover
-            background-color: $ocpurple3
+            td
+                background-color: $ocpurple3
+
+        td
+            &:last-of-type
+                border-radius: 0 .5rem .5rem 0
+
+            &:first-of-type
+                border-radius: .5rem 0 0 .5rem
 
     &__cell
         padding: .5rem 0 .5rem 1rem

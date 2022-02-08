@@ -81,11 +81,8 @@ const buttonSolidProps = {
 };
 
 const DialogUploadFile = ({open, onClose, connectionId, isLoading, setSubmit, setEsriData, setTableInfo, setMapInfo, setParcelInfo, files, setFiles}) => {
-  const classes = useStyles();  
-  const [submitAttempted, setSubmitAttempted] = useState()
-  const [mapType, setMapType] = useState('')
-
-  const { handleSubmit, control, getValues } = useForm();
+    const classes = useStyles();  
+    const { handleSubmit, control, reset } = useForm();
 
   const onSubmit = data => {
     setEsriData(null)
@@ -95,7 +92,7 @@ const DialogUploadFile = ({open, onClose, connectionId, isLoading, setSubmit, se
     const formData = new FormData()
     formData.append('inputFile', data.files);
     formData.append('data', JSON.stringify({
-        mapType: data.mapType,
+        mapType: data.maptype,
         activityName: 'AMCActivity+dev',
         browerConnectionId: connectionId
     }));
@@ -109,6 +106,7 @@ const DialogUploadFile = ({open, onClose, connectionId, isLoading, setSubmit, se
     )
     isLoading(true)
     onClose(false)
+    reset({parcelNumber: '', maptype: ''})
   };
 
   return (
@@ -134,7 +132,7 @@ const DialogUploadFile = ({open, onClose, connectionId, isLoading, setSubmit, se
                         rules={{ required: 'File is required' }}
                     />
                         <Controller
-                            name="mapType"
+                            name="maptype"
                             control={control}
                             defaultValue=""
                             render={({ field: { onChange, value }, fieldState: { error } }) => (
@@ -151,7 +149,6 @@ const DialogUploadFile = ({open, onClose, connectionId, isLoading, setSubmit, se
                                         variant="outlined"
                                         onChange={(e) => {
                                             onChange(e.target.value)
-                                            setMapType(e.target.value)
                                         }}
                                     >
                                         <MenuItem value={'TractMap'} style={{fontFamily: 'poppins, sans-serif'}}>Tract Map</MenuItem>
@@ -173,7 +170,9 @@ const DialogUploadFile = ({open, onClose, connectionId, isLoading, setSubmit, se
                             variant="outlined"
                             type="number"
                             value={value}
-                            onChange={onChange}
+                            onChange={e => e.target.value < 0 ?
+                                        onChange(e.target.value = 0) :
+                                        onChange(e.target.value)}
                             error={!!error}
                             helperText={error ? error.message : null}
                             fullWidth
