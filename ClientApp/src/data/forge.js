@@ -65,7 +65,7 @@ export const onDocumentLoadSuccess = (viewerDocument) => {
 
         // Get all dbIds and hIds from the forge viewer model for dynimc connections
         // for button labels, segments from esri map and data table.
-        viewerDbIds = forgeViewerModelDbIds()
+        getForgeViewerModelDbIds()
 
     });
     console.log("Check if Viewer is completely loaded.")
@@ -104,10 +104,19 @@ export const afterViewerEvents = (viewer, events) => {
 
     return Promise.all(promises)
 }
-// Get all dbIds from the viewer model 
-export const forgeViewerModelDbIds = () => {
+
+// Zoom into dbId object in the viewer model.
+export const fitToViewerHandleId = (hId) => {
+    let dbId = viewerDbIds[hId.toUpperCase()]
+    if (dbId !== "undefined") {
+        viewer.select(dbId)
+        viewer.utilities.fitToView()
+    }
+}
+
+// Get all hIds:dbIds from the viewer model 
+export const getForgeViewerModelDbIds = () => {
     viewer.model.getExternalIdMapping(data => {
-        console.log("dbIdsDict: ", data)
         viewerDbIds = data
     })
 }
@@ -119,7 +128,8 @@ export default {
     onDocumentLoadFailure2,
     getForgeToken,
     afterViewerEvents,
-    forgeViewerModelDbIds,
+    getForgeViewerModelDbIds,
+    fitToViewerHandleId,
     viewer,
     viewerDbIds
 }

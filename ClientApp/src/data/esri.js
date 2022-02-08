@@ -17,7 +17,7 @@ import Zoom from "@arcgis/core/widgets/Zoom";
 import _ from "lodash";
 import Popup from "@arcgis/core/widgets/Popup";
 import { LevelFormat } from "docx";
-import { viewer, viewerDbIds } from '../data/forge'
+import { viewer, viewerDbIds, fitToViewerHandleId } from '../data/forge'
 
 let polylist = []
 let par2poly = {}
@@ -634,6 +634,7 @@ export const buildMap = (json, mapRef, cityLayers, setSelected, selected, setOpe
                             setSelected(null)
                         } else {
                             setSelected(graphic.attributes.oid)
+                            fitToViewerHandleId(graphic.attributes.hid)
                         }
 
                     } catch {
