@@ -56,36 +56,36 @@ const Dropzone = ({ onChange, ...rest }) => {
 
   const [files, setFiles] = useState([])
   const [error, setError] = useState(null)
+  const [warning, setWarning] = useState(null)
 
   const fileNameCheck = name => {
-    const rg1 = new RegExp('^[^\\/:\*\?%\$\@"{}<>\|]+$') // forbidden characters \ / : * ? " < > |
+    const rg1 = new RegExp('^[^\\/:\*\?%\$\@"{}<>\|]+$') // forbidden characters \ / : * ? % $ @ " { } < > |
     console.log(name)
     console.log(rg1.test(name))
     return rg1.test(name);
   }
 
   const onDrop = async acceptedFiles => {
-    // Do something with the files
-    console.log(acceptedFiles[0])
-      checkVersion(acceptedFiles[0]).then(
-        response => {
-          let v = parseInt(response.slice(2, 6))
-          if (v >= 1021) {
-            if (fileNameCheck(acceptedFiles[0].name)) {
-              console.log(v)
-              setFiles(acceptedFiles)
-              onChange(acceptedFiles)
-              setError(null)
-            } else {
-              console.log("invalid file name")
-              setError("Invalid file name. Please Try again")
+    setError(null)
+    setWarning(null)
+    checkVersion(acceptedFiles[0]).then(
+      response => {
+        let v = parseInt(response.slice(2, 6))
+        if (v >= 1021) { //verify autocad version is AC1021 or greater (Autocad 2007 and up)
+          if (fileNameCheck(acceptedFiles[0].name)) {
+            if(acceptedFiles[0].size > 15728640) { //15MB
+              setWarning('Your CAD file is a large size and processing may take longer than expected. Please detach any point cloud files (RCS or RCP) and remove any 3D objects (wireframe, solid, surface, or mesh) if they exist.')
             }
+            setFiles(acceptedFiles)
+            onChange(acceptedFiles)
           } else {
-            console.log("invalid file version")
-            setError("Invalid file version. Autocad 2007 and later only (AC1021)")
+            setError("Invalid file name. Please Try again")
           }
-        } 
-      )
+        } else {
+          setError("Invalid file version. Autocad 2007 and later only (AC1021)")
+        }
+      } 
+    )
   }
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({ onDrop, multiple: false, accept: '.dwg, .dgn', maxFiles: 1, maxSize: 20971520, minSize: 1 });
@@ -129,19 +129,24 @@ const Dropzone = ({ onChange, ...rest }) => {
   )
 
   return (
-    <div {...dropzoneProps} {...getRootProps()}>
-      <input {...getInputProps()} />
-      {isDragActive ? (
-        <p {...dropzoneContDragProps} {...dropTextProps}>Drop the files here ...</p>
-      ) : (
-        <div {...dropzoneContProps}>
-          <h2 {...dropTitleProps}>Drag and Drop</h2>
-          <p {...dropTextProps}>or click to choose files</p>
-          <p>{error}</p>
-        </div>
-      )}
-      <aside>{filesDisplay}</aside>
-    </div>
+    <>
+      <div {...dropzoneProps} {...getRootProps()}>
+        <input {...getInputProps()} />
+        {isDragActive ? (
+          <p {...dropzoneContDragProps} {...dropTextProps}>Drop the files here ...</p>
+        ) : (
+          <div {...dropzoneContProps}>
+            <h2 {...dropTitleProps}>Drag and Drop</h2>
+            <p {...dropTextProps}>or click to choose files</p>
+            <p {...dropTextProps}>Max 1 file, 20MB, .dwg or .dgn</p>
+          </div>
+        )}
+        <aside>{filesDisplay}</aside>
+      </div>
+      {error ? <div className="validation--error" style={{marginTop: 'calc(1rem + 8px)'}}>{error}</div> 
+      : warning ? <div className="validation--warning" style={{marginTop: 'calc(1rem + 8px)'}}>{warning}</div> 
+      : null}
+    </>
   );
 }
 

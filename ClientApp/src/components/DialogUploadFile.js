@@ -1,6 +1,6 @@
 import React, { useState } from "react"
 import Button from '@material-ui/core/Button';
-import { makeStyles } from '@material-ui/core';
+import { createTheme, makeStyles, ThemeProvider } from '@material-ui/core';
 import TextField from '@material-ui/core/TextField';
 import Dialog from '@material-ui/core/Dialog';
 import DialogContent from '@material-ui/core/DialogContent';
@@ -11,6 +11,15 @@ import Select from '@mui/material/Select';
 import { useForm, Controller } from 'react-hook-form';
 import Dropzone from './Dropzone'
 import connection from '../services/connection'
+
+const theme = createTheme({
+    typography: {
+        fontFamily: [
+            'poppins',
+            'sans-serif'
+        ].join(',')
+    }
+})
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -46,8 +55,8 @@ const dialogTitleProps = {
 
 const inputContProps = {
     style: {
-        margin: 'calc(2rem - 8px) 0',
-        width: '100%'
+        margin: 'calc(1rem - 8px) 0 1rem 0',
+        width: '100%',
     }
 } 
 
@@ -72,11 +81,8 @@ const buttonSolidProps = {
 };
 
 const DialogUploadFile = ({open, onClose, connectionId, isLoading, setSubmit, setEsriData, setTableInfo, setMapInfo, setParcelInfo, files, setFiles}) => {
-  const classes = useStyles();  
-  const [submitAttempted, setSubmitAttempted] = useState()
-  const [mapType, setMapType] = useState('')
-
-  const { handleSubmit, control, getValues } = useForm();
+    const classes = useStyles();  
+    const { handleSubmit, control, reset } = useForm();
 
   const onSubmit = data => {
     setEsriData(null)
@@ -86,7 +92,7 @@ const DialogUploadFile = ({open, onClose, connectionId, isLoading, setSubmit, se
     const formData = new FormData()
     formData.append('inputFile', data.files);
     formData.append('data', JSON.stringify({
-        mapType: data.mapType,
+        mapType: data.maptype,
         activityName: 'AMCActivity+dev',
         browerConnectionId: connectionId
     }));
@@ -100,20 +106,24 @@ const DialogUploadFile = ({open, onClose, connectionId, isLoading, setSubmit, se
     )
     isLoading(true)
     onClose(false)
+    reset({parcelNumber: '', maptype: ''})
   };
 
   return (
-    <div>
+    <ThemeProvider theme={theme}>
         <Dialog open={open} onClose={onClose} aria-labelledby="form-dialog-title">
             <div {...dialogTitleProps} id="form-dialog-title">Submit Map</div>
             <DialogContent className='scroll' style={{padding: '0 1rem', border: '2rem 1rem solid transparent'}}>
                 <form className={classes.root} onSubmit={handleSubmit(onSubmit)}>
                     <Controller
-                        render={({ field: { onChange } }) => (
+                        control={control}
+                        render={({ field: { onChange } , fieldState: { error }}) => (
                             <Dropzone onChange={(acceptedFiles) => {
                                     onChange(acceptedFiles[0])
                                     setFiles([acceptedFiles[0]])
                                 }}
+                                error={!!error}
+                                helperText={error ? error.message : null}
                             />
                         )}
                         name="files"
@@ -122,11 +132,11 @@ const DialogUploadFile = ({open, onClose, connectionId, isLoading, setSubmit, se
                         rules={{ required: 'File is required' }}
                     />
                         <Controller
-                            name="mapType"
+                            name="maptype"
                             control={control}
                             defaultValue=""
                             render={({ field: { onChange, value }, fieldState: { error } }) => (
-                                <FormControl style={{marginTop: '2rem'}} fullWidth>
+                                <FormControl style={{margin: '1rem 0 0 0'}} fullWidth>
                                     <TextField
                                         select
                                         value={value}
@@ -134,14 +144,15 @@ const DialogUploadFile = ({open, onClose, connectionId, isLoading, setSubmit, se
                                         id="map"
                                         onChange={onChange}
                                         fullWidth
-                                        variant="filled"
+                                        error={!!error}
+                                        helperText={error ? error.message : null}
+                                        variant="outlined"
                                         onChange={(e) => {
                                             onChange(e.target.value)
-                                            setMapType(e.target.value)
                                         }}
                                     >
-                                        <MenuItem value={'TractMap'}>Tract Map</MenuItem>
-                                        <MenuItem value={'RecordOfSurvey'}>Record of Survey</MenuItem>
+                                        <MenuItem value={'TractMap'} style={{fontFamily: 'poppins, sans-serif'}}>Tract Map</MenuItem>
+                                        <MenuItem value={'RecordOfSurvey'} style={{fontFamily: 'poppins, sans-serif'}}>Record of Survey</MenuItem>
                                     </TextField>
                                 </FormControl>
                             )}
@@ -154,10 +165,14 @@ const DialogUploadFile = ({open, onClose, connectionId, isLoading, setSubmit, se
                         defaultValue=""
                         render={({ field: { onChange, value }, fieldState: { error } }) => (
                         <TextField
+                            inputProps={{ inputMode: 'numeric', pattern: '[0-9]*' }}
                             label="Number of Parcels"
-                            variant="filled"
+                            variant="outlined"
+                            type="number"
                             value={value}
-                            onChange={onChange}
+                            onChange={e => e.target.value < 0 ?
+                                        onChange(e.target.value = 0) :
+                                        onChange(e.target.value)}
                             error={!!error}
                             helperText={error ? error.message : null}
                             fullWidth
@@ -264,7 +279,7 @@ const DialogUploadFile = ({open, onClose, connectionId, isLoading, setSubmit, se
                 </form>
             </DialogContent>
         </Dialog>
-    </div>
+    </ThemeProvider>
   );
 }
 

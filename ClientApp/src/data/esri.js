@@ -216,11 +216,16 @@ const polygonSymbol = {
 }
 
 const clearup = (view) => {
-    let dict = {};
-    let dict2 = {};
-    let oid2lbl = {}
-    let par2poly = {}
-    let oid2line = {}
+    selectedLayers = []
+    parcelLayers = [] 
+    parcelLabels = [] 
+    segmentLabels = []
+
+    dict = {};
+    dict2 = {};
+    oid2lbl = {}
+    par2poly = {}
+    oid2line = {}
 
     lblgroup = {}
     lblgroupstart = {}
@@ -279,7 +284,7 @@ const createFeature = (path, words, hid, oid, oidlist)  => {
 }
 
 const ericJson = (jsonData, view) => {
-    clearup(view)
+    //clearup(view)
     // const dict = jsonData;
     let pnum = 0;
     let mkey = 'Parcel'
@@ -501,6 +506,8 @@ export const buildMap = (json, mapRef, cityLayers, setSelected, selected, setOpe
             wkid: 2230
         })
     })
+
+    clearup(view)
 
     const btoggle = new BasemapToggle({
         titleVisible: true,

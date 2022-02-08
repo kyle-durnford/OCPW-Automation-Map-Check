@@ -9,7 +9,6 @@ import checklist from "../assets/checklist.svg"
 import report from "../assets/report.svg"
 import show from "../assets/show.svg"
 import hide from "../assets/hide.svg"
-import './NavMenu.css';
 
 const drawerWidth = 100;
 
