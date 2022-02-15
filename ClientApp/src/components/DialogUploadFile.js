@@ -84,6 +84,8 @@ const DialogUploadFile = ({open, onClose, connectionId, isLoading, setSubmit, se
     const classes = useStyles();  
     const { handleSubmit, control, reset } = useForm();
 
+    const [parcels, setParcels] = useState()
+
   const onSubmit = data => {
     setEsriData(null)
     setTableInfo(null)
@@ -111,7 +113,7 @@ const DialogUploadFile = ({open, onClose, connectionId, isLoading, setSubmit, se
 
   return (
     <ThemeProvider theme={theme}>
-        <Dialog open={open} onClose={onClose} aria-labelledby="form-dialog-title">
+        <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth aria-labelledby="form-dialog-title">
             <div {...dialogTitleProps} id="form-dialog-title">Submit Map</div>
             <DialogContent className='scroll' style={{padding: '0 1rem', border: '2rem 1rem solid transparent'}}>
                 <form className={classes.root} onSubmit={handleSubmit(onSubmit)}>
@@ -154,6 +156,7 @@ const DialogUploadFile = ({open, onClose, connectionId, isLoading, setSubmit, se
                                         <MenuItem value={'TractMap'} style={{fontFamily: 'poppins, sans-serif'}}>Tract Map</MenuItem>
                                         <MenuItem value={'RecordOfSurvey'} style={{fontFamily: 'poppins, sans-serif'}}>Record of Survey</MenuItem>
                                     </TextField>
+                                    
                                 </FormControl>
                             )}
                             rules={{ required: 'Map Type required' }}
@@ -170,9 +173,11 @@ const DialogUploadFile = ({open, onClose, connectionId, isLoading, setSubmit, se
                             variant="outlined"
                             type="number"
                             value={value}
-                            onChange={e => e.target.value < 0 ?
+                            onChange={e => {e.target.value < 0 ?
                                         onChange(e.target.value = 0) :
-                                        onChange(e.target.value)}
+                                        onChange(e.target.value);
+                                        setParcels(e.target.value)
+                            }}
                             error={!!error}
                             helperText={error ? error.message : null}
                             fullWidth
@@ -180,6 +185,9 @@ const DialogUploadFile = ({open, onClose, connectionId, isLoading, setSubmit, se
                         )}
                         rules={{ required: 'Number of parcels required' }}
                     />
+                    {parcels > 200 ? 
+                        <div className="validation--warning" style={{marginTop: 'calc(1rem + 8px)'}}>This file contains > 200 parcels. Please expect delayed response times.</div>
+                    : null}
                     {/* <Controller
                         name="rsNumber"
                         control={control}

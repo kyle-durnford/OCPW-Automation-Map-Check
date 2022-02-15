@@ -14,9 +14,10 @@ const dropzoneProps = {
       background: '#f4f5fc',
       border: '2px dashed #bbb',
       borderRadius: '1rem',
-      padding: '1rem 8rem',
+      padding: '1rem 0',
       cursor: 'pointer',
       width: '100%',
+      textAlign: 'center'
   }
 }
 
@@ -31,7 +32,7 @@ const dropFileProps = {
   style: {
     fontSize: '1rem',
     fontFamily: 'poppins, sans-serif',
-    textAlign: 'center'
+    textAlign: 'center',
   }
 }
 
@@ -71,10 +72,10 @@ const Dropzone = ({ onChange, ...rest }) => {
     checkVersion(acceptedFiles[0]).then(
       response => {
         let v = parseInt(response.slice(2, 6))
-        if (v >= 1021) { //verify autocad version is AC1021 or greater (Autocad 2007 and up)
+        if (acceptedFiles[0].name.slice(-3) === "dgn" || v >= 1021) { //verify autocad version is AC1021 or greater (Autocad 2007 and up)
           if (fileNameCheck(acceptedFiles[0].name)) {
             if(acceptedFiles[0].size > 15728640) { //15MB
-              setWarning('Your CAD file is a large size and processing may take longer than expected. Please detach any point cloud files (RCS or RCP) and remove any 3D objects (wireframe, solid, surface, or mesh) if they exist.')
+              setWarning('Your CAD file is a large size and processing may take longer than expected.')
             }
             setFiles(acceptedFiles)
             onChange(acceptedFiles)
