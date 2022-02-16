@@ -487,9 +487,6 @@ html {
   margin: 0.5rem 0;
   color: #842029;
 }
-.parcel__data--error:hover {
-  background: #a0acf0;
-}
 .parcel__data--warning {
   background: #fff3cd;
   margin: 0.5rem 0;

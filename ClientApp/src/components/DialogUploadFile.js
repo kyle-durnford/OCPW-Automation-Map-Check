@@ -186,7 +186,7 @@ const DialogUploadFile = ({open, onClose, connectionId, isLoading, setSubmit, se
                         rules={{ required: 'Number of parcels required' }}
                     />
                     {parcels > 200 ? 
-                        <div className="validation--warning" style={{marginTop: 'calc(1rem + 8px)'}}>This file contains > 200 parcels. Please expect delayed response times.</div>
+                        <div className="validation--warning">This file contains > 200 parcels. Please expect delayed response times.</div>
                     : null}
                     {/* <Controller
                         name="rsNumber"

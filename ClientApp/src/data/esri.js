@@ -777,6 +777,7 @@ export const selectedLayer = (selected, open) => {
         selectedgraphicslayer.graphics.addMany(selectedLayers);
         lblgraphicslayer.graphics.removeAll()
         lblgraphicslayer.graphics.add(segmentLabels[select]);
+        fitToViewerHandleId(selectedLayers[select].attributes.hid)
     } else if (open >= 0 ){
         selectedgraphicslayer.graphics.removeAll()
         selectedgraphicslayer.graphics.addMany(selectedLayers);

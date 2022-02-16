@@ -33,6 +33,7 @@
     "reactstrap": "^8.4.1",
     "redocx": "^1.1.4",
     "rimraf": "^2.6.2",
+    "sass": "^1.49.7",
     "yarn": "^1.22.17"
   },
   "devDependencies": {
@@ -54,7 +55,8 @@
     "build": "react-scripts build",
     "test": "cross-env CI=true react-scripts test --env=jsdom",
     "eject": "react-scripts eject",
-    "lint": "eslint ./src/"
+    "lint": "eslint ./src/",
+    "sassy": "sass --watch src/styles/main.sass src/main.css"
   },
   "browserslist": {
     "production": [

@@ -332,15 +332,17 @@ const Container = () => {
   }, [topRef, topHeight, setTopHeight])
 
   useEffect(() => {
+    console.log(mapSplit)
     if ((mapSplit === 1 || mapSplit === 3) && leftRef.current) {
       leftRef.current.style.width = '100%'
     } else if(mapSplit === 2 && leftRef.current) {
+      setLeftWidth('calc(50% - 1rem)')
       leftRef.current.style.width = 'calc(50% - 1rem)'
     }
     if(viewer) {
       viewer.resize() //Resize forge map when finished resizing container.
     }
-  }, [mapSplit, leftRef])
+  }, [mapSplit])
 
   useEffect(() => {
     document.addEventListener('mousemove', onMouseMove);
