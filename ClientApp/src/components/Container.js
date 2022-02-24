@@ -58,6 +58,8 @@ const Container = () => {
   const [windowWidth, setWindowWidth] = useState(window.innerWidth)
   const [mapSplit, setMapSplit] = useState(2)
   const [activeMaps, setActiveMaps] = useState(['esri', 'forge'])
+  const [inputParcelCount, setInputParcelCount] = useState()
+  const [inputMapType, setInputMapType] = useState()
 
   const leftRef = createRef();
   const splitPaneRef = createRef();
@@ -371,11 +373,11 @@ const Container = () => {
         <div className="drawercont__navcont">
           <NavMenu setPage={setPage} page={page} hideDrawer={hideDrawer} setHideDrawer={setHideDrawer}/>
         </div>
-        <Drawer hideDrawer={hideDrawer} loading={loading} page={page} data={parcelInfo} setSelected={setSelected} selected={selected} section={section} setSection={setSection} lineErrors={lineErrors} curveErrors={curveErrors} lineMissing={lineMissing} curveMissing={curveMissing} open={open} setOpen={setOpen}/>
+        <Drawer hideDrawer={hideDrawer} loading={loading} page={page} data={parcelInfo} setSelected={setSelected} selected={selected} section={section} setSection={setSection} lineErrors={lineErrors} curveErrors={curveErrors} lineMissing={lineMissing} curveMissing={curveMissing} open={open} setOpen={setOpen} inputMapType={inputMapType} inputParcelCount={inputParcelCount}/>
       </div>
       <div className='mapcont'>
         <AppBar handleClickOpen={handleClickOpen} setMapSplit={setMapSplit} mapSplit={mapSplit}/>
-        <DialogUploadFile open={openDialog} onClose={onDialogClose} connectionId={designAutomationId} isLoading={handleLoading} setEsriData={setEsriData} setTableInfo={setTableInfo} setMapInfo={setMapInfo} setParcelInfo={setParcelInfo} files={files} setFiles={setFiles}/>
+        <DialogUploadFile open={openDialog} onClose={onDialogClose} connectionId={designAutomationId} isLoading={handleLoading} setEsriData={setEsriData} setTableInfo={setTableInfo} setMapInfo={setMapInfo} setParcelInfo={setParcelInfo} files={files} setFiles={setFiles} setInputParcelCount={setInputParcelCount} setInputMapType={setInputMapType}/>
         <div className="mapcont__view">
         {/* {page === 'check' && submit ?  
           <Checklist data={parcelInfo} section={section} setSection={setSection}/> */}

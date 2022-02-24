@@ -8,7 +8,7 @@ const EsriMap = ({esriData, selected, setSelected, open, setOpen}) => {
     useEffect(() => {
         if (esriData) {
             const cityLayer = createCityLayer()
-            buildMap(esriData, mapRef.current, cityLayer, setSelected, selected, setOpen)
+            buildMap(esriData, mapRef.current, cityLayer, setSelected, selected, setOpen, open)
         }
     }, [esriData]);
 

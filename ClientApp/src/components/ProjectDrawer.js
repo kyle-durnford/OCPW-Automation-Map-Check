@@ -3,7 +3,7 @@ import good from '../assets/check.svg'
 import error from '../assets/error.svg'
 import Project from "../assets/Project.js"
 
-const ProjectDrawer = ({parcelCount, lines, curves, lineErrors, curveErrors, lineMissing, curveMissing}) => {
+const ProjectDrawer = ({parcelCount, lines, curves, lineErrors, curveErrors, lineMissing, curveMissing, inputMapType, inputParcelCount}) => {
 
     const linePercent = Math.round((100 - ((lineMissing + lineErrors)/lines*100)) * 10) / 10
     const curvePercent = Math.round((100 - ((curveMissing + curveErrors)/curves*100)) * 10) / 10
@@ -12,6 +12,7 @@ const ProjectDrawer = ({parcelCount, lines, curves, lineErrors, curveErrors, lin
     return (
         <div className="project">
             {totalPercent > 80 ? <div className="validation--success"><img src={good} alt="Pass" style={{marginRight: '.5rem'}}></img>File meets standards</div> : <div className="validation--error"><img src={error} alt="Fail" style={{marginRight: '.5rem'}}></img>File does not meet standards</div>}
+            {inputParcelCount !== parcelCount ? <div className="validation--error" style={{marginTop: '1rem'}}><img src={error} alt="Fail" style={{marginRight: '.5rem'}}></img>Inputted parcel count ({inputParcelCount}) does not match detected parcel count ({parcelCount})</div> : null}
             <div className="project__title"><span className="project__title__icon"><Project color={'rgb(87, 110, 239)'}/></span><p>Details</p></div>
             <div>
                 <div className="info__row">
@@ -66,17 +67,17 @@ const ProjectDrawer = ({parcelCount, lines, curves, lineErrors, curveErrors, lin
                 </div>
                 <div className="info__row">
                     <div className="info__block">
-                        <p>{linePercent}%</p>
+                        <p>{Number.isNaN(linePercent) ? "0" : linePercent}%</p>
                         <p className="info__title">Line Segment Passing %</p>
                     </div>
                     <div className="info__block">
-                        <p>{curvePercent}%</p>
+                        <p>{Number.isNaN(curvePercent) ? "0" : curvePercent}%</p>
                         <p className="info__title">Curve Segment Passing %</p>
                     </div>
                 </div>
                 <div className="info__row">
                     <div className="info__block">
-                        <p>{totalPercent}%</p>
+                        <p>{Number.isNaN(totalPercent) ? "0" : totalPercent}%</p>
                         <p className="info__title">Total Passing %</p>
                     </div>
                     <div className="info__block">

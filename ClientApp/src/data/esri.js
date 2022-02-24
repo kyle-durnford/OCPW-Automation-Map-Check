@@ -19,6 +19,8 @@ import Popup from "@arcgis/core/widgets/Popup";
 import { LevelFormat } from "docx";
 import { viewer, viewerDbIds, fitToViewerHandleId } from '../data/forge'
 
+import ImageryTileLayer from "@arcgis/core/layers/ImageryTileLayer";
+
 let polylist = []
 let par2poly = {}
 let lblgroup = {}
@@ -124,6 +126,10 @@ const graphicslayer2 = new GraphicsLayer({ //Base segment drawing layer
     id: 'graphicslayer2'
 })
 
+const selectedParcelGraphic = new GraphicsLayer({
+    id: 'selectedparcelgraphic'
+})
+
 const lblgraphicslayer = new GraphicsLayer({ //Labels for segments
     id: 'lblgraphicslayer'
 })
@@ -133,10 +139,11 @@ const selectedgraphicslayer = new GraphicsLayer({ //Highlights selected layer
 })
 
 let selectedLayers = [] //Stores each graphic so it's easy to select the index of the selected segment
-let parcelLayers = [] //Stores parcel layers
+let segmentLayers = [] //Stores segment layers
+let parcelLayers = []
 let parcelLabels = [] //Stores segment labels by parcel
 let segmentLabels = [] //Stores segments labels for a parcel
-
+let sParcelLayers = []
 
 const lineSymbol = {
     type: "simple-line", // autocasts as new SimpleLineSymbol()
@@ -157,12 +164,20 @@ export const createCityLayer = () => {
 //     popupEnabled: false
 // })
 
-const OCbasemapLayer = new TileLayer({
-    url: "https://www.ocgis.com/survey/rest/services/Basemaps/County_Basemap_Ext/MapServer"
+
+//https://www.ocgis.com/arcpub/rest/services/Eagle_Aerial_1ft_2021/ImageServer
+//https://gis.ocgov.com/arcimg/rest/services/Aerial_Imagery_Countywide/Eagle_2020/ImageServer
+
+const OCbasemapLayer = new ImageryTileLayer({
+    url: "https://gis.ocgov.com/arcimg/rest/services/Aerial_Imagery_Countywide/Eagle_2020/ImageServer"
 })
 
-const eagleLayer = new TileLayer({
-    url: "https://gis.ocgov.com/arcimg/rest/services/Aerial_Imagery_Countywide/Eagle_2017/MapServer"
+// const eagleLayer = new TileLayer({
+//     url: "https://gis.ocgov.com/arcimg/rest/services/Aerial_Imagery_Countywide/Eagle_2017/MapServer"
+// })
+
+const publicLayer = new ImageryTileLayer({
+    url: 'https://www.ocgis.com/arcpub/rest/services/Eagle_Aerial_1ft_2021/ImageServer'
 })
 
 const streetlayers = new MapImageLayer({
@@ -174,14 +189,18 @@ const OCB = new Basemap({
     baseLayers: [OCbasemapLayer],
     title: "Orange County",
     id: "ocbasemap",
-    thumbnailUrl: "BasemapThumb.jpg"
 })
 
-const oceagle = new Basemap({
-    baseLayers: [eagleLayer],
-    title: "Eagle",
-    id: "eagle",
-    thumbnailUrl: "Eagle2017AerialThumbnail.jpg"
+// const oceagle = new Basemap({
+//     baseLayers: [eagleLayer],
+//     title: "Eagle",
+//     id: "eagle",
+// })
+
+const publicB = new Basemap({
+    baseLayers: [publicLayer],
+    title: "Public",
+    id: 'public'
 })
 
 
@@ -207,17 +226,25 @@ const map = new Map({
 
 const polygonSymbol = {
     type: "simple-fill",
-    color: [255, 0, 0, 0.01],
+    color: [0,0,0,0],
     outline: {
-        // autocasts as new SimpleLineSymbol()
         color: 'red',
-        width: 0
+        width: 3
+    }
+}
+
+const selectedPolygonSymbol = {
+    type: "simple-fill",
+    color: [0,0,0,0],
+    outline: {
+        color: 'black',
+        width: 3
     }
 }
 
 const clearup = (view) => {
     selectedLayers = []
-    parcelLayers = [] 
+    segmentLayers = [] 
     parcelLabels = [] 
     segmentLabels = []
 
@@ -276,8 +303,7 @@ const createFeature = (path, words, hid, oid, oidlist)  => {
         visible: false
     });
 
-
-    parcelLayers.push(baseGraphic)
+    segmentLayers.push(baseGraphic)
     selectedLayers.push(selectedGraphic)
 
     oid2line[oid] = baseGraphic //For attaching a label to this segment
@@ -289,7 +315,9 @@ const ericJson = (jsonData, view) => {
     let pnum = 0;
     let mkey = 'Parcel'
     const parcels = jsonData.Parcels
+    
     _.forEach(parcels, (value, key) => {
+        segmentLayers = []
         pnum += 1
         mkey = 'Parcel' + pnum
         const dictionary = value[0]['Segments'];
@@ -321,7 +349,15 @@ const ericJson = (jsonData, view) => {
             symbol: polygonSymbol
         });
 
+        let sParcelGraphic = new Graphic({ //Create a polygon of a parcel
+            geometry: poly,
+            attributes: pAtt,
+            symbol: selectedPolygonSymbol
+        });
+
+        
         graphicslayer2.graphics.add(parcelGraphic)
+        sParcelLayers.push(sParcelGraphic)
 
         let lblGraphics = []
 
@@ -475,11 +511,16 @@ const ericJson = (jsonData, view) => {
                 createFeature(item1, words, hid, oid, oidlist);
             }
         })
+        parcelLayers.push(segmentLayers)
         parcelLabels.push(lblGraphics) //Gather array of labels per parcel for selected parcels
     })
+    segmentLayers = [].concat.apply([], parcelLayers)
+    console.log('parcelLayer', parcelLayers)
+    console.log('segmentLayers', segmentLayers)
+    
     console.log("ParcelLayer", parcelLabels)
     parcellayer.graphics.removeAll()
-    parcellayer.graphics.addMany(parcelLayers);
+    parcellayer.graphics.addMany(segmentLayers);
     parcellayer.when(function () { //zoom to area of interest on load
         view.goTo({
             target: parcellayer.graphics
@@ -489,6 +530,7 @@ const ericJson = (jsonData, view) => {
 
 export const buildMap = (json, mapRef, cityLayers, setSelected, selected, setOpen) => {
 
+    config.request.trustedServers.push("https://gis.ocgov.com")
     config.request.timeout = 300000
 
     //Add baselayers to map
@@ -512,7 +554,7 @@ export const buildMap = (json, mapRef, cityLayers, setSelected, selected, setOpe
     const btoggle = new BasemapToggle({
         titleVisible: true,
         view: view,
-        nextBasemap: oceagle
+        nextBasemap: publicB
     })
 
     view.ui.add(btoggle, "bottom-left")
@@ -531,10 +573,13 @@ export const buildMap = (json, mapRef, cityLayers, setSelected, selected, setOpe
     }
 
     //Add layers to map
-    map.add(parcellayer)
+    
     map.add(graphicslayer2)
+    map.add(selectedParcelGraphic)
     map.add(selectedgraphicslayer)
+    map.add(parcellayer)
     map.add(lblgraphicslayer)
+
     
 
     // view.when(function () {
@@ -558,7 +603,7 @@ export const buildMap = (json, mapRef, cityLayers, setSelected, selected, setOpe
 
                        let i = 0
 
-                        parcelLayers.forEach(e => {
+                        segmentLayers.forEach(e => {
                             i++
                             if (i == graphic.attributes.oid) {
                                 e.symbol = {
@@ -569,27 +614,27 @@ export const buildMap = (json, mapRef, cityLayers, setSelected, selected, setOpe
                             } else {
                                 e.symbol = {
                                     type: "simple-line",
-                                    color: 'red',
+                                    color: [0,0,0,0],
                                     width: 3
                                 }
                             }
 
                             parcellayer.graphics.removeAll()
-                            parcellayer.graphics.addMany(parcelLayers)
+                            parcellayer.graphics.addMany(segmentLayers)
                             //console.log(graphic.attributes.oid)
                         })
                     } catch {
                         document.body.style.cursor = 'default'
 
-                        parcelLayers.forEach(e => {
+                        segmentLayers.forEach(e => {
                             e.symbol = {
                                 type: "simple-line",
-                                color: 'red',
+                                color: [0,0,0,0],
                                 width: 3
                             }
                         })
                         parcellayer.graphics.removeAll()
-                        parcellayer.graphics.addMany(parcelLayers)
+                        parcellayer.graphics.addMany(segmentLayers)
                     }
 
                 } else if (selected){
@@ -599,15 +644,15 @@ export const buildMap = (json, mapRef, cityLayers, setSelected, selected, setOpe
                 } else {
                     document.body.style.cursor = 'default'
                     
-                    parcelLayers.forEach(e => {
+                    segmentLayers.forEach(e => {
                         e.symbol = {
                             type: "simple-line",
-                            color: 'red',
+                            color: [0,0,0,0],
                             width: 3
                         }
                     })
                     parcellayer.graphics.removeAll()
-                    parcellayer.graphics.addMany(parcelLayers)
+                    parcellayer.graphics.addMany(segmentLayers)
                 }
             })
         } catch {
@@ -766,7 +811,7 @@ export const buildMap = (json, mapRef, cityLayers, setSelected, selected, setOpe
     console.log('Finished')
 }
 
-//Hnadles highlighting selected segment
+//Handles highlighting selected segment
 export const selectedLayer = (selected, open) => {
     selectedLayers.forEach(e => e.visible = false)
     console.log(open)
@@ -778,7 +823,7 @@ export const selectedLayer = (selected, open) => {
         lblgraphicslayer.graphics.removeAll()
         lblgraphicslayer.graphics.add(segmentLabels[select]);
         fitToViewerHandleId(selectedLayers[select].attributes.hid)
-    } else if (open >= 0 ){
+    } else if (open !== 0 ){
         selectedgraphicslayer.graphics.removeAll()
         selectedgraphicslayer.graphics.addMany(selectedLayers);
         lblgraphicslayer.graphics.removeAll()
@@ -789,9 +834,12 @@ export const selectedLayer = (selected, open) => {
 
 //Handles adding labels to selected parcel
 export const selectedParcel = (open) => {
-    if(open >= 0) {
+    if(open !== null) {
+        selectedParcelGraphic.graphics.removeAll()
+        selectedParcelGraphic.graphics.add(sParcelLayers[open])
         lblgraphicslayer.graphics.removeAll()
         lblgraphicslayer.graphics.addMany(parcelLabels[open]);
+        console.log(sParcelLayers)
     }
 }
 
