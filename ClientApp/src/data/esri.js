@@ -264,13 +264,14 @@ const clearup = (view) => {
     view.graphics.removeAll();
 }
 
-const createFeature = (path, words, hid, oid, oidlist)  => {
+const createFeature = (path, words, hid, oid, oidlist, pnum)  => {
     //Creates polylines and adds them to the selectedLayer Graphic and parcelLayer graphic
 
     const myAtt = {
         legal: words,
         oid: oid,
-        hid: hid
+        hid: hid,
+        pnum: pnum
     };
 
     var myline = new Polyline({
@@ -489,7 +490,7 @@ const ericJson = (jsonData, view) => {
                 const y2 = str.split(',')[1].split(' ')[2]
                 const path = [[x, y, 0], [x2, y2, 0]]
 
-                createFeature(path, words, hid, oid, oidlist);
+                createFeature(path, words, hid, oid, oidlist, pnum);
             } 
             else if (shapetype == 'Curve') {
                 const cstr = str.split(', ')
@@ -508,7 +509,7 @@ const ericJson = (jsonData, view) => {
                     item1.push(item2)
                 })
 
-                createFeature(item1, words, hid, oid, oidlist);
+                createFeature(item1, words, hid, oid, oidlist, pnum);
             }
         })
         parcelLayers.push(segmentLayers)
@@ -682,12 +683,19 @@ export const buildMap = (json, mapRef, cityLayers, setSelected, selected, setOpe
                         console.log(viewerDbIds)
                         console.log(graphic)
                         console.log(graphic.attributes.oid)
-                        if (check == 1) {
-                            setSelected(null)
-                        } else {
-                            setSelected(graphic.attributes.oid)
-                            fitToViewerHandleId(graphic.attributes.hid)
+                        console.log("pnum", graphic.attributes.pnum)
+                        try {
+                            if (check == 1) {
+                                setSelected(null)
+                            } else {
+                                setSelected(graphic.attributes.oid)
+                                setOpen(graphic.attributes.pnum - 1)
+                                fitToViewerHandleId(graphic.attributes.hid)
+                            }
+                        } catch {
+                            console.log("map has not loaded yet")
                         }
+                       
 
                     } catch {
                         console.log('unselected')
@@ -833,13 +841,18 @@ export const selectedLayer = (selected, open) => {
 }
 
 //Handles adding labels to selected parcel
-export const selectedParcel = (open) => {
+export const selectedParcel = (open, selected) => {
+    console.log("open", open)
     if(open !== null) {
         selectedParcelGraphic.graphics.removeAll()
         selectedParcelGraphic.graphics.add(sParcelLayers[open])
-        lblgraphicslayer.graphics.removeAll()
-        lblgraphicslayer.graphics.addMany(parcelLabels[open]);
+        if (!selected) {
+            lblgraphicslayer.graphics.removeAll()
+            lblgraphicslayer.graphics.addMany(parcelLabels[open]);
+        }
         console.log(sParcelLayers)
+    } else {
+        selectedParcelGraphic.graphics.removeAll()
     }
 }
 
