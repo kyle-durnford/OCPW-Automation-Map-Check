@@ -107,10 +107,12 @@ export const afterViewerEvents = (viewer, events) => {
 
 // Zoom into dbId object in the viewer model.
 export const fitToViewerHandleId = (hId) => {
-    let dbId = viewerDbIds[hId.toUpperCase()]
-    if (dbId !== "undefined") {
-        viewer.select(dbId)
-        viewer.utilities.fitToView()
+    if (viewerDbIds){
+        let dbId = viewerDbIds[hId.toUpperCase()]
+        if (dbId !== "undefined") {
+            viewer.select(dbId)
+            viewer.utilities.fitToView()
+        }
     }
 }
 

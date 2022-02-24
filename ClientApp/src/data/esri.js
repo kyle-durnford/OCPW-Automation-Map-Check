@@ -363,7 +363,6 @@ const ericJson = (jsonData, view) => {
         let lblGraphics = []
 
         _.forEach(dictionary, (value, key) => {
-            // console.log('Key', key)
 
             const shapetype = value.shapeType;
             const radtangentstart = value.radtangent_start;
@@ -516,10 +515,6 @@ const ericJson = (jsonData, view) => {
         parcelLabels.push(lblGraphics) //Gather array of labels per parcel for selected parcels
     })
     segmentLayers = [].concat.apply([], parcelLayers)
-    console.log('parcelLayer', parcelLayers)
-    console.log('segmentLayers', segmentLayers)
-    
-    console.log("ParcelLayer", parcelLabels)
     parcellayer.graphics.removeAll()
     parcellayer.graphics.addMany(segmentLayers);
     parcellayer.when(function () { //zoom to area of interest on load
@@ -680,31 +675,19 @@ export const buildMap = (json, mapRef, cityLayers, setSelected, selected, setOpe
                                 return result.graphic.layer
                             }
                         })[0].graphic
-                        console.log(viewerDbIds)
-                        console.log(graphic)
-                        console.log(graphic.attributes.oid)
-                        console.log("pnum", graphic.attributes.pnum)
-                        try {
-                            if (check == 1) {
-                                setSelected(null)
-                            } else {
-                                setSelected(graphic.attributes.oid)
-                                setOpen(graphic.attributes.pnum - 1)
-                                fitToViewerHandleId(graphic.attributes.hid)
-                            }
-                        } catch {
-                            console.log("map has not loaded yet")
+                        if (check == 1) {
+                            setSelected(null)
+                        } else {
+                            setSelected(graphic.attributes.oid)
+                            setOpen(graphic.attributes.pnum - 1)
+                            fitToViewerHandleId(graphic.attributes.hid)
                         }
-                       
-
                     } catch {
                         console.log('unselected')
                     }
-                    
                 }
             })
         } catch {
-            console.log('none')
         }
     })
 
@@ -716,7 +699,6 @@ export const buildMap = (json, mapRef, cityLayers, setSelected, selected, setOpe
             try {
                 const graphic = response.results.filter(function (result) {
                     if (result.graphic.layer === graphicslayer2) {
-                        //console.log('Maybe poly')
                         return result.graphic.layer === graphicslayer2;
                     }
                     
@@ -729,7 +711,6 @@ export const buildMap = (json, mapRef, cityLayers, setSelected, selected, setOpe
                 const hid = attribute.hid;
                 setOpen(hid - 1)
                 setSelected(null)
-                console.log(graphic.attributes)
                 // if (hid) {
                     
                 //     const overLayGeometryExtension = viewer.getExtension('OverLayGeometry')
@@ -815,14 +796,11 @@ export const buildMap = (json, mapRef, cityLayers, setSelected, selected, setOpe
     //     }
         
     // })
-
-    console.log('Finished')
 }
 
 //Handles highlighting selected segment
 export const selectedLayer = (selected, open) => {
     selectedLayers.forEach(e => e.visible = false)
-    console.log(open)
     if (selected) {
         let select = selected - 1
         selectedLayers[select].visible = true
@@ -842,7 +820,6 @@ export const selectedLayer = (selected, open) => {
 
 //Handles adding labels to selected parcel
 export const selectedParcel = (open, selected) => {
-    console.log("open", open)
     if(open !== null) {
         selectedParcelGraphic.graphics.removeAll()
         selectedParcelGraphic.graphics.add(sParcelLayers[open])
@@ -850,7 +827,6 @@ export const selectedParcel = (open, selected) => {
             lblgraphicslayer.graphics.removeAll()
             lblgraphicslayer.graphics.addMany(parcelLabels[open]);
         }
-        console.log(sParcelLayers)
     } else {
         selectedParcelGraphic.graphics.removeAll()
     }

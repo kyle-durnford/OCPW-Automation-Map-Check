@@ -13,12 +13,10 @@ const EsriMap = ({esriData, selected, setSelected, open, setOpen}) => {
     }, [esriData]);
 
     useEffect(() => {
-        console.log("open 2", open)
         selectedLayer(selected, open)
     }, [selected])
 
     useEffect(() => {
-        console.log("open 1", open)
         selectedParcel(open, selected)
     }, [open, selected])
 
