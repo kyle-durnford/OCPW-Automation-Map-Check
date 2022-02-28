@@ -227,8 +227,10 @@ useEffect(() => {
 
               if (e.toString() === 'parcelId') {
                 return (textA===undefined)-(textB===undefined) || textA.localeCompare(textB, 'en', { numeric: true, sensitivity: 'base' });
+              } else if (Number(textA) == NaN && Number(textB) == NaN) {
+                return (textA===undefined)-(textB===undefined) || textA.localeCompare(textB, 'en', { sensitivity: 'base' });
               } else {
-                return (textA===undefined)-(textB===undefined) || -(textA<textB)||+(textA>textB);
+                return (textA===undefined)-(textB===undefined) || +(Number(textA)>Number(textB))||-(Number(textA)<Number(textB));
               }
             })
             results = results.concat(sort)
@@ -240,8 +242,10 @@ useEffect(() => {
               let textB = _.get(b, e);
               if (e.toString() === 'parcelId') {
                 return (textA===undefined)-(textB===undefined) || textB.localeCompare(textA, 'en', { numeric: true, sensitivity: 'base' });
+              } else if (Number(textA) == NaN && Number(textB) == NaN) {
+                return (textA===undefined)-(textB===undefined) || textB.localeCompare(textA, 'en', { sensitivity: 'base' });
               } else {
-                return (textA===undefined)-(textB===undefined) || -(textA>textB)||+(textA<textB);
+                return (textA===undefined)-(textB===undefined) || -(Number(textA)>Number(textB))||+(Number(textA)<Number(textB));
               }
             })
             results = results.concat(sort)
@@ -256,8 +260,10 @@ useEffect(() => {
             let textB = _.get(b, e);
             if (e.toString() === 'parcelId') {
               return (textA===undefined)-(textB===undefined) || textA.localeCompare(textB, 'en', { numeric: true, sensitivity: 'base' });
+            } else if (Number(textA) == NaN && Number(textB) == NaN) {
+              return (textA===undefined)-(textB===undefined) || textA.localeCompare(textB, 'en', { sensitivity: 'base' });
             } else {
-              return (textA===undefined)-(textB===undefined) || +(textA>textB)||-(textA<textB);
+              return (textA===undefined)-(textB===undefined) || +(Number(textA)>Number(textB))||-(Number(textA)<Number(textB));
             }
           })
           results = results.concat(sort)
@@ -268,8 +274,12 @@ useEffect(() => {
             let textB = _.get(b, e);
             if (e.toString() === 'parcelId') {
               return (textA===undefined)-(textB===undefined) || textB.localeCompare(textA, 'en', { numeric: true, sensitivity: 'base' });
+            } else if (Number(textA) == NaN && Number(textB) == NaN) {
+              console.log("jhgkghkjhgk")
+              return (textA===undefined)-(textB===undefined) || textB.localeCompare(textA, 'en', { sensitivity: 'base' });
             } else {
-              return (textA===undefined)-(textB===undefined) || -(textA>textB)||+(textA<textB);
+              console.log('h1h1h1h1h1')
+              return (textA===undefined)-(textB===undefined) || -(Number(textA)>Number(textB))||+(Number(textA)<Number(textB));
             }
           })
           results = results.concat(sort)

@@ -138,12 +138,17 @@ const selectedgraphicslayer = new GraphicsLayer({ //Highlights selected layer
     id: 'selectedgraphicslayer'
 })
 
+const radgraphicslayer = new GraphicsLayer({
+    id: 'radgraphicslayer'
+})
+
 let selectedLayers = [] //Stores each graphic so it's easy to select the index of the selected segment
 let segmentLayers = [] //Stores segment layers
 let parcelLayers = []
 let parcelLabels = [] //Stores segment labels by parcel
 let segmentLabels = [] //Stores segments labels for a parcel
 let sParcelLayers = []
+let radLayers = []
 
 const lineSymbol = {
     type: "simple-line", // autocasts as new SimpleLineSymbol()
@@ -261,6 +266,7 @@ const clearup = (view) => {
     parcellayer.graphics.removeAll();
     graphicslayer2.graphics.removeAll();
     selectedgraphicslayer.graphics.removeAll()
+    radgraphicslayer.removeAll();
     view.graphics.removeAll();
 }
 
@@ -361,6 +367,7 @@ const ericJson = (jsonData, view) => {
         sParcelLayers.push(sParcelGraphic)
 
         let lblGraphics = []
+        let radParcelLayers = []
 
         _.forEach(dictionary, (value, key) => {
 
@@ -373,6 +380,8 @@ const ericJson = (jsonData, view) => {
             const starty = value.starty;
             const endx = value.endx;
             const endy = value.endy;
+            const centerx = value.centerx
+            const centery = value.centery
             const words = value.desc_ground;
             const oid = value.oid;
             const wkt = value.wkt;
@@ -508,9 +517,26 @@ const ericJson = (jsonData, view) => {
                     item1.push(item2)
                 })
 
+                const rad = new Polyline({
+                    paths: [[startx, starty], [centerx, centery], [endx, endy]],
+                    spatialReference: { wkid: 2230 }
+                })
+
+                const radgraphic = new Graphic({
+                    geometry: rad,
+                    attributes: {oid: oid},
+                    symbol: {
+                        type: 'simple-line',
+                        color: 'blue',
+                        width: 1,
+                        style: 'dash'
+                    }
+                })
+                radParcelLayers.push(radgraphic)
                 createFeature(item1, words, hid, oid, oidlist, pnum);
             }
         })
+        radLayers.push(radParcelLayers)
         parcelLayers.push(segmentLayers)
         parcelLabels.push(lblGraphics) //Gather array of labels per parcel for selected parcels
     })
@@ -574,6 +600,7 @@ export const buildMap = (json, mapRef, cityLayers, setSelected, selected, setOpe
     map.add(selectedParcelGraphic)
     map.add(selectedgraphicslayer)
     map.add(parcellayer)
+    map.add(radgraphicslayer)
     map.add(lblgraphicslayer)
 
     
@@ -804,17 +831,20 @@ export const selectedLayer = (selected, open) => {
     if (selected) {
         let select = selected - 1
         selectedLayers[select].visible = true
+        let radselect = [].concat.apply([], radLayers).findIndex(e => e.attributes.oid == selectedLayers[select].attributes.oid)
+        radgraphicslayer.removeAll()
+        radgraphicslayer.add([].concat.apply([], radLayers)[radselect])
+        console.log(radgraphicslayer)
         selectedgraphicslayer.graphics.removeAll()
         selectedgraphicslayer.graphics.addMany(selectedLayers);
         lblgraphicslayer.graphics.removeAll()
         lblgraphicslayer.graphics.add(segmentLabels[select]);
         fitToViewerHandleId(selectedLayers[select].attributes.hid)
-    } else if (open !== 0 ){
+    } else if (open !== 0){
         selectedgraphicslayer.graphics.removeAll()
         selectedgraphicslayer.graphics.addMany(selectedLayers);
         lblgraphicslayer.graphics.removeAll()
         lblgraphicslayer.graphics.addMany(parcelLabels[open]);
-        
     }
 }
 
@@ -826,9 +856,15 @@ export const selectedParcel = (open, selected) => {
         if (!selected) {
             lblgraphicslayer.graphics.removeAll()
             lblgraphicslayer.graphics.addMany(parcelLabels[open]);
+            radgraphicslayer.graphics.removeAll()
+            radgraphicslayer.graphics.addMany(radLayers[open])
         }
     } else {
         selectedParcelGraphic.graphics.removeAll()
+        if(!selected) {
+            radgraphicslayer.removeAll()
+            lblgraphicslayer.removeAll()
+        }
     }
 }
 

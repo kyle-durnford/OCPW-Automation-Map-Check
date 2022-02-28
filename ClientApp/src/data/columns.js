@@ -6,12 +6,12 @@ export const lineColumns = [
     },
     {
       id: 'length',
-      label: 'Length',
+      label: 'Geometry Length',
       align: 'left',
     },
     {
       id: 'bearing_DMS',
-      label: 'Bearing',
+      label: 'Geometry Bearing',
       align: 'left',
     },
     {
