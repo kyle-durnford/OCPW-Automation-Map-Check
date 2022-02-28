@@ -141,6 +141,9 @@ const selectedgraphicslayer = new GraphicsLayer({ //Highlights selected layer
 const radgraphicslayer = new GraphicsLayer({
     id: 'radgraphicslayer'
 })
+const tangraphicslayer = new GraphicsLayer({
+    id: 'tangraphicslayer'
+})
 
 let selectedLayers = [] //Stores each graphic so it's easy to select the index of the selected segment
 let segmentLayers = [] //Stores segment layers
@@ -149,6 +152,8 @@ let parcelLabels = [] //Stores segment labels by parcel
 let segmentLabels = [] //Stores segments labels for a parcel
 let sParcelLayers = []
 let radLayers = []
+let tanStartLayers = []
+let tanEndLayers = []
 
 const lineSymbol = {
     type: "simple-line", // autocasts as new SimpleLineSymbol()
@@ -368,6 +373,8 @@ const ericJson = (jsonData, view) => {
 
         let lblGraphics = []
         let radParcelLayers = []
+        let tanParcelStartLayers = []
+        let tanParcelEndLayers = []
 
         _.forEach(dictionary, (value, key) => {
 
@@ -444,7 +451,7 @@ const ericJson = (jsonData, view) => {
                         color: "black",
                         haloColor: "white",
                         haloSize: "1px",
-                        text: bearingRadiusInDMSstart + "\n(Non-Tangent)",
+                        text: bearingRadiusInDMSstart + "\n(Start: Non-Tangent)",
                         xoffset: 0,
                         yoffset: 0,
                         font: {  // autocast as new Font()
@@ -456,8 +463,30 @@ const ericJson = (jsonData, view) => {
                     }
                 });
 
-                lblgroupstart[oid] = lblGraphic;
+                tanParcelStartLayers.push(lblGraphic);
 
+            } else if ((shapetype == 'Curve') && (radtangentstart == "Tangent")) {
+                point = new Point(startx, starty, view.spatialReference);
+                const lblGraphic = new Graphic({
+                    geometry: point,
+                    symbol: {
+                        type: "text", // autocasts as SimpleFillSymbol
+                        color: "black",
+                        haloColor: "white",
+                        haloSize: "1px",
+                        text: bearingRadiusInDMSstart + "\n(Start: Tangent)",
+                        xoffset: 0,
+                        yoffset: 0,
+                        font: {  // autocast as new Font()
+                            size: 9,
+                            family: "sans-serif",
+                            weight: "bold"
+                        }
+
+                    }
+                });
+
+                tanParcelStartLayers.push(lblGraphic);
             }
 
             if ((shapetype == 'Curve') && (radtangentend == "Non-Tangent")) {
@@ -470,7 +499,7 @@ const ericJson = (jsonData, view) => {
                         color: "black",
                         haloColor: "white",
                         haloSize: "1px",
-                        text: bearingRadiusInDMSend + "\n(Non-Tangent)",
+                        text: bearingRadiusInDMSend + "\n(End: Non-Tangent)",
                         xoffset: 0,
                         yoffset: 0,
                         font: {  // autocast as new Font()
@@ -482,7 +511,30 @@ const ericJson = (jsonData, view) => {
                     }
                 });
 
-                lblgroupend[oid] = lblGraphic;
+                tanParcelEndLayers.push(lblGraphic);
+            } else if ((shapetype == 'Curve') && (radtangentend == "Tangent")) {
+
+                point = new Point(endx, endy, view.spatialReference);
+                const lblGraphic = new Graphic({
+                    geometry: point,
+                    symbol: {
+                        type: "text", // autocasts as SimpleFillSymbol
+                        color: "black",
+                        haloColor: "white",
+                        haloSize: "1px",
+                        text: bearingRadiusInDMSend + "\n(End: Tangent)",
+                        xoffset: 0,
+                        yoffset: 0,
+                        font: {  // autocast as new Font()
+                            size: 9,
+                            family: "sans-serif",
+                            weight: "bold"
+                        }
+
+                    }
+                });
+
+                tanParcelEndLayers.push(lblGraphic);
             }
 
             let str = wkt
@@ -536,6 +588,8 @@ const ericJson = (jsonData, view) => {
                 createFeature(item1, words, hid, oid, oidlist, pnum);
             }
         })
+        tanEndLayers.push(tanParcelEndLayers)
+        tanStartLayers.push(tanParcelStartLayers)
         radLayers.push(radParcelLayers)
         parcelLayers.push(segmentLayers)
         parcelLabels.push(lblGraphics) //Gather array of labels per parcel for selected parcels
@@ -601,6 +655,7 @@ export const buildMap = (json, mapRef, cityLayers, setSelected, selected, setOpe
     map.add(selectedgraphicslayer)
     map.add(parcellayer)
     map.add(radgraphicslayer)
+    map.add(tangraphicslayer)
     map.add(lblgraphicslayer)
 
     
@@ -834,7 +889,9 @@ export const selectedLayer = (selected, open) => {
         let radselect = [].concat.apply([], radLayers).findIndex(e => e.attributes.oid == selectedLayers[select].attributes.oid)
         radgraphicslayer.removeAll()
         radgraphicslayer.add([].concat.apply([], radLayers)[radselect])
-        console.log(radgraphicslayer)
+        tangraphicslayer.removeAll()
+        tangraphicslayer.add([].concat.apply([], tanStartLayers)[radselect])
+        tangraphicslayer.add([].concat.apply([], tanEndLayers)[radselect])
         selectedgraphicslayer.graphics.removeAll()
         selectedgraphicslayer.graphics.addMany(selectedLayers);
         lblgraphicslayer.graphics.removeAll()
@@ -858,10 +915,13 @@ export const selectedParcel = (open, selected) => {
             lblgraphicslayer.graphics.addMany(parcelLabels[open]);
             radgraphicslayer.graphics.removeAll()
             radgraphicslayer.graphics.addMany(radLayers[open])
+            tangraphicslayer.removeAll()
+            tangraphicslayer.addMany(tanStartLayers[open], tanEndLayers[open])
         }
     } else {
         selectedParcelGraphic.graphics.removeAll()
         if(!selected) {
+            tangraphicslayer.removeAll()
             radgraphicslayer.removeAll()
             lblgraphicslayer.removeAll()
         }

@@ -332,12 +332,12 @@ useEffect(() => {
         <div className="survey__tab-col">
           {/* Adding tabs to handle filters */}
           <div
-          className={(showError === 'fail' || showError === 'pass' || showError === 'none' ? 'survey__tab survey__tab--selected' : 'survey__tab')}
-          onClick={() => handleFilterClick()}>Sort By {(contain === true ? "All" : "Parcel")}
+          className={(contain === true ? 'survey__tab survey__tab--selected' : 'survey__tab')}
+          onClick={() => handleFilterClick()}>Sorting By {(contain === false ? "All" : "Parcel")}
           </div>
           <div
           className={(showError === 'fail' || showError === 'pass' || showError === 'none' ? 'survey__tab survey__tab--selected' : 'survey__tab')}
-          onClick={() => handleErrorClick()}>Filter {(showError === 'fail' ? 'Passing': showError === 'pass' ? "Unknown" : showError === 'none' ? 'All' : "Failing")}
+          onClick={() => handleErrorClick()}>Showing {(showError === 'fail' ? 'Failing': showError === 'pass' ? "Passing" : showError === 'none' ? 'Missing' : "All")}
           </div>
         </div>
       </div>
