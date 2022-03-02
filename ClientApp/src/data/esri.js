@@ -32,6 +32,8 @@ let hiddict = {}
 let oid2line = {}
 let oid2lbl = {}
 
+let view = undefined
+
 const lods = [
     {
         "level": 0,
@@ -619,7 +621,7 @@ export const buildMap = (json, mapRef, cityLayers, setSelected, selected, setOpe
     map.add(parcelimagelayer)
     map.add(streetlayers)
 
-    const view = new MapView({
+    view = new MapView({
         container: mapRef,
         map: map,
         constraints: {
@@ -767,7 +769,7 @@ export const buildMap = (json, mapRef, cityLayers, setSelected, selected, setOpe
                         } else {
                             setSelected(graphic.attributes.oid)
                             setOpen(graphic.attributes.pnum - 1)
-                            fitToViewerHandleId(graphic.attributes.hid)
+                            //fitToViewerHandleId(graphic.attributes.hid)
                         }
                     } catch {
                         console.log('unselected')
@@ -886,11 +888,12 @@ export const buildMap = (json, mapRef, cityLayers, setSelected, selected, setOpe
 }
 
 //Handles highlighting selected segment
-export const selectedLayer = (selected, open) => {
+export const selectedLayer = (selected, open, setOpen, zoomToggle) => {
     selectedLayers.forEach(e => e.visible = false)
     if (selected) {
         let select = selected - 1
         selectedLayers[select].visible = true
+        setOpen(selectedLayers[select].attributes.pnum - 1)
         let radselect = [].concat.apply([], radLayers).findIndex(e => e.attributes.oid == selectedLayers[select].attributes.oid)
         radgraphicslayer.removeAll()
         radgraphicslayer.add([].concat.apply([], radLayers)[radselect])
@@ -901,7 +904,10 @@ export const selectedLayer = (selected, open) => {
         selectedgraphicslayer.graphics.addMany(selectedLayers);
         lblgraphicslayer.graphics.removeAll()
         lblgraphicslayer.graphics.add(segmentLabels[select]);
-        fitToViewerHandleId(selectedLayers[select].attributes.hid)
+        if (zoomToggle && view) {
+            view.goTo({target: selectedLayers[select]})
+            fitToViewerHandleId(selectedLayers[select].attributes.hid)
+        }
     } else if (open !== 0){
         selectedgraphicslayer.graphics.removeAll()
         selectedgraphicslayer.graphics.addMany(selectedLayers);
@@ -911,7 +917,8 @@ export const selectedLayer = (selected, open) => {
 }
 
 //Handles adding labels to selected parcel
-export const selectedParcel = (open, selected) => {
+export const selectedParcel = (open, selected, zoomToggle) => {
+    console.log("open", open)
     if(open !== null) {
         selectedParcelGraphic.graphics.removeAll()
         selectedParcelGraphic.graphics.add(sParcelLayers[open])
@@ -922,14 +929,15 @@ export const selectedParcel = (open, selected) => {
             radgraphicslayer.graphics.addMany(radLayers[open])
             tangraphicslayer.removeAll()
             tangraphicslayer.addMany(tanStartLayers[open], tanEndLayers[open])
+            if (zoomToggle && view) {
+                view.goTo({target: sParcelLayers[open]})
+            }
         }
     } else {
         selectedParcelGraphic.graphics.removeAll()
-        if(!selected) {
-            tangraphicslayer.removeAll()
-            radgraphicslayer.removeAll()
-            lblgraphicslayer.removeAll()
-        }
+        tangraphicslayer.removeAll()
+        radgraphicslayer.removeAll()
+        lblgraphicslayer.removeAll()
     }
 }
 

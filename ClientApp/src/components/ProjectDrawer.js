@@ -9,8 +9,6 @@ const ProjectDrawer = ({parcelCount, lines, curves, lineErrors, curveErrors, lin
     const curvePercent = Math.round((100 - ((curveErrors)/curves*100)))
     const totalPercent = Math.round((100 - (((lineErrors + curveErrors)/(lines + curves)) * 100)))
 
-    console.log("pc", parcelCount)
-
     return (
         <div className="project">
             {totalPercent > 80 ? <div className="validation--success"><img src={good} alt="Pass" style={{marginRight: '.5rem'}}></img>File meets standards</div> : <div className="validation--error"><img src={error} alt="Fail" style={{marginRight: '.5rem'}}></img>File does not meet standards</div>}

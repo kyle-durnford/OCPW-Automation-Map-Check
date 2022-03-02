@@ -61,8 +61,6 @@ const Dropzone = ({ onChange, ...rest }) => {
 
   const fileNameCheck = name => {
     const rg1 = new RegExp('^[^\\/:\*\?%\$\@"{}<>\|]+$') // forbidden characters \ / : * ? % $ @ " { } < > |
-    console.log(name)
-    console.log(rg1.test(name))
     return rg1.test(name);
   }
 

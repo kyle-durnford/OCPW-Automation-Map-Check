@@ -6,8 +6,6 @@ import good from '../assets/check.svg'
 const ReportDrawer = ({data}) => {
     const [success, setSuccess] = useState(false);
 
-    console.log(data)
-
     const paragraphs = () => { //Building a paragraph (1 per parcel)
         return data.map((e, i) => new docx.Paragraph({
             children: [ new docx.TextRun({text: 'parcel_' + (i + 1), break: 2, bold: true,  font: "Calibri", size: 32}), //Creating the title

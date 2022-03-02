@@ -18,7 +18,7 @@ import {
 
 
 
-const SurveyTable = ({loading, data, selected, setSelected, page, lineErrors, setLineErrors, curveErrors, setCurveErrors, lineMissing, curveMissing, setLineMissing, setCurveMissing}) => {
+const SurveyTable = ({loading, data, selected, setSelected, page, lineErrors, setLineErrors, curveErrors, setCurveErrors, lineMissing, curveMissing, setLineMissing, setCurveMissing, zoomToggle, setZoomToggle}) => {
   const referenceTabs = [['References', referenceColumns], [ 'Timeline', timelineColumns]];
   const legalTabs = [['Line Check', lineColumns], ['Curve Check', curveColumns]];
   const monumentTabs = [['Monuments', monumentsColumns], ['History', historyColumns], ['Timeline', monumentTimelineColumns], ['Relatived', relativedColumns]];
@@ -73,7 +73,6 @@ const SurveyTable = ({loading, data, selected, setSelected, page, lineErrors, se
           } else if (row.find(({ shapeType }) => shapeType === 'Curve')) {
             let check1 = false
             let check2 = false
-            console.log(Object.values(Object.values(Object.values(row[1].Labels_Check))))
             if(Object.values(Object.values(Object.values(row[1].Labels_Check))).includes('None')) {
               row[1] = {...row[1], ...{status: 'none'}}
               curveCountMissing++
@@ -147,6 +146,14 @@ const handleFilterClick = () => {
     setContain(false)
   } else {
     setContain(true)
+  }
+}
+
+const handleZoomClick = () => {
+  if(zoomToggle === true) {
+    setZoomToggle(false)
+  } else {
+    setZoomToggle(true)
   }
 }
 
@@ -267,7 +274,6 @@ useEffect(() => {
             }
           })
           results = results.concat(sort)
-          console.log(sortName)
         } else if(sortArrow[1] === 'up'){
           let sort = filteredResults.slice().sort((a, b) => {
             let textA = _.get(a, e);
@@ -275,10 +281,8 @@ useEffect(() => {
             if (e.toString() === 'parcelId') {
               return (textA===undefined)-(textB===undefined) || textB.localeCompare(textA, 'en', { numeric: true, sensitivity: 'base' });
             } else if (Number(textA) == NaN && Number(textB) == NaN) {
-              console.log("jhgkghkjhgk")
               return (textA===undefined)-(textB===undefined) || textB.localeCompare(textA, 'en', { sensitivity: 'base' });
             } else {
-              console.log('h1h1h1h1h1')
               return (textA===undefined)-(textB===undefined) || -(Number(textA)>Number(textB))||+(Number(textA)<Number(textB));
             }
           })
@@ -331,6 +335,10 @@ useEffect(() => {
         </div>
         <div className="survey__tab-col">
           {/* Adding tabs to handle filters */}
+          <div
+          className={(zoomToggle === true ? 'survey__tab survey__tab--selected' : 'survey__tab')}
+          onClick={() => handleZoomClick()}>{(zoomToggle === false ? "Zoom" : "Zooming")} To Extent
+          </div>
           <div
           className={(contain === true ? 'survey__tab survey__tab--selected' : 'survey__tab')}
           onClick={() => handleFilterClick()}>Sorting By {(contain === false ? "All" : "Parcel")}

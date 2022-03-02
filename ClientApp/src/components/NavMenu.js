@@ -9,6 +9,7 @@ import checklist from "../assets/checklist.svg"
 import report from "../assets/report.svg"
 import show from "../assets/show.svg"
 import hide from "../assets/hide.svg"
+import logo from "../assets/oc-logo.png"
 
 const drawerWidth = 100;
 
@@ -18,59 +19,62 @@ const NavMenu = ({setPage, page, hideDrawer, setHideDrawer}) => {
       <div className='navbar'>
         <Nav className='navbar__nav nav' width={`calc(100% - ${drawerWidth}px)`} >
             <ul className="nav__list">
-                <li className='pill' onClick={() => setPage('project')} className={(page === 'project' ? 'pill pill--selected' : 'pill')}>
-                  <div className="pill__icon">
-                    <Project className="icon--nav" color={'#fff'}/>
-                  </div>
-                  <div className='pill__title'>
-                    Project
-                  </div> 
-                </li> 
-              
-                <li className='pill' onClick={() => setPage('legal')} className={(page === 'legal' ? 'pill pill--selected' : 'pill')}>
-                  <div className="pill__icon">
-                    <img src={iconLegal} className="icon--nav"></img>
-                  </div>
-                  <div className='pill__title'>
-                    Legal
-                  </div> 
-                </li> 
+              <li className='logo'>
+                  <img src={logo} alt="Orange County Parcel Check"/>
+              </li> 
+              <li className='pill' onClick={() => setPage('project')} className={(page === 'project' ? 'pill pill--selected' : 'pill')}>
+                <div className="pill__icon">
+                  <Project className="icon--nav" color={'#fff'}/>
+                </div>
+                <div className='pill__title'>
+                  Project
+                </div> 
+              </li> 
+            
+              <li className='pill' onClick={() => setPage('legal')} className={(page === 'legal' ? 'pill pill--selected' : 'pill')}>
+                <div className="pill__icon">
+                  <img src={iconLegal} className="icon--nav"></img>
+                </div>
+                <div className='pill__title'>
+                  Legal
+                </div> 
+              </li> 
 
-                {/* <li className='pill' onClick={() => setPage('monument')} className={(page === 'monument' ? 'pill pill--selected' : 'pill')}>
-                  <div className="pill__icon">
-                    <img src={monument} className="icon--nav"></img>
-                  </div>
-                  <div className='pill__title'>
-                    Monument
-                  </div> 
-                </li>  */}
+              {/* <li className='pill' onClick={() => setPage('monument')} className={(page === 'monument' ? 'pill pill--selected' : 'pill')}>
+                <div className="pill__icon">
+                  <img src={monument} className="icon--nav"></img>
+                </div>
+                <div className='pill__title'>
+                  Monument
+                </div> 
+              </li>  */}
 
-                {/* <li className='pill' onClick={() => setPage('reference')} className={(page === 'reference' ? 'pill pill--selected' : 'pill')}>
-                  <div className="pill__icon">
-                    <img src={reference} className="icon--nav"></img>
-                  </div>
-                  <div className='pill__title'>
-                    Reference
-                  </div> 
-                </li>  */}
+              {/* <li className='pill' onClick={() => setPage('reference')} className={(page === 'reference' ? 'pill pill--selected' : 'pill')}>
+                <div className="pill__icon">
+                  <img src={reference} className="icon--nav"></img>
+                </div>
+                <div className='pill__title'>
+                  Reference
+                </div> 
+              </li>  */}
 
-                {/* <li className='pill' onClick={() => setPage('check')} className={(page === 'check' ? 'pill pill--selected' : 'pill')}>
-                  <div className="pill__icon">
-                    <img src={checklist} className="icon--nav"></img>
-                  </div>
-                  <div className='pill__title'>
-                    Checklist
-                  </div> 
-                </li>  */}
+              {/* <li className='pill' onClick={() => setPage('check')} className={(page === 'check' ? 'pill pill--selected' : 'pill')}>
+                <div className="pill__icon">
+                  <img src={checklist} className="icon--nav"></img>
+                </div>
+                <div className='pill__title'>
+                  Checklist
+                </div> 
+              </li>  */}
 
-                <li className='pill' onClick={() => setPage('report')} className={(page === 'report' ? 'pill pill--selected' : 'pill')}>
-                  <div className="pill__icon">
-                    <img src={report} className="icon--nav"></img>
-                  </div>
-                  <div className='pill__title'>
-                    Report
-                  </div> 
-                </li> 
+              <li className='pill' onClick={() => setPage('report')} className={(page === 'report' ? 'pill pill--selected' : 'pill')}>
+                <div className="pill__icon">
+                  <img src={report} className="icon--nav"></img>
+                </div>
+                <div className='pill__title'>
+                  Report
+                </div> 
+              </li> 
             </ul>
         </Nav>
         <ul className='nav__list--bottom'>

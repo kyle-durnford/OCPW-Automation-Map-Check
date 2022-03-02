@@ -60,14 +60,11 @@ const Container = () => {
   const [activeMaps, setActiveMaps] = useState(['esri', 'forge'])
   const [inputParcelCount, setInputParcelCount] = useState()
   const [inputMapType, setInputMapType] = useState()
+  const [zoomToggle, setZoomToggle] = useState(true)
 
   const leftRef = createRef();
   const splitPaneRef = createRef();
   const drawerContRef = createRef();
-
-  useEffect(() => {
-    console.log('EsriDataCheck', esriData)
-  }, [esriData])
 
   useEffect(() => {
     if(!mapInfo) {
@@ -385,7 +382,7 @@ const Container = () => {
           <div ref={e => setSplitPaneHeightRef(e)} className="mapcont__view__cont">
             <div className="splitpane" ref={splitPaneRef} ref={e => setTopRef(e)}>
               <div className='splitpane__map splitpane__map--left' ref={leftRef} style={mapSplit === 3 ? {display: 'none'} : {display: 'block'}}>
-                  <EsriMap esriData={esriData} selected={selected} setSelected={setSelected} open={open} setOpen={setOpen}/>
+                  <EsriMap esriData={esriData} selected={selected} setSelected={setSelected} open={open} setOpen={setOpen} zoomToggle={zoomToggle}/>
               </div>
               <div className="splitpane__divider splitpane__divider--ver" onMouseDown={e => onMouseDown(e, 'horz')} style={mapSplit === 1 || mapSplit === 3 ? {display: 'none'} : {display: 'block'}}>
                 <div className="splitpane__divider__handle splitpane__divider__handle--ver">
@@ -403,7 +400,7 @@ const Container = () => {
                   <span className="splitpane__divider__handle__bar splitpane__divider__handle__bar--hor"></span>
                 </div>
               </div>
-            <SurveyTable page={page} loading={loadingTable} data={tableInfo} selected={selected} setSelected={setSelected} lineErrors={lineErrors} setLineErrors={setLineErrors} curveErrors={curveErrors} setCurveErrors={setCurveErrors} lineMissing={lineMissing} setLineMissing={setLineMissing} curveMissing={curveMissing} setCurveMissing={setCurveMissing}/>
+            <SurveyTable page={page} loading={loadingTable} data={tableInfo} selected={selected} setSelected={setSelected} lineErrors={lineErrors} setLineErrors={setLineErrors} curveErrors={curveErrors} setCurveErrors={setCurveErrors} lineMissing={lineMissing} setLineMissing={setLineMissing} curveMissing={curveMissing} setCurveMissing={setCurveMissing} zoomToggle={zoomToggle} setZoomToggle={setZoomToggle}/>
           </div>
 
         : appError ?
