@@ -10,7 +10,7 @@ export const lineColumns = [
       align: 'left',
     },
     {
-      id: 'bearing_DMS',
+      id: 'bearing_DMS_2',
       label: 'Geometry Bearing',
       align: 'left',
     },
@@ -30,7 +30,7 @@ export const lineColumns = [
       align: 'left',
     },
     {
-      id: 'Labels_Check.LineBearing_Check.Difference',
+      id: 'Labels_Check.LineBearing_Check.Difference_2',
       label: 'Bearing Diff.',
       align: 'left',
     },
@@ -74,7 +74,7 @@ export const lineColumns = [
       align: 'left',
     },
     {
-      id: 'arcDelta_DD',
+      id: 'arcDelta_DMS_2',
       label: 'Total Angle',
       align: 'left',
     },
@@ -99,7 +99,7 @@ export const lineColumns = [
       align: 'left',
     },
     {
-      id: 'Labels_Check.ArcDelta_Check.CurveTotalAngle_Label',
+      id: 'Labels_Check.ArcDelta_Check.Difference_2',
       label: 'Label Total Angle',
       align: 'left',
     },

@@ -5,9 +5,9 @@ import Project from "../assets/Project.js"
 
 const ProjectDrawer = ({parcelCount, lines, curves, lineErrors, curveErrors, lineMissing, curveMissing, inputMapType, inputParcelCount}) => {
 
-    const linePercent = Math.round((100 - ((lineErrors)/lines*100)) * 10) / 10
-    const curvePercent = Math.round((100 - ((curveErrors)/curves*100)) * 10) / 10
-    const totalPercent = Math.round((100 - (((lineErrors + curveErrors)/(lines + curves)) * 100)) * 10) / 10
+    const linePercent = Math.round((100 - ((lineErrors)/lines*100)))
+    const curvePercent = Math.round((100 - ((curveErrors)/curves*100)))
+    const totalPercent = Math.round((100 - (((lineErrors + curveErrors)/(lines + curves)) * 100)))
 
     console.log("pc", parcelCount)
 

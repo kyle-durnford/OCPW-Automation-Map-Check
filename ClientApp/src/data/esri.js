@@ -255,11 +255,16 @@ const selectedPolygonSymbol = {
 const clearup = (view) => {
     selectedLayers = []
     segmentLayers = [] 
+    parcelLayers = []
     parcelLabels = [] 
-    segmentLabels = []
+    segmentLabels = [] 
+    sParcelLayers = []
+    radLayers = []
+    tanStartLayers = []
+    tanEndLayers = []
 
-    dict = {};
-    dict2 = {};
+    dict = {}
+    dict2 = {}
     oid2lbl = {}
     par2poly = {}
     oid2line = {}
