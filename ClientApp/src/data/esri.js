@@ -15,9 +15,8 @@ import Polygon from "@arcgis/core/geometry/Polygon"
 import Attribution from "@arcgis/core/widgets/Attribution";
 import Zoom from "@arcgis/core/widgets/Zoom";
 import _ from "lodash";
-import Popup from "@arcgis/core/widgets/Popup";
-import { LevelFormat } from "docx";
 import { viewer, viewerDbIds, fitToViewerHandleId } from '../data/forge'
+import OpacitySlider from "@arcgis/core/widgets/smartMapping/OpacitySlider";
 
 import ImageryTileLayer from "@arcgis/core/layers/ImageryTileLayer";
 
@@ -147,6 +146,10 @@ const tangraphicslayer = new GraphicsLayer({
     id: 'tangraphicslayer'
 })
 
+const poblayer = new GraphicsLayer({
+    id: 'poblayer'
+})
+
 let selectedLayers = [] //Stores each graphic so it's easy to select the index of the selected segment
 let segmentLayers = [] //Stores segment layers
 let parcelLayers = []
@@ -176,7 +179,7 @@ export const createCityLayer = () => {
 //     popupEnabled: false
 // })
 
-
+//https://gis.ocgov.com/arcimg/rest/services/Aerial_Imagery_Countywide/Eagle_2017/MapServer
 //https://www.ocgis.com/arcpub/rest/services/Eagle_Aerial_1ft_2021/ImageServer
 //https://gis.ocgov.com/arcimg/rest/services/Aerial_Imagery_Countywide/Eagle_2020/ImageServer
 
@@ -184,9 +187,9 @@ const OCbasemapLayer = new ImageryTileLayer({
     url: "https://gis.ocgov.com/arcimg/rest/services/Aerial_Imagery_Countywide/Eagle_2020/ImageServer"
 })
 
-// const eagleLayer = new TileLayer({
-//     url: "https://gis.ocgov.com/arcimg/rest/services/Aerial_Imagery_Countywide/Eagle_2017/MapServer"
-// })
+const eagleLayer = new MapImageLayer({
+    url: "https://www.ocgis.com/arcpub/rest/services/Map_Layers/City_Boundaries/MapServer"
+})
 
 const publicLayer = new ImageryTileLayer({
     url: 'https://www.ocgis.com/arcpub/rest/services/Eagle_Aerial_1ft_2021/ImageServer'
@@ -203,18 +206,28 @@ const OCB = new Basemap({
     id: "ocbasemap",
 })
 
-// const oceagle = new Basemap({
-//     baseLayers: [eagleLayer],
-//     title: "Eagle",
-//     id: "eagle",
-// })
-
 const publicB = new Basemap({
     baseLayers: [publicLayer],
     title: "Public",
     id: 'public'
 })
 
+const oceagle = new Basemap({
+    baseLayers: [eagleLayer],
+    title: "Eagle",
+    id: "eagle",
+})
+
+OCB.when(e => {
+    console.log('oc hi')
+    if(e.loadError != null) {
+        console.log('ocb loaded')
+        map.basemap = OCB
+    } else {
+        console.log('OCb map failed')
+        map.basemap = publicB
+    }
+})
 
 const parcelimagelayer = new MapImageLayer({
     url: "https://www.ocgis.com/survey/rest/services/WebApps/Map_Layers_Associated_Documents/MapServer",
@@ -384,7 +397,7 @@ const ericJson = (jsonData, view) => {
         let tanParcelEndLayers = []
 
         _.forEach(dictionary, (value, key) => {
-
+            console.log("key", key)
             const shapetype = value.shapeType;
             const radtangentstart = value.radtangent_start;
             const radtangentend = value.radtangent_end;
@@ -424,23 +437,36 @@ const ericJson = (jsonData, view) => {
                 midy = midy - 3;
             }
 
+            if (key == 1) {
+                let pob = new Point (startx, starty, view.spatialReference)
+                const pobgraphic = new Graphic({
+                    geometry: pob,
+                    symbol: {
+                        type: "simple-marker",
+                        color: 'red',
+                        size: '16px',
+                        path: "M168.3 499.2C116.1 435 0 279.4 0 192C0 85.96 85.96 0 192 0C298 0 384 85.96 384 192C384 279.4 267 435 215.7 499.2C203.4 514.5 180.6 514.5 168.3 499.2H168.3zM192 256C227.3 256 256 227.3 256 192C256 156.7 227.3 128 192 128C156.7 128 128 156.7 128 192C128 227.3 156.7 256 192 256z"
+                    }
+                })
+                poblayer.graphics.add(pobgraphic)
+            }
+
             let point = new Point(midx, midy, view.spatialReference);
             const lblGraphic = new Graphic({ //Create label for segment
                 geometry: point,
                 symbol: {
                     type: "text", // autocasts as SimpleFillSymbol
-                    color: "black",
-                    haloColor: "white",
+                    color: "white",
+                    haloColor: "black",
                     haloSize: "1px",
                     text: bdlabel,
                     xoffset: 0,
                     yoffset: 0,
                     font: {  // autocast as new Font()
-                        size: 9,
+                        size: 12,
                         family: "sans-serif",
-                        weight: "bold"
+                        
                     }
-
                 }
             });
             segmentLabels.push(lblGraphic) //Individual labels for a selected segment
@@ -455,16 +481,16 @@ const ericJson = (jsonData, view) => {
                     geometry: point,
                     symbol: {
                         type: "text", // autocasts as SimpleFillSymbol
-                        color: "black",
-                        haloColor: "white",
+                        color: "white",
+                        haloColor: "black",
                         haloSize: "1px",
                         text: bearingRadiusInDMSstart + "\n(Start: Non-Tangent)",
                         xoffset: 0,
                         yoffset: 0,
                         font: {  // autocast as new Font()
-                            size: 9,
+                            size: 12,
                             family: "sans-serif",
-                            weight: "bold"
+                            
                         }
 
                     }
@@ -478,16 +504,16 @@ const ericJson = (jsonData, view) => {
                     geometry: point,
                     symbol: {
                         type: "text", // autocasts as SimpleFillSymbol
-                        color: "black",
-                        haloColor: "white",
+                        color: "white",
+                        haloColor: "black",
                         haloSize: "1px",
-                        text: bearingRadiusInDMSstart + "\n(Start: Tangent)",
+                        text: "Start: Tangent",
                         xoffset: 0,
                         yoffset: 0,
                         font: {  // autocast as new Font()
-                            size: 9,
+                            size: 12,
                             family: "sans-serif",
-                            weight: "bold"
+                            
                         }
 
                     }
@@ -503,16 +529,16 @@ const ericJson = (jsonData, view) => {
                     geometry: point,
                     symbol: {
                         type: "text", // autocasts as SimpleFillSymbol
-                        color: "black",
-                        haloColor: "white",
+                        color: "white",
+                        haloColor: "black",
                         haloSize: "1px",
                         text: bearingRadiusInDMSend + "\n(End: Non-Tangent)",
                         xoffset: 0,
                         yoffset: 0,
                         font: {  // autocast as new Font()
-                            size: 9,
+                            size: 12,
                             family: "sans-serif",
-                            weight: "bold"
+                            
                         }
 
                     }
@@ -526,16 +552,16 @@ const ericJson = (jsonData, view) => {
                     geometry: point,
                     symbol: {
                         type: "text", // autocasts as SimpleFillSymbol
-                        color: "black",
-                        haloColor: "white",
+                        color: "white",
+                        haloColor: "black",
                         haloSize: "1px",
-                        text: bearingRadiusInDMSend + "\n(End: Tangent)",
+                        text: "End: Tangent",
                         xoffset: 0,
                         yoffset: 0,
                         font: {  // autocast as new Font()
-                            size: 9,
+                            size: 12,
                             family: "sans-serif",
-                            weight: "bold"
+                            
                         }
 
                     }
@@ -637,39 +663,22 @@ export const buildMap = (json, mapRef, cityLayers, setSelected, selected, setOpe
     const btoggle = new BasemapToggle({
         titleVisible: true,
         view: view,
-        nextBasemap: publicB
+        nextBasemap: oceagle
     })
-
+    
     view.ui.add(btoggle, "bottom-left")
     view.ui.move("zoom", "bottom-right")
     // view.ui.add("reset-map", "top-left")
 
-    //Display parcel number when clicked on
-    view.popup = {
-        dockEnabled: true,
-        position: 'top-right',
-        autoOpenEnabled: false,
-        dockOptions: {
-            buttonEnabled: false,
-            breakpoint: false
-        }
-    }
-
     //Add layers to map
-    
     map.add(graphicslayer2)
     map.add(selectedParcelGraphic)
     map.add(selectedgraphicslayer)
     map.add(parcellayer)
+    map.add(poblayer)
     map.add(radgraphicslayer)
     map.add(tangraphicslayer)
     map.add(lblgraphicslayer)
-
-    
-
-    // view.when(function () {
-    //     //myUpload()
-    // })
 
     ericJson(json, view)
 
@@ -780,10 +789,8 @@ export const buildMap = (json, mapRef, cityLayers, setSelected, selected, setOpe
         }
     })
 
-
     //Check if parcel exists where mouse is long clicked. If one does, select that parcel and display the selected parcel
     view.on("hold", function (event) {
-        let lastgeo = ''
         view.hitTest(event).then(function (response) {
             try {
                 const graphic = response.results.filter(function (result) {
@@ -792,99 +799,16 @@ export const buildMap = (json, mapRef, cityLayers, setSelected, selected, setOpe
                     }
                     
                 })[0].graphic;
-                view.popup.open({
-                    title: graphic.attributes.pstring,
-                })
                 
                 const attribute = graphic.attributes;
                 const hid = attribute.hid;
                 setOpen(hid - 1)
                 setSelected(null)
-                // if (hid) {
-                    
-                //     const overLayGeometryExtension = viewer.getExtension('OverLayGeometry')
-                //     // Call Function to zoom in to object on viewer.
-                //     console.log('Extension found')
-                //     //executeFitToViewHandleId(hid);
-    
-                //     overLayGeometryExtension.searchSelectedObj(hid, viewerDbIds)
-                // }
             } catch {
-                view.popup.open({
-                    title: "No Parcel Found",
-                })
+                setOpen(null)
             }
         })
     })
-
-    // view.on("pointer-down", function (event) {
-    //     let lastgeo = ''
-    //     try {
-    //         view.hitTest(event).then(function (response) {
-    //             const graphic = response.results.filter(function (result) {
-    //                 if (result.graphic.layer === selectedgraphicslayer) {
-    //                     console.log('Mapbe poly')
-    //                 }
-    //                 return result.graphic.layer === selectedgraphicslayer;
-    //             })[0].graphic;
-    //             const attribute = graphic.attributes;
-    //             const hid = attribute.hid;
-    //             console.log(graphic.attributes.hid)
-    //             // const overLayGeometryExtension = viewer.getExtension('OverLayGeometry')
-    //             // if (hid) {
-    //             //     // Call Function to zoom in to object on viewer.
-    //             //     executeFitToViewHandleId(hid);
-    
-    //             //     overLayGeometryExtension.searchSelectedObj(hid, viewerDbIds)
-    //             // }
-    
-    //             const geo = graphic.geometry;
-    //             //view.graphics.removeAll();
-    //             // $(".lblclass").css("background-color", "white");
-    //             // $(".ptab").css("background-color", "white");
-    //             // $(".atab").removeClass("show");
-    //             // $(".headtab").addClass("collapsed");
-    
-    
-    //             if (lastgeo !== geo) {
-    //                 lastgeo = geo;
-    //                 //lineSymbol
-    
-    //                 var graphic3 = new Graphic({
-    //                     geometry: geo,
-    //                     symbol: lineSymbol
-    //                 });
-    
-    //                 ////*[@id="87"]
-    
-    //                 view.graphics.add(graphic3);
-    
-    //                 // $("#" + attribute.oid).css("background-color", "cyan");
-    //                 // var pid = $("#" + attribute.oid).attr("pid");
-    //                 // $(pid).css("background-color", "cyan");
-    //                 // var ppid = $(pid).attr("ppid");
-    //                 // var tid = $(pid).attr("tid");
-    //                 // $(ppid).addClass("show");
-    //                 // $(tid).removeClass("collapsed");
-    //                 // $(tid).attr("aria-expanded", "true")
-    //                 // $(pid)[0].scrollIntoView({
-    //                 //     behavior: "smooth", // or "auto" or "instant"
-    //                 //     block: "start" // or "end"
-    //                 // });
-    //                 // $("#" + attribute.oid)[0].scrollIntoView({
-    //                 //     behavior: "smooth", // or "auto" or "instant"
-    //                 //     block: "start" // or "end"
-    //                 // });
-    //             } else {
-    //                 //console.log('Same');
-    //             }
-    
-    //         })
-    //     } catch {
-    //         console.log('out of bounds')
-    //     }
-        
-    // })
 }
 
 //Handles highlighting selected segment

@@ -22,7 +22,7 @@ const EsriMap = ({esriData, selected, setSelected, open, setOpen, zoomToggle}) =
 
     if (esriData) {
         return (
-            <div className="esri" ref={mapRef}/>
+            <div className="esri" ref={mapRef} />
         )
     } else {
         return(
