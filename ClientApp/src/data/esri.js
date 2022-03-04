@@ -825,7 +825,7 @@ export const selectedLayer = (selected, open, setOpen, zoomToggle) => {
         lblgraphicslayer.graphics.removeAll()
         lblgraphicslayer.graphics.add(segmentLabels[select]);
         if (zoomToggle && view) {
-            view.goTo({target: selectedLayers[select]})
+            view.goTo({target: selectedLayers[select]}).catch(error => {console.log(error)})
             fitToViewerHandleId(selectedLayers[select].attributes.hid)
         }
     } else if (open !== 0){
@@ -849,7 +849,7 @@ export const selectedParcel = (open, selected, zoomToggle) => {
             tangraphicslayer.removeAll()
             tangraphicslayer.addMany(tanStartLayers[open], tanEndLayers[open])
             if (zoomToggle && view) {
-                view.goTo({target: sParcelLayers[open]})
+                view.goTo({target: sParcelLayers[open]}).catch(error => {console.log(error)})
             }
         }
     } else {
