@@ -188,7 +188,7 @@ const OCbasemapLayer = new ImageryTileLayer({
 })
 
 const eagleLayer = new MapImageLayer({
-    url: "https://www.ocgis.com/arcpub/rest/services/Map_Layers/City_Boundaries/MapServer"
+    url: "https://www.ocgis.com/survey/rest/services/Basemaps/County_Basemap_Ext/MapServer"
 })
 
 const publicLayer = new ImageryTileLayer({
@@ -219,12 +219,9 @@ const oceagle = new Basemap({
 })
 
 OCB.when(e => {
-    console.log('oc hi')
     if(e.loadError != null) {
-        console.log('ocb loaded')
         map.basemap = OCB
     } else {
-        console.log('OCb map failed')
         map.basemap = publicB
     }
 })
@@ -397,7 +394,6 @@ const ericJson = (jsonData, view) => {
         let tanParcelEndLayers = []
 
         _.forEach(dictionary, (value, key) => {
-            console.log("key", key)
             const shapetype = value.shapeType;
             const radtangentstart = value.radtangent_start;
             const radtangentend = value.radtangent_end;
@@ -474,7 +470,7 @@ const ericJson = (jsonData, view) => {
 
             lblgroup[oid] = lblGraphic;
 
-            if ((shapetype == 'Curve') && (radtangentstart == "Non-Tangent")) {
+            if ((shapetype == 'Curve') && (radtangentstart == "Tangent")) {
 
                 point = new Point(startx, starty, view.spatialReference);
                 const lblGraphic = new Graphic({
@@ -484,7 +480,7 @@ const ericJson = (jsonData, view) => {
                         color: "white",
                         haloColor: "black",
                         haloSize: "1px",
-                        text: bearingRadiusInDMSstart + "\n(Start: Non-Tangent)",
+                        text: "(Start: Tangent)",
                         xoffset: 0,
                         yoffset: 0,
                         font: {  // autocast as new Font()
@@ -498,7 +494,7 @@ const ericJson = (jsonData, view) => {
 
                 tanParcelStartLayers.push(lblGraphic);
 
-            } else if ((shapetype == 'Curve') && (radtangentstart == "Tangent")) {
+            } else if ((shapetype == 'Curve') && (radtangentstart != "Tangent")) {
                 point = new Point(startx, starty, view.spatialReference);
                 const lblGraphic = new Graphic({
                     geometry: point,
@@ -507,7 +503,7 @@ const ericJson = (jsonData, view) => {
                         color: "white",
                         haloColor: "black",
                         haloSize: "1px",
-                        text: "Start: Tangent",
+                        text: bearingRadiusInDMSstart + "\n(Start:"+ radtangentstart +")",
                         xoffset: 0,
                         yoffset: 0,
                         font: {  // autocast as new Font()
@@ -522,7 +518,7 @@ const ericJson = (jsonData, view) => {
                 tanParcelStartLayers.push(lblGraphic);
             }
 
-            if ((shapetype == 'Curve') && (radtangentend == "Non-Tangent")) {
+            if ((shapetype == 'Curve') && (radtangentend == "Tangent")) {
 
                 point = new Point(endx, endy, view.spatialReference);
                 const lblGraphic = new Graphic({
@@ -532,7 +528,7 @@ const ericJson = (jsonData, view) => {
                         color: "white",
                         haloColor: "black",
                         haloSize: "1px",
-                        text: bearingRadiusInDMSend + "\n(End: Non-Tangent)",
+                        text: "(End: Tangent)",
                         xoffset: 0,
                         yoffset: 0,
                         font: {  // autocast as new Font()
@@ -545,8 +541,7 @@ const ericJson = (jsonData, view) => {
                 });
 
                 tanParcelEndLayers.push(lblGraphic);
-            } else if ((shapetype == 'Curve') && (radtangentend == "Tangent")) {
-
+            } else if ((shapetype == 'Curve') && (radtangentend != "Tangent")){
                 point = new Point(endx, endy, view.spatialReference);
                 const lblGraphic = new Graphic({
                     geometry: point,
@@ -555,7 +550,7 @@ const ericJson = (jsonData, view) => {
                         color: "white",
                         haloColor: "black",
                         haloSize: "1px",
-                        text: "End: Tangent",
+                        text: bearingRadiusInDMSend + "\n(End:"+ radtangentend +")",
                         xoffset: 0,
                         yoffset: 0,
                         font: {  // autocast as new Font()
@@ -842,7 +837,6 @@ export const selectedLayer = (selected, open, setOpen, zoomToggle) => {
 
 //Handles adding labels to selected parcel
 export const selectedParcel = (open, selected, zoomToggle) => {
-    console.log("open", open)
     if(open !== null) {
         selectedParcelGraphic.graphics.removeAll()
         selectedParcelGraphic.graphics.add(sParcelLayers[open])

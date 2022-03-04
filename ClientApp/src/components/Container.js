@@ -373,7 +373,7 @@ const Container = () => {
         <Drawer hideDrawer={hideDrawer} loading={loading} page={page} data={parcelInfo} setSelected={setSelected} selected={selected} section={section} setSection={setSection} lineErrors={lineErrors} curveErrors={curveErrors} lineMissing={lineMissing} curveMissing={curveMissing} open={open} setOpen={setOpen} inputMapType={inputMapType} inputParcelCount={inputParcelCount}/>
       </div>
       <div className='mapcont'>
-        <AppBar handleClickOpen={handleClickOpen} setMapSplit={setMapSplit} mapSplit={mapSplit}/>
+        <AppBar handleClickOpen={handleClickOpen} setMapSplit={setMapSplit} mapSplit={mapSplit} files={files}/>
         <DialogUploadFile open={openDialog} onClose={onDialogClose} connectionId={designAutomationId} isLoading={handleLoading} setEsriData={setEsriData} setTableInfo={setTableInfo} setMapInfo={setMapInfo} setParcelInfo={setParcelInfo} files={files} setFiles={setFiles} setInputParcelCount={setInputParcelCount} setInputMapType={setInputMapType}/>
         <div className="mapcont__view">
         {/* {page === 'check' && submit ?  
