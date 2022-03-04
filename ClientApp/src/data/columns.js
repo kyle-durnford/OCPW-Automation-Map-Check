@@ -74,6 +74,11 @@ export const lineColumns = [
       align: 'left',
     },
     {
+      id: 'bearingRadiusIn_DMS_2',
+      label: 'Bearing Radius In',
+      align: 'left',
+    },
+    {
       id: 'arcDelta_DMS_2',
       label: 'Total Angle',
       align: 'left',
@@ -91,6 +96,11 @@ export const lineColumns = [
     {
       id: 'radtangent_end',
       label: 'End Tangency',
+      align: 'left',
+    },
+    {
+      id: 'bearingRadiusOut_DMS_2',
+      label: 'Bearing Radius Out',
       align: 'left',
     },
     {

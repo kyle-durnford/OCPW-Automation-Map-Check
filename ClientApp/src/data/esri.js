@@ -503,7 +503,7 @@ const ericJson = (jsonData, view) => {
                         color: "white",
                         haloColor: "black",
                         haloSize: "1px",
-                        text: bearingRadiusInDMSstart + "\n(Start:"+ radtangentstart +")",
+                        text: bearingRadiusInDMSstart + "\n(Start: "+ radtangentstart +")",
                         xoffset: 0,
                         yoffset: 0,
                         font: {  // autocast as new Font()
@@ -550,7 +550,7 @@ const ericJson = (jsonData, view) => {
                         color: "white",
                         haloColor: "black",
                         haloSize: "1px",
-                        text: bearingRadiusInDMSend + "\n(End:"+ radtangentend +")",
+                        text: bearingRadiusInDMSend + "\n(End: "+ radtangentend +")",
                         xoffset: 0,
                         yoffset: 0,
                         font: {  // autocast as new Font()
