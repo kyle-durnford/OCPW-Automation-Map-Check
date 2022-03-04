@@ -771,8 +771,9 @@ export const buildMap = (json, mapRef, cityLayers, setSelected, selected, setOpe
                         if (check == 1) {
                             setSelected(null)
                         } else {
-                            setSelected(graphic.attributes.oid)
                             setOpen(graphic.attributes.pnum - 1)
+                            setSelected(graphic.attributes.oid)
+                            
                             //fitToViewerHandleId(graphic.attributes.hid)
                         }
                     } catch {
