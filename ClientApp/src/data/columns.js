@@ -79,7 +79,7 @@ export const lineColumns = [
       align: 'left',
     },
     {
-      id: 'arcDelta_DMS_2',
+      id: 'arcDelta_DMS_3',
       label: 'Total Angle',
       align: 'left',
     },

@@ -159,6 +159,7 @@ let sParcelLayers = []
 let radLayers = []
 let tanStartLayers = []
 let tanEndLayers = []
+let pobLayers = []
 
 const lineSymbol = {
     type: "simple-line", // autocasts as new SimpleLineSymbol()
@@ -444,7 +445,7 @@ const ericJson = (jsonData, view) => {
                         path: "M168.3 499.2C116.1 435 0 279.4 0 192C0 85.96 85.96 0 192 0C298 0 384 85.96 384 192C384 279.4 267 435 215.7 499.2C203.4 514.5 180.6 514.5 168.3 499.2H168.3zM192 256C227.3 256 256 227.3 256 192C256 156.7 227.3 128 192 128C156.7 128 128 156.7 128 192C128 227.3 156.7 256 192 256z"
                     }
                 })
-                poblayer.graphics.add(pobgraphic)
+                pobLayers.push(pobgraphic)
             }
 
             let point = new Point(midx, midy, view.spatialReference);
@@ -623,6 +624,7 @@ const ericJson = (jsonData, view) => {
         parcelLabels.push(lblGraphics) //Gather array of labels per parcel for selected parcels
     })
     segmentLayers = [].concat.apply([], parcelLayers)
+    poblayer.addMany(pobLayers)
     parcellayer.graphics.removeAll()
     parcellayer.graphics.addMany(segmentLayers);
     parcellayer.when(function () { //zoom to area of interest on load
@@ -841,6 +843,8 @@ export const selectedParcel = (open, selected, zoomToggle) => {
     if(open !== null) {
         selectedParcelGraphic.graphics.removeAll()
         selectedParcelGraphic.graphics.add(sParcelLayers[open])
+        poblayer.graphics.removeAll()
+        poblayer.graphics.add(pobLayers[open])
         if (!selected) {
             lblgraphicslayer.graphics.removeAll()
             lblgraphicslayer.graphics.addMany(parcelLabels[open]);
@@ -853,6 +857,8 @@ export const selectedParcel = (open, selected, zoomToggle) => {
             }
         }
     } else {
+        poblayer.graphics.removeAll()
+        poblayer.graphics.addMany(pobLayers)
         selectedParcelGraphic.graphics.removeAll()
         tangraphicslayer.removeAll()
         radgraphicslayer.removeAll()

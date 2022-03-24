@@ -22,7 +22,7 @@ const NavMenu = ({setPage, page, hideDrawer, setHideDrawer}) => {
               <li className='logo'>
                   <img src={logo} alt="Orange County Parcel Check"/>
               </li> 
-              <li className='pill' onClick={() => setPage('project')} className={(page === 'project' ? 'pill pill--selected' : 'pill')}>
+              <li onClick={() => setPage('project')} className={(page === 'project' ? 'pill pill--selected' : 'pill')}>
                 <div className="pill__icon">
                   <Project className="icon--nav" color={'#fff'}/>
                 </div>
@@ -31,7 +31,7 @@ const NavMenu = ({setPage, page, hideDrawer, setHideDrawer}) => {
                 </div> 
               </li> 
             
-              <li className='pill' onClick={() => setPage('legal')} className={(page === 'legal' ? 'pill pill--selected' : 'pill')}>
+              <li onClick={() => setPage('legal')} className={(page === 'legal' ? 'pill pill--selected' : 'pill')}>
                 <div className="pill__icon">
                   <img src={iconLegal} className="icon--nav"></img>
                 </div>
@@ -67,7 +67,7 @@ const NavMenu = ({setPage, page, hideDrawer, setHideDrawer}) => {
                 </div> 
               </li>  */}
 
-              <li className='pill' onClick={() => setPage('report')} className={(page === 'report' ? 'pill pill--selected' : 'pill')}>
+              <li onClick={() => setPage('report')} className={(page === 'report' ? 'pill pill--selected' : 'pill')}>
                 <div className="pill__icon">
                   <img src={report} className="icon--nav"></img>
                 </div>
@@ -78,6 +78,9 @@ const NavMenu = ({setPage, page, hideDrawer, setHideDrawer}) => {
             </ul>
         </Nav>
         <ul className='nav__list--bottom'>
+          {//V Major release.Minor Release.Patch Release
+          }
+          <li><p className='version'>0.0.1</p></li>
           <li onClick={() => setHideDrawer(hideDrawer ? false : true)}>
             <div>
               <img src={(hideDrawer === false ? hide : show)} className="icon--nav"></img>

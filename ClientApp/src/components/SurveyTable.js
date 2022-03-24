@@ -113,11 +113,13 @@ const SurveyTable = ({loading, data, selected, setSelected, page, lineErrors, se
 
   //Scroll to the selected row in the table
   if (row !== null) {
-    row.scrollIntoView({
-      scrollMode: 'if-needed',
-      behavior: "smooth",
-      block: 'center'
-    })
+    setTimeout(() => {
+      row.scrollIntoView({
+        scrollMode: 'if-needed',
+        behavior: "smooth",
+        block: 'center'
+      })
+    }, 100)
   }
 
   //Changes the table view to line/curve depending on what table the selected row is in
@@ -234,8 +236,8 @@ useEffect(() => {
 
               if (e.toString() === 'parcelId') {
                 return (textA===undefined)-(textB===undefined) || textA.localeCompare(textB, 'en', { numeric: true, sensitivity: 'base' });
-              } else if (Number(textA) == NaN && Number(textB) == NaN) {
-                return (textA===undefined)-(textB===undefined) || textA.localeCompare(textB, 'en', { sensitivity: 'base' });
+              } else if (isNaN(Number(textA)) && isNaN((Number(textB)))) {
+                return (textA===undefined)-(textB===undefined) || +(textA>textB) || -(textA<textB);
               } else {
                 return (textA===undefined)-(textB===undefined) || +(Number(textA)>Number(textB))||-(Number(textA)<Number(textB));
               }
@@ -249,8 +251,8 @@ useEffect(() => {
               let textB = _.get(b, e);
               if (e.toString() === 'parcelId') {
                 return (textA===undefined)-(textB===undefined) || textB.localeCompare(textA, 'en', { numeric: true, sensitivity: 'base' });
-              } else if (Number(textA) == NaN && Number(textB) == NaN) {
-                return (textA===undefined)-(textB===undefined) || textB.localeCompare(textA, 'en', { sensitivity: 'base' });
+              } else if (isNaN(Number(textA)) && isNaN((Number(textB)))) {
+                return (textA===undefined)-(textB===undefined) || -(textA>textB) || +(textA<textB)
               } else {
                 return (textA===undefined)-(textB===undefined) || -(Number(textA)>Number(textB))||+(Number(textA)<Number(textB));
               }
@@ -267,8 +269,8 @@ useEffect(() => {
             let textB = _.get(b, e);
             if (e.toString() === 'parcelId') {
               return (textA===undefined)-(textB===undefined) || textA.localeCompare(textB, 'en', { numeric: true, sensitivity: 'base' });
-            } else if (Number(textA) == NaN && Number(textB) == NaN) {
-              return (textA===undefined)-(textB===undefined) || textA.localeCompare(textB, 'en', { sensitivity: 'base' });
+            } else if (isNaN(Number(textA)) && isNaN((Number(textB)))) {
+              return (textA===undefined)-(textB===undefined) || +(textA>textB) || -(textA<textB);
             } else {
               return (textA===undefined)-(textB===undefined) || +(Number(textA)>Number(textB))||-(Number(textA)<Number(textB));
             }
@@ -280,8 +282,8 @@ useEffect(() => {
             let textB = _.get(b, e);
             if (e.toString() === 'parcelId') {
               return (textA===undefined)-(textB===undefined) || textB.localeCompare(textA, 'en', { numeric: true, sensitivity: 'base' });
-            } else if (Number(textA) == NaN && Number(textB) == NaN) {
-              return (textA===undefined)-(textB===undefined) || textB.localeCompare(textA, 'en', { sensitivity: 'base' });
+            } else if (isNaN(Number(textA)) && isNaN((Number(textB)))) {
+              return (textA===undefined)-(textB===undefined) || -(textA>textB) || +(textA<textB);
             } else {
               return (textA===undefined)-(textB===undefined) || -(Number(textA)>Number(textB))||+(Number(textA)<Number(textB));
             }

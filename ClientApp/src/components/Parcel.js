@@ -46,11 +46,13 @@ const Parcel = ({loading, setSelected, selected, data, parcelNum, open, setOpen,
 
   //Scroll to the selected segment
   if (row !== null) {
-    row.scrollIntoView({
-      scrollMode: 'if-needed',
-      behavior: "smooth",
-      block: 'center'
-    })
+    setTimeout(() => {
+      row.scrollIntoView({
+        scrollMode: 'if-needed',
+        behavior: "smooth",
+        block: 'center'
+      })
+    }, 100)
   }
       
     if (loading || !data) 
