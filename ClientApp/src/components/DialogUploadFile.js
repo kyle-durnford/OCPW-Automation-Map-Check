@@ -80,7 +80,7 @@ const buttonSolidProps = {
     }
 };
 
-const DialogUploadFile = ({open, onClose, connectionId, isLoading, setSubmit, setEsriData, setTableInfo, setMapInfo, setParcelInfo, files, setFiles}) => {
+const DialogUploadFile = ({open, onClose, connectionId, isLoading, setSubmit, setEsriData, setTableInfo, setMapInfo, setParcelInfo, files, setFiles, setInputParcelCount, setInputMapType}) => {
     const classes = useStyles();  
     const { handleSubmit, control, reset } = useForm();
 
@@ -91,6 +91,8 @@ const DialogUploadFile = ({open, onClose, connectionId, isLoading, setSubmit, se
     setTableInfo(null)
     setMapInfo(null)
     setParcelInfo(null)
+    setInputParcelCount(null)
+    setInputMapType(null)
     const formData = new FormData()
     formData.append('inputFile', data.files);
     formData.append('data', JSON.stringify({
@@ -108,6 +110,8 @@ const DialogUploadFile = ({open, onClose, connectionId, isLoading, setSubmit, se
     )
     isLoading(true)
     onClose(false)
+    setInputParcelCount(data.parcelNumber)
+    setInputMapType(data.mapType)
     reset({parcelNumber: '', maptype: ''})
   };
 
@@ -186,7 +190,7 @@ const DialogUploadFile = ({open, onClose, connectionId, isLoading, setSubmit, se
                         rules={{ required: 'Number of parcels required' }}
                     />
                     {parcels > 200 ? 
-                        <div className="validation--warning" style={{marginTop: 'calc(1rem + 8px)'}}>This file contains > 200 parcels. Please expect delayed response times.</div>
+                        <div className="validation--warning">This file contains > 200 parcels. Please expect delayed response times.</div>
                     : null}
                     {/* <Controller
                         name="rsNumber"

@@ -61,8 +61,6 @@ const Dropzone = ({ onChange, ...rest }) => {
 
   const fileNameCheck = name => {
     const rg1 = new RegExp('^[^\\/:\*\?%\$\@"{}<>\|]+$') // forbidden characters \ / : * ? % $ @ " { } < > |
-    console.log(name)
-    console.log(rg1.test(name))
     return rg1.test(name);
   }
 
@@ -89,7 +87,7 @@ const Dropzone = ({ onChange, ...rest }) => {
     )
   }
 
-  const { getRootProps, getInputProps, isDragActive } = useDropzone({ onDrop, multiple: false, accept: '.dwg, .dgn', maxFiles: 1, maxSize: 20971520, minSize: 1 });
+  const { getRootProps, getInputProps, isDragActive } = useDropzone({ onDrop, multiple: false, accept: '.dwg', maxFiles: 1, maxSize: 20971520, minSize: 1 }); //accept: '.dwg, .dgn'
 
   const removeFile = i => {
     setFiles(files.filter((v, j) => j !== i))
@@ -139,7 +137,7 @@ const Dropzone = ({ onChange, ...rest }) => {
           <div {...dropzoneContProps}>
             <h2 {...dropTitleProps}>Drag and Drop</h2>
             <p {...dropTextProps}>or click to choose files</p>
-            <p {...dropTextProps}>Max 1 file, 20MB, .dwg or .dgn</p>
+            <p {...dropTextProps}>Max 1 file, 20MB, .dwg</p>
           </div>
         )}
         <aside>{filesDisplay}</aside>

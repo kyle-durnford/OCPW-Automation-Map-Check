@@ -58,14 +58,13 @@ const Container = () => {
   const [windowWidth, setWindowWidth] = useState(window.innerWidth)
   const [mapSplit, setMapSplit] = useState(2)
   const [activeMaps, setActiveMaps] = useState(['esri', 'forge'])
+  const [inputParcelCount, setInputParcelCount] = useState()
+  const [inputMapType, setInputMapType] = useState()
+  const [zoomToggle, setZoomToggle] = useState(true)
 
   const leftRef = createRef();
   const splitPaneRef = createRef();
   const drawerContRef = createRef();
-
-  useEffect(() => {
-    console.log('EsriDataCheck', esriData)
-  }, [esriData])
 
   useEffect(() => {
     if(!mapInfo) {
@@ -332,15 +331,17 @@ const Container = () => {
   }, [topRef, topHeight, setTopHeight])
 
   useEffect(() => {
+    console.log(mapSplit)
     if ((mapSplit === 1 || mapSplit === 3) && leftRef.current) {
       leftRef.current.style.width = '100%'
     } else if(mapSplit === 2 && leftRef.current) {
+      setLeftWidth('calc(50% - 1rem)')
       leftRef.current.style.width = 'calc(50% - 1rem)'
     }
     if(viewer) {
       viewer.resize() //Resize forge map when finished resizing container.
     }
-  }, [mapSplit, leftRef])
+  }, [mapSplit])
 
   useEffect(() => {
     document.addEventListener('mousemove', onMouseMove);
@@ -369,11 +370,11 @@ const Container = () => {
         <div className="drawercont__navcont">
           <NavMenu setPage={setPage} page={page} hideDrawer={hideDrawer} setHideDrawer={setHideDrawer}/>
         </div>
-        <Drawer hideDrawer={hideDrawer} loading={loading} page={page} data={parcelInfo} setSelected={setSelected} selected={selected} section={section} setSection={setSection} lineErrors={lineErrors} curveErrors={curveErrors} lineMissing={lineMissing} curveMissing={curveMissing} open={open} setOpen={setOpen}/>
+        <Drawer hideDrawer={hideDrawer} loading={loading} page={page} data={parcelInfo} setSelected={setSelected} selected={selected} section={section} setSection={setSection} lineErrors={lineErrors} curveErrors={curveErrors} lineMissing={lineMissing} curveMissing={curveMissing} open={open} setOpen={setOpen} inputMapType={inputMapType} inputParcelCount={inputParcelCount}/>
       </div>
       <div className='mapcont'>
-        <AppBar handleClickOpen={handleClickOpen} setMapSplit={setMapSplit} mapSplit={mapSplit}/>
-        <DialogUploadFile open={openDialog} onClose={onDialogClose} connectionId={designAutomationId} isLoading={handleLoading} setEsriData={setEsriData} setTableInfo={setTableInfo} setMapInfo={setMapInfo} setParcelInfo={setParcelInfo} files={files} setFiles={setFiles}/>
+        <AppBar handleClickOpen={handleClickOpen} setMapSplit={setMapSplit} mapSplit={mapSplit} files={files}/>
+        <DialogUploadFile open={openDialog} onClose={onDialogClose} connectionId={designAutomationId} isLoading={handleLoading} setEsriData={setEsriData} setTableInfo={setTableInfo} setMapInfo={setMapInfo} setParcelInfo={setParcelInfo} files={files} setFiles={setFiles} setInputParcelCount={setInputParcelCount} setInputMapType={setInputMapType}/>
         <div className="mapcont__view">
         {/* {page === 'check' && submit ?  
           <Checklist data={parcelInfo} section={section} setSection={setSection}/> */}
@@ -381,7 +382,7 @@ const Container = () => {
           <div ref={e => setSplitPaneHeightRef(e)} className="mapcont__view__cont">
             <div className="splitpane" ref={splitPaneRef} ref={e => setTopRef(e)}>
               <div className='splitpane__map splitpane__map--left' ref={leftRef} style={mapSplit === 3 ? {display: 'none'} : {display: 'block'}}>
-                  <EsriMap esriData={esriData} selected={selected} setSelected={setSelected} open={open} setOpen={setOpen}/>
+                  <EsriMap esriData={esriData} selected={selected} setSelected={setSelected} open={open} setOpen={setOpen} zoomToggle={zoomToggle}/>
               </div>
               <div className="splitpane__divider splitpane__divider--ver" onMouseDown={e => onMouseDown(e, 'horz')} style={mapSplit === 1 || mapSplit === 3 ? {display: 'none'} : {display: 'block'}}>
                 <div className="splitpane__divider__handle splitpane__divider__handle--ver">
@@ -399,7 +400,7 @@ const Container = () => {
                   <span className="splitpane__divider__handle__bar splitpane__divider__handle__bar--hor"></span>
                 </div>
               </div>
-            <SurveyTable page={page} loading={loadingTable} data={tableInfo} selected={selected} setSelected={setSelected} lineErrors={lineErrors} setLineErrors={setLineErrors} curveErrors={curveErrors} setCurveErrors={setCurveErrors} lineMissing={lineMissing} setLineMissing={setLineMissing} curveMissing={curveMissing} setCurveMissing={setCurveMissing}/>
+            <SurveyTable page={page} loading={loadingTable} data={tableInfo} selected={selected} setSelected={setSelected} lineErrors={lineErrors} setLineErrors={setLineErrors} curveErrors={curveErrors} setCurveErrors={setCurveErrors} lineMissing={lineMissing} setLineMissing={setLineMissing} curveMissing={curveMissing} setCurveMissing={setCurveMissing} zoomToggle={zoomToggle} setZoomToggle={setZoomToggle}/>
           </div>
 
         : appError ?

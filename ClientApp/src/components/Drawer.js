@@ -4,7 +4,7 @@ import ProjectDrawer from './ProjectDrawer.js';
 import ReportDrawer from './ReportDrawer.js';
 import CheckDrawer from './CheckDrawer.js'
 
-const Drawer = ({loading, data, setSelected, selected, page, setSection, section, hideDrawer, lineErrors, curveErrors, lineMissing, curveMissing, open, setOpen}) => {
+const Drawer = ({loading, data, setSelected, selected, page, setSection, section, hideDrawer, lineErrors, curveErrors, lineMissing, curveMissing, open, setOpen, inputMapType, inputParcelCount}) => {
 
     const [drawerData, setDrawerData] = useState();
     const [parcelCount, setParcelCount] = useState();
@@ -52,7 +52,7 @@ const Drawer = ({loading, data, setSelected, selected, page, setSection, section
                 })
                 setDrawerData(parcels)
             } else if (page === 'project') {
-                setDrawerData(() => {return (<ProjectDrawer lines={segmentCount[0]} curves={segmentCount[1]} parcelCount={parcelCount} lineErrors={lineErrors} curveErrors={curveErrors} lineMissing={lineMissing} curveMissing={curveMissing}/>)})
+                setDrawerData(() => {return (<ProjectDrawer lines={segmentCount[0]} curves={segmentCount[1]} parcelCount={parcelCount} lineErrors={lineErrors} curveErrors={curveErrors} lineMissing={lineMissing} curveMissing={curveMissing} inputMapType={inputMapType} inputParcelCount={inputParcelCount}/>)})
             } else if (page === 'check') {
                 setDrawerData(() => {return (<CheckDrawer setSection={setSection} section={section}/>)})
             }

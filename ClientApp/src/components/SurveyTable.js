@@ -18,7 +18,7 @@ import {
 
 
 
-const SurveyTable = ({loading, data, selected, setSelected, page, lineErrors, setLineErrors, curveErrors, setCurveErrors, lineMissing, curveMissing, setLineMissing, setCurveMissing}) => {
+const SurveyTable = ({loading, data, selected, setSelected, page, lineErrors, setLineErrors, curveErrors, setCurveErrors, lineMissing, curveMissing, setLineMissing, setCurveMissing, zoomToggle, setZoomToggle}) => {
   const referenceTabs = [['References', referenceColumns], [ 'Timeline', timelineColumns]];
   const legalTabs = [['Line Check', lineColumns], ['Curve Check', curveColumns]];
   const monumentTabs = [['Monuments', monumentsColumns], ['History', historyColumns], ['Timeline', monumentTimelineColumns], ['Relatived', relativedColumns]];
@@ -73,7 +73,6 @@ const SurveyTable = ({loading, data, selected, setSelected, page, lineErrors, se
           } else if (row.find(({ shapeType }) => shapeType === 'Curve')) {
             let check1 = false
             let check2 = false
-            console.log(Object.values(Object.values(Object.values(row[1].Labels_Check))))
             if(Object.values(Object.values(Object.values(row[1].Labels_Check))).includes('None')) {
               row[1] = {...row[1], ...{status: 'none'}}
               curveCountMissing++
@@ -114,11 +113,13 @@ const SurveyTable = ({loading, data, selected, setSelected, page, lineErrors, se
 
   //Scroll to the selected row in the table
   if (row !== null) {
-    row.scrollIntoView({
-      scrollMode: 'if-needed',
-      behavior: "smooth",
-      block: 'center'
-    })
+    setTimeout(() => {
+      row.scrollIntoView({
+        scrollMode: 'if-needed',
+        behavior: "smooth",
+        block: 'center'
+      })
+    }, 100)
   }
 
   //Changes the table view to line/curve depending on what table the selected row is in
@@ -147,6 +148,14 @@ const handleFilterClick = () => {
     setContain(false)
   } else {
     setContain(true)
+  }
+}
+
+const handleZoomClick = () => {
+  if(zoomToggle === true) {
+    setZoomToggle(false)
+  } else {
+    setZoomToggle(true)
   }
 }
 
@@ -227,8 +236,10 @@ useEffect(() => {
 
               if (e.toString() === 'parcelId') {
                 return (textA===undefined)-(textB===undefined) || textA.localeCompare(textB, 'en', { numeric: true, sensitivity: 'base' });
+              } else if (isNaN(Number(textA)) && isNaN((Number(textB)))) {
+                return (textA===undefined)-(textB===undefined) || +(textA>textB) || -(textA<textB);
               } else {
-                return (textA===undefined)-(textB===undefined) || -(textA<textB)||+(textA>textB);
+                return (textA===undefined)-(textB===undefined) || +(Number(textA)>Number(textB))||-(Number(textA)<Number(textB));
               }
             })
             results = results.concat(sort)
@@ -240,8 +251,10 @@ useEffect(() => {
               let textB = _.get(b, e);
               if (e.toString() === 'parcelId') {
                 return (textA===undefined)-(textB===undefined) || textB.localeCompare(textA, 'en', { numeric: true, sensitivity: 'base' });
+              } else if (isNaN(Number(textA)) && isNaN((Number(textB)))) {
+                return (textA===undefined)-(textB===undefined) || -(textA>textB) || +(textA<textB)
               } else {
-                return (textA===undefined)-(textB===undefined) || -(textA>textB)||+(textA<textB);
+                return (textA===undefined)-(textB===undefined) || -(Number(textA)>Number(textB))||+(Number(textA)<Number(textB));
               }
             })
             results = results.concat(sort)
@@ -256,20 +269,23 @@ useEffect(() => {
             let textB = _.get(b, e);
             if (e.toString() === 'parcelId') {
               return (textA===undefined)-(textB===undefined) || textA.localeCompare(textB, 'en', { numeric: true, sensitivity: 'base' });
+            } else if (isNaN(Number(textA)) && isNaN((Number(textB)))) {
+              return (textA===undefined)-(textB===undefined) || +(textA>textB) || -(textA<textB);
             } else {
-              return (textA===undefined)-(textB===undefined) || +(textA>textB)||-(textA<textB);
+              return (textA===undefined)-(textB===undefined) || +(Number(textA)>Number(textB))||-(Number(textA)<Number(textB));
             }
           })
           results = results.concat(sort)
-          console.log(sortName)
         } else if(sortArrow[1] === 'up'){
           let sort = filteredResults.slice().sort((a, b) => {
             let textA = _.get(a, e);
             let textB = _.get(b, e);
             if (e.toString() === 'parcelId') {
               return (textA===undefined)-(textB===undefined) || textB.localeCompare(textA, 'en', { numeric: true, sensitivity: 'base' });
+            } else if (isNaN(Number(textA)) && isNaN((Number(textB)))) {
+              return (textA===undefined)-(textB===undefined) || -(textA>textB) || +(textA<textB);
             } else {
-              return (textA===undefined)-(textB===undefined) || -(textA>textB)||+(textA<textB);
+              return (textA===undefined)-(textB===undefined) || -(Number(textA)>Number(textB))||+(Number(textA)<Number(textB));
             }
           })
           results = results.concat(sort)
@@ -322,12 +338,16 @@ useEffect(() => {
         <div className="survey__tab-col">
           {/* Adding tabs to handle filters */}
           <div
-          className={(showError === 'fail' || showError === 'pass' || showError === 'none' ? 'survey__tab survey__tab--selected' : 'survey__tab')}
-          onClick={() => handleFilterClick()}>Sort By {(contain === true ? "All" : "Parcel")}
+          className={(zoomToggle === true ? 'survey__tab survey__tab--selected' : 'survey__tab')}
+          onClick={() => handleZoomClick()}>{(zoomToggle === false ? "Zoom" : "Zooming")} To Extent
+          </div>
+          <div
+          className={(contain === true ? 'survey__tab survey__tab--selected' : 'survey__tab')}
+          onClick={() => handleFilterClick()}>Sorting By {(contain === false ? "All" : "Parcel")}
           </div>
           <div
           className={(showError === 'fail' || showError === 'pass' || showError === 'none' ? 'survey__tab survey__tab--selected' : 'survey__tab')}
-          onClick={() => handleErrorClick()}>Filter {(showError === 'fail' ? 'Passing': showError === 'pass' ? "Unknown" : showError === 'none' ? 'All' : "Failing")}
+          onClick={() => handleErrorClick()}>Showing {(showError === 'fail' ? 'Failing': showError === 'pass' ? "Passing" : showError === 'none' ? 'Missing' : "All")}
           </div>
         </div>
       </div>

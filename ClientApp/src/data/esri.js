@@ -15,9 +15,10 @@ import Polygon from "@arcgis/core/geometry/Polygon"
 import Attribution from "@arcgis/core/widgets/Attribution";
 import Zoom from "@arcgis/core/widgets/Zoom";
 import _ from "lodash";
-import Popup from "@arcgis/core/widgets/Popup";
-import { LevelFormat } from "docx";
 import { viewer, viewerDbIds, fitToViewerHandleId } from '../data/forge'
+import OpacitySlider from "@arcgis/core/widgets/smartMapping/OpacitySlider";
+
+import ImageryTileLayer from "@arcgis/core/layers/ImageryTileLayer";
 
 let polylist = []
 let par2poly = {}
@@ -29,6 +30,8 @@ let dict2 = {}
 let hiddict = {}
 let oid2line = {}
 let oid2lbl = {}
+
+let view = undefined
 
 const lods = [
     {
@@ -124,6 +127,10 @@ const graphicslayer2 = new GraphicsLayer({ //Base segment drawing layer
     id: 'graphicslayer2'
 })
 
+const selectedParcelGraphic = new GraphicsLayer({
+    id: 'selectedparcelgraphic'
+})
+
 const lblgraphicslayer = new GraphicsLayer({ //Labels for segments
     id: 'lblgraphicslayer'
 })
@@ -132,11 +139,27 @@ const selectedgraphicslayer = new GraphicsLayer({ //Highlights selected layer
     id: 'selectedgraphicslayer'
 })
 
+const radgraphicslayer = new GraphicsLayer({
+    id: 'radgraphicslayer'
+})
+const tangraphicslayer = new GraphicsLayer({
+    id: 'tangraphicslayer'
+})
+
+const poblayer = new GraphicsLayer({
+    id: 'poblayer'
+})
+
 let selectedLayers = [] //Stores each graphic so it's easy to select the index of the selected segment
-let parcelLayers = [] //Stores parcel layers
+let segmentLayers = [] //Stores segment layers
+let parcelLayers = []
 let parcelLabels = [] //Stores segment labels by parcel
 let segmentLabels = [] //Stores segments labels for a parcel
-
+let sParcelLayers = []
+let radLayers = []
+let tanStartLayers = []
+let tanEndLayers = []
+let pobLayers = []
 
 const lineSymbol = {
     type: "simple-line", // autocasts as new SimpleLineSymbol()
@@ -157,12 +180,20 @@ export const createCityLayer = () => {
 //     popupEnabled: false
 // })
 
-const OCbasemapLayer = new TileLayer({
+//https://gis.ocgov.com/arcimg/rest/services/Aerial_Imagery_Countywide/Eagle_2017/MapServer
+//https://www.ocgis.com/arcpub/rest/services/Eagle_Aerial_1ft_2021/ImageServer
+//https://gis.ocgov.com/arcimg/rest/services/Aerial_Imagery_Countywide/Eagle_2020/ImageServer
+
+const OCbasemapLayer = new ImageryTileLayer({
+    url: "https://gis.ocgov.com/arcimg/rest/services/Aerial_Imagery_Countywide/Eagle_2020/ImageServer"
+})
+
+const eagleLayer = new MapImageLayer({
     url: "https://www.ocgis.com/survey/rest/services/Basemaps/County_Basemap_Ext/MapServer"
 })
 
-const eagleLayer = new TileLayer({
-    url: "https://gis.ocgov.com/arcimg/rest/services/Aerial_Imagery_Countywide/Eagle_2017/MapServer"
+const publicLayer = new ImageryTileLayer({
+    url: 'https://www.ocgis.com/arcpub/rest/services/Eagle_Aerial_1ft_2021/ImageServer'
 })
 
 const streetlayers = new MapImageLayer({
@@ -174,16 +205,27 @@ const OCB = new Basemap({
     baseLayers: [OCbasemapLayer],
     title: "Orange County",
     id: "ocbasemap",
-    thumbnailUrl: "BasemapThumb.jpg"
+})
+
+const publicB = new Basemap({
+    baseLayers: [publicLayer],
+    title: "Public",
+    id: 'public'
 })
 
 const oceagle = new Basemap({
     baseLayers: [eagleLayer],
     title: "Eagle",
     id: "eagle",
-    thumbnailUrl: "Eagle2017AerialThumbnail.jpg"
 })
 
+OCB.when(e => {
+    if(e.loadError != null) {
+        map.basemap = OCB
+    } else {
+        map.basemap = publicB
+    }
+})
 
 const parcelimagelayer = new MapImageLayer({
     url: "https://www.ocgis.com/survey/rest/services/WebApps/Map_Layers_Associated_Documents/MapServer",
@@ -207,22 +249,35 @@ const map = new Map({
 
 const polygonSymbol = {
     type: "simple-fill",
-    color: [255, 0, 0, 0.01],
+    color: [0,0,0,0],
     outline: {
-        // autocasts as new SimpleLineSymbol()
         color: 'red',
-        width: 0
+        width: 3
+    }
+}
+
+const selectedPolygonSymbol = {
+    type: "simple-fill",
+    color: [0,0,0,0],
+    outline: {
+        color: 'black',
+        width: 3
     }
 }
 
 const clearup = (view) => {
     selectedLayers = []
-    parcelLayers = [] 
+    segmentLayers = [] 
+    parcelLayers = []
     parcelLabels = [] 
-    segmentLabels = []
+    segmentLabels = [] 
+    sParcelLayers = []
+    radLayers = []
+    tanStartLayers = []
+    tanEndLayers = []
 
-    dict = {};
-    dict2 = {};
+    dict = {}
+    dict2 = {}
     oid2lbl = {}
     par2poly = {}
     oid2line = {}
@@ -234,16 +289,18 @@ const clearup = (view) => {
     parcellayer.graphics.removeAll();
     graphicslayer2.graphics.removeAll();
     selectedgraphicslayer.graphics.removeAll()
+    radgraphicslayer.removeAll();
     view.graphics.removeAll();
 }
 
-const createFeature = (path, words, hid, oid, oidlist)  => {
+const createFeature = (path, words, hid, oid, oidlist, pnum)  => {
     //Creates polylines and adds them to the selectedLayer Graphic and parcelLayer graphic
 
     const myAtt = {
         legal: words,
         oid: oid,
-        hid: hid
+        hid: hid,
+        pnum: pnum
     };
 
     var myline = new Polyline({
@@ -276,8 +333,7 @@ const createFeature = (path, words, hid, oid, oidlist)  => {
         visible: false
     });
 
-
-    parcelLayers.push(baseGraphic)
+    segmentLayers.push(baseGraphic)
     selectedLayers.push(selectedGraphic)
 
     oid2line[oid] = baseGraphic //For attaching a label to this segment
@@ -289,7 +345,9 @@ const ericJson = (jsonData, view) => {
     let pnum = 0;
     let mkey = 'Parcel'
     const parcels = jsonData.Parcels
+    
     _.forEach(parcels, (value, key) => {
+        segmentLayers = []
         pnum += 1
         mkey = 'Parcel' + pnum
         const dictionary = value[0]['Segments'];
@@ -321,13 +379,22 @@ const ericJson = (jsonData, view) => {
             symbol: polygonSymbol
         });
 
+        let sParcelGraphic = new Graphic({ //Create a polygon of a parcel
+            geometry: poly,
+            attributes: pAtt,
+            symbol: selectedPolygonSymbol
+        });
+
+        
         graphicslayer2.graphics.add(parcelGraphic)
+        sParcelLayers.push(sParcelGraphic)
 
         let lblGraphics = []
+        let radParcelLayers = []
+        let tanParcelStartLayers = []
+        let tanParcelEndLayers = []
 
         _.forEach(dictionary, (value, key) => {
-            // console.log('Key', key)
-
             const shapetype = value.shapeType;
             const radtangentstart = value.radtangent_start;
             const radtangentend = value.radtangent_end;
@@ -337,6 +404,8 @@ const ericJson = (jsonData, view) => {
             const starty = value.starty;
             const endx = value.endx;
             const endy = value.endy;
+            const centerx = value.centerx
+            const centery = value.centery
             const words = value.desc_ground;
             const oid = value.oid;
             const wkt = value.wkt;
@@ -365,23 +434,36 @@ const ericJson = (jsonData, view) => {
                 midy = midy - 3;
             }
 
+            if (key == 1) {
+                let pob = new Point (startx, starty, view.spatialReference)
+                const pobgraphic = new Graphic({
+                    geometry: pob,
+                    symbol: {
+                        type: "simple-marker",
+                        color: 'red',
+                        size: '16px',
+                        path: "M168.3 499.2C116.1 435 0 279.4 0 192C0 85.96 85.96 0 192 0C298 0 384 85.96 384 192C384 279.4 267 435 215.7 499.2C203.4 514.5 180.6 514.5 168.3 499.2H168.3zM192 256C227.3 256 256 227.3 256 192C256 156.7 227.3 128 192 128C156.7 128 128 156.7 128 192C128 227.3 156.7 256 192 256z"
+                    }
+                })
+                pobLayers.push(pobgraphic)
+            }
+
             let point = new Point(midx, midy, view.spatialReference);
             const lblGraphic = new Graphic({ //Create label for segment
                 geometry: point,
                 symbol: {
                     type: "text", // autocasts as SimpleFillSymbol
-                    color: "black",
-                    haloColor: "white",
+                    color: "white",
+                    haloColor: "black",
                     haloSize: "1px",
                     text: bdlabel,
                     xoffset: 0,
                     yoffset: 0,
                     font: {  // autocast as new Font()
-                        size: 9,
+                        size: 12,
                         family: "sans-serif",
-                        weight: "bold"
+                        
                     }
-
                 }
             });
             segmentLabels.push(lblGraphic) //Individual labels for a selected segment
@@ -389,55 +471,99 @@ const ericJson = (jsonData, view) => {
 
             lblgroup[oid] = lblGraphic;
 
-            if ((shapetype == 'Curve') && (radtangentstart == "Non-Tangent")) {
+            if ((shapetype == 'Curve') && (radtangentstart == "Tangent")) {
 
                 point = new Point(startx, starty, view.spatialReference);
                 const lblGraphic = new Graphic({
                     geometry: point,
                     symbol: {
                         type: "text", // autocasts as SimpleFillSymbol
-                        color: "black",
-                        haloColor: "white",
+                        color: "white",
+                        haloColor: "black",
                         haloSize: "1px",
-                        text: bearingRadiusInDMSstart + "\n(Non-Tangent)",
+                        text: "(Start: Tangent)",
                         xoffset: 0,
                         yoffset: 0,
                         font: {  // autocast as new Font()
-                            size: 9,
+                            size: 12,
                             family: "sans-serif",
-                            weight: "bold"
+                            
                         }
 
                     }
                 });
 
-                lblgroupstart[oid] = lblGraphic;
+                tanParcelStartLayers.push(lblGraphic);
 
+            } else if ((shapetype == 'Curve') && (radtangentstart != "Tangent")) {
+                point = new Point(startx, starty, view.spatialReference);
+                const lblGraphic = new Graphic({
+                    geometry: point,
+                    symbol: {
+                        type: "text", // autocasts as SimpleFillSymbol
+                        color: "white",
+                        haloColor: "black",
+                        haloSize: "1px",
+                        text: bearingRadiusInDMSstart + "\n(Start: "+ radtangentstart +")",
+                        xoffset: 0,
+                        yoffset: 0,
+                        font: {  // autocast as new Font()
+                            size: 12,
+                            family: "sans-serif",
+                            
+                        }
+
+                    }
+                });
+
+                tanParcelStartLayers.push(lblGraphic);
             }
 
-            if ((shapetype == 'Curve') && (radtangentend == "Non-Tangent")) {
+            if ((shapetype == 'Curve') && (radtangentend == "Tangent")) {
 
                 point = new Point(endx, endy, view.spatialReference);
                 const lblGraphic = new Graphic({
                     geometry: point,
                     symbol: {
                         type: "text", // autocasts as SimpleFillSymbol
-                        color: "black",
-                        haloColor: "white",
+                        color: "white",
+                        haloColor: "black",
                         haloSize: "1px",
-                        text: bearingRadiusInDMSend + "\n(Non-Tangent)",
+                        text: "(End: Tangent)",
                         xoffset: 0,
                         yoffset: 0,
                         font: {  // autocast as new Font()
-                            size: 9,
+                            size: 12,
                             family: "sans-serif",
-                            weight: "bold"
+                            
                         }
 
                     }
                 });
 
-                lblgroupend[oid] = lblGraphic;
+                tanParcelEndLayers.push(lblGraphic);
+            } else if ((shapetype == 'Curve') && (radtangentend != "Tangent")){
+                point = new Point(endx, endy, view.spatialReference);
+                const lblGraphic = new Graphic({
+                    geometry: point,
+                    symbol: {
+                        type: "text", // autocasts as SimpleFillSymbol
+                        color: "white",
+                        haloColor: "black",
+                        haloSize: "1px",
+                        text: bearingRadiusInDMSend + "\n(End: "+ radtangentend +")",
+                        xoffset: 0,
+                        yoffset: 0,
+                        font: {  // autocast as new Font()
+                            size: 12,
+                            family: "sans-serif",
+                            
+                        }
+
+                    }
+                });
+
+                tanParcelEndLayers.push(lblGraphic);
             }
 
             let str = wkt
@@ -453,7 +579,7 @@ const ericJson = (jsonData, view) => {
                 const y2 = str.split(',')[1].split(' ')[2]
                 const path = [[x, y, 0], [x2, y2, 0]]
 
-                createFeature(path, words, hid, oid, oidlist);
+                createFeature(path, words, hid, oid, oidlist, pnum);
             } 
             else if (shapetype == 'Curve') {
                 const cstr = str.split(', ')
@@ -472,14 +598,35 @@ const ericJson = (jsonData, view) => {
                     item1.push(item2)
                 })
 
-                createFeature(item1, words, hid, oid, oidlist);
+                const rad = new Polyline({
+                    paths: [[startx, starty], [centerx, centery], [endx, endy]],
+                    spatialReference: { wkid: 2230 }
+                })
+
+                const radgraphic = new Graphic({
+                    geometry: rad,
+                    attributes: {oid: oid},
+                    symbol: {
+                        type: 'simple-line',
+                        color: 'blue',
+                        width: 1,
+                        style: 'dash'
+                    }
+                })
+                radParcelLayers.push(radgraphic)
+                createFeature(item1, words, hid, oid, oidlist, pnum);
             }
         })
+        tanEndLayers.push(tanParcelEndLayers)
+        tanStartLayers.push(tanParcelStartLayers)
+        radLayers.push(radParcelLayers)
+        parcelLayers.push(segmentLayers)
         parcelLabels.push(lblGraphics) //Gather array of labels per parcel for selected parcels
     })
-    console.log("ParcelLayer", parcelLabels)
+    segmentLayers = [].concat.apply([], parcelLayers)
+    poblayer.addMany(pobLayers)
     parcellayer.graphics.removeAll()
-    parcellayer.graphics.addMany(parcelLayers);
+    parcellayer.graphics.addMany(segmentLayers);
     parcellayer.when(function () { //zoom to area of interest on load
         view.goTo({
             target: parcellayer.graphics
@@ -489,6 +636,7 @@ const ericJson = (jsonData, view) => {
 
 export const buildMap = (json, mapRef, cityLayers, setSelected, selected, setOpen) => {
 
+    config.request.trustedServers.push("https://gis.ocgov.com")
     config.request.timeout = 300000
 
     //Add baselayers to map
@@ -496,7 +644,7 @@ export const buildMap = (json, mapRef, cityLayers, setSelected, selected, setOpe
     map.add(parcelimagelayer)
     map.add(streetlayers)
 
-    const view = new MapView({
+    view = new MapView({
         container: mapRef,
         map: map,
         constraints: {
@@ -514,32 +662,20 @@ export const buildMap = (json, mapRef, cityLayers, setSelected, selected, setOpe
         view: view,
         nextBasemap: oceagle
     })
-
+    
     view.ui.add(btoggle, "bottom-left")
     view.ui.move("zoom", "bottom-right")
     // view.ui.add("reset-map", "top-left")
 
-    //Display parcel number when clicked on
-    view.popup = {
-        dockEnabled: true,
-        position: 'top-right',
-        autoOpenEnabled: false,
-        dockOptions: {
-            buttonEnabled: false,
-            breakpoint: false
-        }
-    }
-
     //Add layers to map
-    map.add(parcellayer)
     map.add(graphicslayer2)
+    map.add(selectedParcelGraphic)
     map.add(selectedgraphicslayer)
+    map.add(parcellayer)
+    map.add(poblayer)
+    map.add(radgraphicslayer)
+    map.add(tangraphicslayer)
     map.add(lblgraphicslayer)
-    
-
-    // view.when(function () {
-    //     //myUpload()
-    // })
 
     ericJson(json, view)
 
@@ -558,7 +694,7 @@ export const buildMap = (json, mapRef, cityLayers, setSelected, selected, setOpe
 
                        let i = 0
 
-                        parcelLayers.forEach(e => {
+                        segmentLayers.forEach(e => {
                             i++
                             if (i == graphic.attributes.oid) {
                                 e.symbol = {
@@ -569,27 +705,27 @@ export const buildMap = (json, mapRef, cityLayers, setSelected, selected, setOpe
                             } else {
                                 e.symbol = {
                                     type: "simple-line",
-                                    color: 'red',
+                                    color: [0,0,0,0],
                                     width: 3
                                 }
                             }
 
                             parcellayer.graphics.removeAll()
-                            parcellayer.graphics.addMany(parcelLayers)
+                            parcellayer.graphics.addMany(segmentLayers)
                             //console.log(graphic.attributes.oid)
                         })
                     } catch {
                         document.body.style.cursor = 'default'
 
-                        parcelLayers.forEach(e => {
+                        segmentLayers.forEach(e => {
                             e.symbol = {
                                 type: "simple-line",
-                                color: 'red',
+                                color: [0,0,0,0],
                                 width: 3
                             }
                         })
                         parcellayer.graphics.removeAll()
-                        parcellayer.graphics.addMany(parcelLayers)
+                        parcellayer.graphics.addMany(segmentLayers)
                     }
 
                 } else if (selected){
@@ -599,15 +735,15 @@ export const buildMap = (json, mapRef, cityLayers, setSelected, selected, setOpe
                 } else {
                     document.body.style.cursor = 'default'
                     
-                    parcelLayers.forEach(e => {
+                    segmentLayers.forEach(e => {
                         e.symbol = {
                             type: "simple-line",
-                            color: 'red',
+                            color: [0,0,0,0],
                             width: 3
                         }
                     })
                     parcellayer.graphics.removeAll()
-                    parcellayer.graphics.addMany(parcelLayers)
+                    parcellayer.graphics.addMany(segmentLayers)
                 }
             })
         } catch {
@@ -634,163 +770,99 @@ export const buildMap = (json, mapRef, cityLayers, setSelected, selected, setOpe
                                 return result.graphic.layer
                             }
                         })[0].graphic
-                        console.log(viewerDbIds)
-                        console.log(graphic)
-                        console.log(graphic.attributes.oid)
                         if (check == 1) {
                             setSelected(null)
                         } else {
+                            setOpen(graphic.attributes.pnum - 1)
                             setSelected(graphic.attributes.oid)
-                            fitToViewerHandleId(graphic.attributes.hid)
+                            
+                            //fitToViewerHandleId(graphic.attributes.hid)
                         }
-
                     } catch {
                         console.log('unselected')
                     }
-                    
                 }
             })
         } catch {
-            console.log('none')
         }
     })
 
-
     //Check if parcel exists where mouse is long clicked. If one does, select that parcel and display the selected parcel
     view.on("hold", function (event) {
-        let lastgeo = ''
         view.hitTest(event).then(function (response) {
             try {
                 const graphic = response.results.filter(function (result) {
                     if (result.graphic.layer === graphicslayer2) {
-                        //console.log('Maybe poly')
                         return result.graphic.layer === graphicslayer2;
                     }
                     
                 })[0].graphic;
-                view.popup.open({
-                    title: graphic.attributes.pstring,
-                })
                 
                 const attribute = graphic.attributes;
                 const hid = attribute.hid;
                 setOpen(hid - 1)
                 setSelected(null)
-                console.log(graphic.attributes)
-                // if (hid) {
-                    
-                //     const overLayGeometryExtension = viewer.getExtension('OverLayGeometry')
-                //     // Call Function to zoom in to object on viewer.
-                //     console.log('Extension found')
-                //     //executeFitToViewHandleId(hid);
-    
-                //     overLayGeometryExtension.searchSelectedObj(hid, viewerDbIds)
-                // }
             } catch {
-                view.popup.open({
-                    title: "No Parcel Found",
-                })
+                setOpen(null)
             }
         })
     })
-
-    // view.on("pointer-down", function (event) {
-    //     let lastgeo = ''
-    //     try {
-    //         view.hitTest(event).then(function (response) {
-    //             const graphic = response.results.filter(function (result) {
-    //                 if (result.graphic.layer === selectedgraphicslayer) {
-    //                     console.log('Mapbe poly')
-    //                 }
-    //                 return result.graphic.layer === selectedgraphicslayer;
-    //             })[0].graphic;
-    //             const attribute = graphic.attributes;
-    //             const hid = attribute.hid;
-    //             console.log(graphic.attributes.hid)
-    //             // const overLayGeometryExtension = viewer.getExtension('OverLayGeometry')
-    //             // if (hid) {
-    //             //     // Call Function to zoom in to object on viewer.
-    //             //     executeFitToViewHandleId(hid);
-    
-    //             //     overLayGeometryExtension.searchSelectedObj(hid, viewerDbIds)
-    //             // }
-    
-    //             const geo = graphic.geometry;
-    //             //view.graphics.removeAll();
-    //             // $(".lblclass").css("background-color", "white");
-    //             // $(".ptab").css("background-color", "white");
-    //             // $(".atab").removeClass("show");
-    //             // $(".headtab").addClass("collapsed");
-    
-    
-    //             if (lastgeo !== geo) {
-    //                 lastgeo = geo;
-    //                 //lineSymbol
-    
-    //                 var graphic3 = new Graphic({
-    //                     geometry: geo,
-    //                     symbol: lineSymbol
-    //                 });
-    
-    //                 ////*[@id="87"]
-    
-    //                 view.graphics.add(graphic3);
-    
-    //                 // $("#" + attribute.oid).css("background-color", "cyan");
-    //                 // var pid = $("#" + attribute.oid).attr("pid");
-    //                 // $(pid).css("background-color", "cyan");
-    //                 // var ppid = $(pid).attr("ppid");
-    //                 // var tid = $(pid).attr("tid");
-    //                 // $(ppid).addClass("show");
-    //                 // $(tid).removeClass("collapsed");
-    //                 // $(tid).attr("aria-expanded", "true")
-    //                 // $(pid)[0].scrollIntoView({
-    //                 //     behavior: "smooth", // or "auto" or "instant"
-    //                 //     block: "start" // or "end"
-    //                 // });
-    //                 // $("#" + attribute.oid)[0].scrollIntoView({
-    //                 //     behavior: "smooth", // or "auto" or "instant"
-    //                 //     block: "start" // or "end"
-    //                 // });
-    //             } else {
-    //                 //console.log('Same');
-    //             }
-    
-    //         })
-    //     } catch {
-    //         console.log('out of bounds')
-    //     }
-        
-    // })
-
-    console.log('Finished')
 }
 
-//Hnadles highlighting selected segment
-export const selectedLayer = (selected, open) => {
+//Handles highlighting selected segment
+export const selectedLayer = (selected, open, setOpen, zoomToggle) => {
     selectedLayers.forEach(e => e.visible = false)
-    console.log(open)
     if (selected) {
         let select = selected - 1
         selectedLayers[select].visible = true
+        setOpen(selectedLayers[select].attributes.pnum - 1)
+        let radselect = [].concat.apply([], radLayers).findIndex(e => e.attributes.oid == selectedLayers[select].attributes.oid)
+        radgraphicslayer.removeAll()
+        radgraphicslayer.add([].concat.apply([], radLayers)[radselect])
+        tangraphicslayer.removeAll()
+        tangraphicslayer.add([].concat.apply([], tanStartLayers)[radselect])
+        tangraphicslayer.add([].concat.apply([], tanEndLayers)[radselect])
         selectedgraphicslayer.graphics.removeAll()
         selectedgraphicslayer.graphics.addMany(selectedLayers);
         lblgraphicslayer.graphics.removeAll()
         lblgraphicslayer.graphics.add(segmentLabels[select]);
-    } else if (open >= 0 ){
+        if (zoomToggle && view) {
+            view.goTo({target: selectedLayers[select]}).catch(error => {console.log(error)})
+            fitToViewerHandleId(selectedLayers[select].attributes.hid)
+        }
+    } else if (open !== 0){
         selectedgraphicslayer.graphics.removeAll()
         selectedgraphicslayer.graphics.addMany(selectedLayers);
         lblgraphicslayer.graphics.removeAll()
         lblgraphicslayer.graphics.addMany(parcelLabels[open]);
-        
     }
 }
 
 //Handles adding labels to selected parcel
-export const selectedParcel = (open) => {
-    if(open >= 0) {
-        lblgraphicslayer.graphics.removeAll()
-        lblgraphicslayer.graphics.addMany(parcelLabels[open]);
+export const selectedParcel = (open, selected, zoomToggle) => {
+    if(open !== null) {
+        selectedParcelGraphic.graphics.removeAll()
+        selectedParcelGraphic.graphics.add(sParcelLayers[open])
+        poblayer.graphics.removeAll()
+        poblayer.graphics.add(pobLayers[open])
+        if (!selected) {
+            lblgraphicslayer.graphics.removeAll()
+            lblgraphicslayer.graphics.addMany(parcelLabels[open]);
+            radgraphicslayer.graphics.removeAll()
+            radgraphicslayer.graphics.addMany(radLayers[open])
+            tangraphicslayer.removeAll()
+            tangraphicslayer.addMany(tanStartLayers[open], tanEndLayers[open])
+            if (zoomToggle && view) {
+                view.goTo({target: sParcelLayers[open]}).catch(error => {console.log(error)})
+            }
+        }
+    } else {
+        poblayer.graphics.removeAll()
+        poblayer.graphics.addMany(pobLayers)
+        selectedParcelGraphic.graphics.removeAll()
+        tangraphicslayer.removeAll()
+        radgraphicslayer.removeAll()
+        lblgraphicslayer.removeAll()
     }
 }
 

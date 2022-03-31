@@ -2,27 +2,27 @@ import React, { useEffect, useRef } from "react"
 import { buildMap, createCityLayer, selectedLayer, selectedParcel } from '../data/esri'
 import { CircularProgress } from '@material-ui/core';
 
-const EsriMap = ({esriData, selected, setSelected, open, setOpen}) => {
+const EsriMap = ({esriData, selected, setSelected, open, setOpen, zoomToggle}) => {
     const mapRef = useRef();
 
     useEffect(() => {
         if (esriData) {
             const cityLayer = createCityLayer()
-            buildMap(esriData, mapRef.current, cityLayer, setSelected, selected, setOpen)
+            buildMap(esriData, mapRef.current, cityLayer, setSelected, selected, setOpen, open)
         }
     }, [esriData]);
 
     useEffect(() => {
-        selectedLayer(selected, open)
-    }, [selected])
+        selectedLayer(selected, open, setOpen, zoomToggle)
+    }, [selected, zoomToggle])
 
     useEffect(() => {
-        selectedParcel(open)
-    }, [open])
+        selectedParcel(open, selected, zoomToggle)
+    }, [open, selected, zoomToggle])
 
     if (esriData) {
         return (
-            <div className="esri" ref={mapRef}/>
+            <div className="esri" ref={mapRef} />
         )
     } else {
         return(

@@ -6,12 +6,12 @@ export const lineColumns = [
     },
     {
       id: 'length',
-      label: 'Length',
+      label: 'Geometry Length',
       align: 'left',
     },
     {
-      id: 'bearing_DMS',
-      label: 'Bearing',
+      id: 'bearing_DMS_2',
+      label: 'Geometry Bearing',
       align: 'left',
     },
     {
@@ -30,7 +30,7 @@ export const lineColumns = [
       align: 'left',
     },
     {
-      id: 'Labels_Check.LineBearing_Check.Difference',
+      id: 'Labels_Check.LineBearing_Check.Difference_2',
       label: 'Bearing Diff.',
       align: 'left',
     },
@@ -74,7 +74,12 @@ export const lineColumns = [
       align: 'left',
     },
     {
-      id: 'arcDelta_DD',
+      id: 'bearingRadiusIn_DMS_2',
+      label: 'Bearing Radius In',
+      align: 'left',
+    },
+    {
+      id: 'arcDelta_DMS_3',
       label: 'Total Angle',
       align: 'left',
     },
@@ -94,12 +99,17 @@ export const lineColumns = [
       align: 'left',
     },
     {
+      id: 'bearingRadiusOut_DMS_2',
+      label: 'Bearing Radius Out',
+      align: 'left',
+    },
+    {
       id: 'Labels_Check.Arc_StartPoint_Check.StartPoint_Label',
       label: 'Label Start Tangency',
       align: 'left',
     },
     {
-      id: 'Labels_Check.ArcDelta_Check.CurveTotalAngle_Label',
+      id: 'Labels_Check.ArcDelta_Check.Difference_2',
       label: 'Label Total Angle',
       align: 'left',
     },

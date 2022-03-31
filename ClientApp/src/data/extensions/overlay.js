@@ -20,13 +20,6 @@ GeometryCallback.prototype.onLineSegment = function (x1, y1, x2, y2, vpId) {
     var pt1 = new THREE.Vector3().set(x1, y1, 0)//.applyMatrix4(vpXform);
     var pt2 = new THREE.Vector3().set(x2, y2, 0)//.applyMatrix4(vpXform);
 
-    console.log('Line segment vertices coordinates: ', {
-        pointX1: pt1.x,
-        pointY1: pt1.y,
-        pointX2: pt2.x,
-        pointY2: pt2.y
-    });
-
     //add overlay geometry
     var geometry = new THREE.Geometry()
     geometry.vertices.push(new THREE.Vector3(pt1.x, pt1.y, 0))
@@ -44,14 +37,6 @@ GeometryCallback.prototype.onCircularArc = function (cx, cy, start, end, radius,
     var vpXform = this.viewer.model.getPageToModelTransform(vpId);
     //if in CAD coordinate system, applyMatrix4 with vpXform
     var center = new THREE.Vector3().set(cx, cy, 0)//.applyMatrix4(vpXform);
-
-    console.log('CircleArc segment: ', {
-        centerX: center.x,
-        centerY: center.y,
-        radius: radius,
-        startAngle: start,
-        endAngle: end
-    });
 
     //add overlay geometry
     var curve = new THREE.EllipseCurve(
@@ -74,14 +59,6 @@ GeometryCallback.prototype.onEllipticalArc = function (cx, cy, start, end, major
     var vpXform = this.viewer.model.getPageToModelTransform(vpId);
     //if in CAD coordinate system, applyMatrix4 with vpXform
     var center = new THREE.Vector3().set(cx, cy, 0)//.applyMatrix4(vpXform);
-
-    console.log('EllipticalArc segment: ', {
-        centerX: center.x,
-        centerY: center.y,
-        radius: radius,
-        startAngle: start,
-        endAngle: end
-    });
 
     //add overlay geometry
     var curve = new THREE.EllipseCurve(
@@ -129,7 +106,6 @@ function Show2dCurve(viewer) {
 
     //when extension is loaded
     this.load = function () {
-        console.log('Eric - Show2dCurve extension is loaded!');
 
         //$(document).on('click', '.matched-found', function () {
 
@@ -148,7 +124,7 @@ function Show2dCurve(viewer) {
 
     //when extension is unloaded
     this.unload = function () {
-        console.log('MyShow2dCurve is now unloaded!');
+        
         //unbind keyup event
         $(document).unbind('keyup', this.onKeyUp);
         return true;
@@ -156,7 +132,7 @@ function Show2dCurve(viewer) {
 
     //when key up
     function onKeyUp(evt) {
-        console.log('Eric - onKeyUp:' + evt.keyCode);
+        
 
         //when key 'S' is pressed
         if (evt.keyCode == 83) {
@@ -183,7 +159,7 @@ function Show2dCurve(viewer) {
         _viewer.removeEventListener(Autodesk.Viewing.SELECTION_CHANGED_EVENT)
         _viewer.impl.createOverlayScene(_copiedGeometryName, _curveMaterial)
 
-        console.log("createOverlayforHandleIdObj executed");
+        
         //get instance tree
         var it = _viewer.model.getData().instanceTree;
         console.log("get instance tree")
