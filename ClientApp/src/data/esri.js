@@ -244,7 +244,7 @@ const parcelimagelayer = new MapImageLayer({
 })
 
 const map = new Map({
-    basemap: OCB
+    basemap: publicB
 })
 
 const polygonSymbol = {
