@@ -7,27 +7,31 @@ import { launchViewer } from "../data/forge";
 
 const ForgeMap = ({objectKeys, connectionId, urn, error, setError, mapInfo, setMapInfo}) => {
 
-    const [didMount, setDidMount] = useState(false)
-    
-    useEffect(() => { 
-        setDidMount(true)
-    }, [])
+    const [restart, setRestart] = useState(0)
 
     useEffect(() => {
-        if (didMount) {
+        if(objectKeys) {
             connection.translateObject(objectKeys, connectionId)
-            .then(
-                response => {
-                    console.log('Response', response)
-                    setError()
-                },
-                error => {
-                    console.log('Error:', error)
-                    setError(error)
+        .then(
+            response => {
+                console.log('Response', response)
+                setError(null)
+            },
+            error => {
+                console.log('Error:', error)
+                setError('error')
+                if (restart < 2) {
+                    console.log('retrying' + restart)
+                    setTimeout(() => {
+                        setRestart(restart + 1)
+                    }, 10000)
+                } else {
+                    console.log('fatal')
+                    setError('fatal')
                 }
-            )
-        }  
-    }, [objectKeys]);
+            })
+        }
+    }, [objectKeys, restart]);
 
     useEffect(()=> {
         if(urn) {
@@ -35,11 +39,18 @@ const ForgeMap = ({objectKeys, connectionId, urn, error, setError, mapInfo, setM
         }
     }, [urn]) // wait for the translation to finish
 
-    if (error) {
+    if (error == 'fatal') {
         return (
-            <span className='spinner'>
-                <TriError color={'rgb(245, 93, 110)'}/>
-                <p></p>
+            <span className='forge__error forge__error--final' onClick={() => setRestart(0)}>
+                <TriError color={'#842029'}/>
+                <p>Map failed to load. Click to try again</p>
+            </span>
+        )
+    } else if (error == 'error') {
+        return (
+            <span className='forge__error'>
+                <TriError color={'#842029'}/>
+                <p>Error: Retrying (Attempt {restart + 1}/3)</p>
             </span>
         )
     } else if (!mapInfo)  {

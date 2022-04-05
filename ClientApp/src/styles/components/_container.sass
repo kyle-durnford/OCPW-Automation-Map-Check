@@ -136,7 +136,32 @@
             background: $error
             flex: 1 1 auto
             position: relative
-            margin: 0 0 .25rem .25rem
+            //margin: 0 0 .25rem .25rem
+
+.forge
+
+    &__error
+        display: flex
+        flex-direction: column
+        justify-content: center
+        align-items: center
+        width: 100%
+        height: 100%
+        background: $error
+        color: $error2
+        font: $bold-title
+        font-size: 1.5rem
+        margin-top: 1rem
+
+        p
+            margin-top: 1rem
+
+        &--final
+            cursor: pointer
+
+            &:hover
+                text-decoration: underline
+            
 
 .upload
     background: $white,

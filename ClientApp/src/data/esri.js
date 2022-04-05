@@ -275,6 +275,7 @@ const clearup = (view) => {
     radLayers = []
     tanStartLayers = []
     tanEndLayers = []
+    pobLayers = []
 
     dict = {}
     dict2 = {}
@@ -291,6 +292,7 @@ const clearup = (view) => {
     selectedgraphicslayer.graphics.removeAll()
     radgraphicslayer.removeAll();
     view.graphics.removeAll();
+    poblayer.graphics.removeAll();
 }
 
 const createFeature = (path, words, hid, oid, oidlist, pnum)  => {
@@ -398,8 +400,8 @@ const ericJson = (jsonData, view) => {
             const shapetype = value.shapeType;
             const radtangentstart = value.radtangent_start;
             const radtangentend = value.radtangent_end;
-            const bearingRadiusInDMSstart = value.annweb_grid_radTanStart;
-            const bearingRadiusInDMSend = value.annweb_grid_radTanEnd;
+            const bearingRadiusInDMSstart = value.annweb_grid_radTanStart_2;
+            const bearingRadiusInDMSend = value.annweb_grid_radTanEnd_2;
             const startx = value.startx;
             const starty = value.starty;
             const endx = value.endx;

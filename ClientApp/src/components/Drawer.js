@@ -48,7 +48,7 @@ const Drawer = ({loading, data, setSelected, selected, page, setSection, section
                 setDrawerData(() => { return (<ReportDrawer data={parcelData}/>)})
             } else if (page === 'legal' || page === 'monument' || page === 'reference') {
                 const parcels = parcelData.map((e, i) => {
-                    return <Parcel loading={loading} page={page} data={parcelData[i][1][1][1]} setSelected={setSelected} selected={selected} key={i} parcelNum={i} page={page} open={open} setOpen={setOpen} lineMissing={lineMissing} curveMissing={curveMissing}/> 
+                    return <Parcel loading={loading} page={page} data={parcelData[i][1][1][1]} setSelected={setSelected} selected={selected} key={i} parcelNum={i} open={open} setOpen={setOpen} lineMissing={lineMissing} curveMissing={curveMissing}/> 
                 })
                 setDrawerData(parcels)
             } else if (page === 'project') {

@@ -80,7 +80,7 @@ const buttonSolidProps = {
     }
 };
 
-const DialogUploadFile = ({open, onClose, connectionId, isLoading, setSubmit, setEsriData, setTableInfo, setMapInfo, setParcelInfo, files, setFiles, setInputParcelCount, setInputMapType}) => {
+const DialogUploadFile = ({open, onClose, connectionId, isLoading, setSubmit, setEsriData, setTableInfo, setMapInfo, setParcelInfo, files, setFiles, setInputParcelCount, setInputMapType, setError}) => {
     const classes = useStyles();  
     const { handleSubmit, control, reset } = useForm();
 
@@ -93,6 +93,7 @@ const DialogUploadFile = ({open, onClose, connectionId, isLoading, setSubmit, se
     setParcelInfo(null)
     setInputParcelCount(null)
     setInputMapType(null)
+    setError(null)
     const formData = new FormData()
     formData.append('inputFile', data.files);
     formData.append('data', JSON.stringify({

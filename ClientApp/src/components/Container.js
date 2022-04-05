@@ -14,6 +14,7 @@ import connection from '../services/connection'
 import TriError from '../assets/TriError.js'
 import { viewer } from '../data/forge'
 import { display } from "@mui/system";
+import { bindAll } from "lodash";
 
 const Container = () => {
   const [page, setPage] = useState('project')
@@ -46,13 +47,12 @@ const Container = () => {
   const [esriData, setEsriData] = useState()
   const [hideDrawer, setHideDrawer] = useState(false)
   const [urn, setUrn] = useState(null)
-  const [forgeError, setForgeError] = useState()
+  const [forgeError, setForgeError] = useState(null)
   const [appError, setAppError] = useState()
   const [lineErrors, setLineErrors] = useState(0)
   const [curveErrors, setCurveErrors] = useState(0)
   const [lineMissing, setLineMissing]  = useState(0)
   const [curveMissing, setCurveMissing] = useState(0)
-  const [restart, setRestart] = useState(0)
   const [open, setOpen] = useState(null);
   const [files, setFiles] = useState([]);
   const [windowWidth, setWindowWidth] = useState(window.innerWidth)
@@ -63,7 +63,7 @@ const Container = () => {
   const [zoomToggle, setZoomToggle] = useState(true)
 
   const leftRef = createRef();
-  const splitPaneRef = createRef();
+  //const splitPaneRef = createRef();
   const drawerContRef = createRef();
 
   useEffect(() => {
@@ -187,10 +187,13 @@ const Container = () => {
 
             setUrn(extractionFinished.resourceUrn)
           });
-      }).catch(e => console.log('Connection failed: ', e));
+      }).catch(e => {
+        console.log('Connection failed: ', e)
+      })
+        
 
     }
-  }, [modelDerivativeConnect, restart]);
+  }, [modelDerivativeConnect]);
 
 
   useEffect(() => {
@@ -279,8 +282,8 @@ const Container = () => {
         return;
       }
 
-      if (splitPaneRef.current) {
-        const splitPaneWidth = splitPaneRef.current.clientWidth;
+      if (topRef.current) {
+        const splitPaneWidth = topRef.current.clientWidth;
 
         if (newLeftWidth > splitPaneWidth - MIN_WIDTH) {
           setLeftWidth(splitPaneWidth - MIN_WIDTH);
@@ -374,13 +377,13 @@ const Container = () => {
       </div>
       <div className='mapcont'>
         <AppBar handleClickOpen={handleClickOpen} setMapSplit={setMapSplit} mapSplit={mapSplit} files={files}/>
-        <DialogUploadFile open={openDialog} onClose={onDialogClose} connectionId={designAutomationId} isLoading={handleLoading} setEsriData={setEsriData} setTableInfo={setTableInfo} setMapInfo={setMapInfo} setParcelInfo={setParcelInfo} files={files} setFiles={setFiles} setInputParcelCount={setInputParcelCount} setInputMapType={setInputMapType}/>
+        <DialogUploadFile setError={setForgeError} open={openDialog} onClose={onDialogClose} connectionId={designAutomationId} isLoading={handleLoading} setEsriData={setEsriData} setTableInfo={setTableInfo} setMapInfo={setMapInfo} setParcelInfo={setParcelInfo} files={files} setFiles={setFiles} setInputParcelCount={setInputParcelCount} setInputMapType={setInputMapType}/>
         <div className="mapcont__view">
         {/* {page === 'check' && submit ?  
           <Checklist data={parcelInfo} section={section} setSection={setSection}/> */}
         { submit && !appError ?
           <div ref={e => setSplitPaneHeightRef(e)} className="mapcont__view__cont">
-            <div className="splitpane" ref={splitPaneRef} ref={e => setTopRef(e)}>
+            <div className="splitpane" ref={e => setTopRef(e)}>
               <div className='splitpane__map splitpane__map--left' ref={leftRef} style={mapSplit === 3 ? {display: 'none'} : {display: 'block'}}>
                   <EsriMap esriData={esriData} selected={selected} setSelected={setSelected} open={open} setOpen={setOpen} zoomToggle={zoomToggle}/>
               </div>

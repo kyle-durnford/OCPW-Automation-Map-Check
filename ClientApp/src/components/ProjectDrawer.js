@@ -12,7 +12,7 @@ const ProjectDrawer = ({parcelCount, lines, curves, lineErrors, curveErrors, lin
     return (
         <div className="project">
             {totalPercent > 80 ? <div className="validation--success"><img src={good} alt="Pass" style={{marginRight: '.5rem'}}></img>File meets standards</div> : <div className="validation--error"><img src={error} alt="Fail" style={{marginRight: '.5rem'}}></img>File does not meet standards</div>}
-            {inputParcelCount != parcelCount ? <div className="validation--error" style={{marginTop: '1rem'}}><img src={error} alt="Fail" style={{marginRight: '.5rem'}}></img>Inputted parcel count ({inputParcelCount}) does not match detected parcel count ({parcelCount})</div> : null}
+            {inputParcelCount != parcelCount ? <div className="validation--error" style={{marginTop: '1rem'}}><img src={error} alt="Fail" style={{marginRight: '.5rem'}}></img>Submitted parcel count ({inputParcelCount}) does not match detected parcel count ({parcelCount})</div> : null}
             <div className="project__title"><span className="project__title__icon"><Project color={'rgb(87, 110, 239)'}/></span><p>Details</p></div>
             <div>
                 <div className="info__row">

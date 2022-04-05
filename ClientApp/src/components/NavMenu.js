@@ -80,7 +80,7 @@ const NavMenu = ({setPage, page, hideDrawer, setHideDrawer}) => {
         <ul className='nav__list--bottom'>
           {//V Major release.Minor Release.Patch Release
           }
-          <li><p className='version'>0.0.1</p></li>
+          <li><p className='version'>0.0.2</p></li>
           <li onClick={() => setHideDrawer(hideDrawer ? false : true)}>
             <div>
               <img src={(hideDrawer === false ? hide : show)} className="icon--nav"></img>

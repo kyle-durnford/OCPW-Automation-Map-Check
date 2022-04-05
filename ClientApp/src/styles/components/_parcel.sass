@@ -31,11 +31,12 @@
         cursor: pointer
         width: 100%
         border-radius: .5rem
-        transition: background .2s ease
+        transition: border .2s ease
         margin: .5rem 0
+        border: 2px solid transparent
 
         &:hover
-            background: $ocpurple
+            border: 2px solid $ocblue
 
         &--error
             background: $error
@@ -51,7 +52,7 @@
             color: $warning2
 
             &:hover
-                background: $ocpurple
+                border: 2px solid $ocblue
 
         &--success
             background: $success
@@ -59,19 +60,23 @@
             color: $success3
 
             &:hover
-                background: $ocpurple
+                border: 2px solid $ocblue
 
         &--selected
-            background: $ocpurple
+            border: 2px solid $ocblue
+            background: $success
+            color: $success3
 
             &--error
                 color: $error2
+                background: $error
 
             &--warning
                 color: $warning2
+                background: $warning
                 
             &:hover
-                background: $ocpurple
+                border: 2px solid $ocblue
 
         
     

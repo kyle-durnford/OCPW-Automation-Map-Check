@@ -107,14 +107,19 @@ export const afterViewerEvents = (viewer, events) => {
 
 // Zoom into dbId object in the viewer model.
 export const fitToViewerHandleId = (hId) => {
-    if (viewerDbIds){
-        let dbId = viewerDbIds[hId.toUpperCase()]
-        if (dbId !== "undefined") {
-            viewer.select(dbId)
-            viewer.utilities.fitToView()
+    try {
+        if (viewerDbIds){
+            let dbId = viewerDbIds[hId.toUpperCase()]
+            if (dbId !== "undefined") {
+                viewer.select(dbId)
+                viewer.utilities.fitToView()
+            }
         }
+    } catch (error) {
     }
 }
+    
+
 
 // Get all hIds:dbIds from the viewer model 
 export const getForgeViewerModelDbIds = () => {
